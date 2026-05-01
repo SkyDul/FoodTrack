@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('Form Stok')}"></head>
+<body>
+<div class="layout">
+    <nav th:replace="~{admin/layout :: sidebar('stok')}"></nav>
+    <div class="main-content">
+        <header th:replace="~{admin/layout :: topbar('<a href=\'/admin/dashboard\'>Dashboard</a> &rsaquo; <a href=\'/admin/stok\'>Stok Pangan</a> &rsaquo; <span>Form</span>')}"></header>
+        <div class="page-content">
+            <div class="page-header">
+                <h1 th:text="${stokPangan.idStok != null} ? 'Edit Stok Pangan' : 'Tambah Stok Pangan'">Tambah Stok Pangan</h1>
+                <p>Masukkan rincian hasil panen untuk diperbarui di sistem inventaris.</p>
+            </div>
+            <div class="card" style="max-width:700px;">
+                <form th:action="@{/admin/stok/simpan}" method="post" th:object="${stokPangan}">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <input type="hidden" th:field="*{idStok}"/>
+
+                    <div class="form-group">
+                        <label for="petani">Petani <span class="required">*</span></label>
+                        <select id="petani" th:field="*{petani.idPetani}" class="form-control" required>
+                            <option value="">-- Pilih Petani --</option>
+                            <option th:each="p : ${listPetani}" th:value="${p.idPetani}" th:text="${p.nama}">Budi</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="komoditas">Komoditas <span class="required">*</span></label>
+                        <select id="komoditas" th:field="*{komoditas.idKomoditas}" class="form-control" required>
+                            <option value="">-- Pilih Komoditas --</option>
+                            <option th:each="k : ${listKomoditas}" th:value="${k.idKomoditas}"
+                                    th:text="${k.namaKomoditas + ' (' + k.satuan + ')'}">Beras (Kg)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="jumlahMasuk">Jumlah Masuk <span class="required">*</span></label>
+                        <input type="number" id="jumlahMasuk" th:field="*{jumlahMasuk}" class="form-control"
+                               placeholder="0" min="0" required/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tanggalPanen">Tanggal Panen <span class="required">*</span></label>
+                        <input type="date" id="tanggalPanen" th:field="*{tanggalPanen}" class="form-control" required/>
+                    </div>
+
+                    <div style="display:flex;gap:12px;justify-content:flex-end;padding-top:20px;border-top:1px solid var(--outline-variant);">
+                        <a th:href="@{/admin/stok}" class="btn btn-secondary">Batal</a>
+                        <button type="submit" class="btn btn-primary">
+                            <span class="material-symbols-outlined" style="font-size:18px;">save</span> Simpan Stok
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

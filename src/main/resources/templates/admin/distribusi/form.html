@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('Form Distribusi')}"></head>
+<body>
+<div class="layout">
+    <nav th:replace="~{admin/layout :: sidebar('distribusi')}"></nav>
+    <div class="main-content">
+        <header th:replace="~{admin/layout :: topbar('<a href=\'/admin/dashboard\'>Dashboard</a> &rsaquo; <a href=\'/admin/distribusi\'>Distribusi</a> &rsaquo; <span>Form</span>')}"></header>
+        <div class="page-content">
+            <div class="page-header">
+                <h1>Tambah Distribusi</h1>
+                <p>Catat pengiriman stok pangan ke tujuan distribusi.</p>
+            </div>
+            <div class="card" style="max-width:700px;">
+                <form th:action="@{/admin/distribusi/simpan}" method="post" th:object="${distribusi}">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <input type="hidden" th:field="*{idDistribusi}"/>
+
+                    <div class="form-group">
+                        <label for="stokPangan">Stok Pangan <span class="required">*</span></label>
+                        <select id="stokPangan" th:field="*{stokPangan.idStok}" class="form-control" required>
+                            <option value="">-- Pilih Stok Pangan --</option>
+                            <option th:each="s : ${listStok}" th:value="${s.idStok}"
+                                    th:text="${s.komoditas.namaKomoditas + ' — ' + s.petani.nama + ' (' + s.jumlahMasuk + ' ' + s.komoditas.satuan + ')'}">
+                                Beras — Budi (500 Kg)
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tujuan">Tujuan Distribusi <span class="required">*</span></label>
+                        <input type="text" id="tujuan" th:field="*{tujuan}" class="form-control"
+                               placeholder="Contoh: Gudang Kecamatan Sukasari" required/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="statusPengiriman">Status Pengiriman</label>
+                        <select id="statusPengiriman" th:field="*{statusPengiriman}" class="form-control">
+                            <option value="Menunggu">Menunggu</option>
+                            <option value="Dikirim">Dikirim</option>
+                            <option value="Selesai">Selesai</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tanggalKirim">Tanggal Kirim</label>
+                        <input type="date" id="tanggalKirim" th:field="*{tanggalKirim}" class="form-control"/>
+                    </div>
+
+                    <div style="display:flex;gap:12px;justify-content:flex-end;padding-top:20px;border-top:1px solid var(--outline-variant);">
+                        <a th:href="@{/admin/distribusi}" class="btn btn-secondary">Batal</a>
+                        <button type="submit" class="btn btn-primary">
+                            <span class="material-symbols-outlined" style="font-size:18px;">save</span> Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

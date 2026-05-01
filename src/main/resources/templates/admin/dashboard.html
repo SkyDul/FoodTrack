@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{admin/layout :: head('Dashboard')}"></head>
+<body>
+<div class="layout">
+    <nav th:replace="~{admin/layout :: sidebar('dashboard')}"></nav>
+    <div class="main-content">
+        <header th:replace="~{admin/layout :: topbar('<span>Dashboard</span>')}"></header>
+        <div class="page-content">
+            <div th:replace="~{admin/layout :: flash}"></div>
+
+            <div class="page-header">
+                <h1>Dashboard</h1>
+            </div>
+
+            <!-- Stat Cards -->
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <span class="material-symbols-outlined">group</span>
+                    </div>
+                    <div>
+                        <div class="stat-label">Total Petani</div>
+                        <div class="stat-value" th:text="${totalPetani} ?: '0'">128</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon yellow">
+                        <span class="material-symbols-outlined">eco</span>
+                    </div>
+                    <div>
+                        <div class="stat-label">Komoditas Aktif</div>
+                        <div class="stat-value" th:text="${totalKomoditas} ?: '0'">14</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon red">
+                        <span class="material-symbols-outlined">inventory_2</span>
+                    </div>
+                    <div>
+                        <div class="stat-label">Stok Masuk</div>
+                        <div class="stat-value" th:text="${totalStok} ?: '0'">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <span class="material-symbols-outlined">local_shipping</span>
+                    </div>
+                    <div>
+                        <div class="stat-label">Distribusi</div>
+                        <div class="stat-value" th:text="${totalDistribusi} ?: '0'">47</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Data Section -->
+            <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;">
+                <!-- Stok Pangan Terbaru -->
+                <div class="card">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                        <h3 class="text-h3">Stok Pangan Terbaru</h3>
+                        <a th:href="@{/admin/stok}" style="color:var(--primary);font-weight:500;font-size:0.875rem;">Lihat Semua</a>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Komoditas</th>
+                                <th>Petani</th>
+                                <th>Jumlah</th>
+                                <th>Tanggal Panen</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="stok : ${recentStok}">
+                                <td th:text="${stok.komoditas.namaKomoditas}">Beras</td>
+                                <td th:text="${stok.petani.nama}">Budi</td>
+                                <td>
+                                    <strong th:text="${stok.jumlahMasuk}">500</strong>
+                                    <span th:text="${stok.komoditas.satuan}" style="color:var(--on-surface-variant);">kg</span>
+                                </td>
+                                <td th:text="${#temporals.format(stok.tanggalPanen, 'dd MMM yyyy')}">12 Okt 2023</td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(recentStok)}">
+                                <td colspan="4" style="text-align:center;color:var(--outline);padding:32px;">Belum ada data stok</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Aktivitas Chatbot AI Terbaru -->
+                <div class="card">
+                    <h3 class="text-h3" style="margin-bottom:20px;">Aktivitas Chatbot AI Terbaru</h3>
+                    <div th:each="log : ${recentChatbotLogs}" style="display:flex;gap:12px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--outline-variant);">
+                        <div style="width:40px;height:40px;border-radius:50%;background:var(--primary-container);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <span class="material-symbols-outlined" style="color:#fff;font-size:20px;">smart_toy</span>
+                        </div>
+                        <div>
+                            <strong th:text="${log.petani.nama}" style="font-size:0.9375rem;">Budi</strong>
+                            <p th:text="${#strings.abbreviate(log.userPrompt, 80)}" style="font-size:0.8125rem;color:var(--on-surface-variant);margin-top:2px;">Pertanyaan...</p>
+                            <span th:text="${#temporals.format(log.timestamp, 'dd MMM, HH:mm')}" style="font-size:0.75rem;color:var(--outline);">10 menit lalu</span>
+                        </div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(recentChatbotLogs)}" style="text-align:center;color:var(--outline);padding:24px;">
+                        Belum ada aktivitas chatbot
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

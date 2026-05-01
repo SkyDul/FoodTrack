@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('Form Petani')}"></head>
+<body>
+<div class="layout">
+    <nav th:replace="~{admin/layout :: sidebar('petani')}"></nav>
+    <div class="main-content">
+        <header th:replace="~{admin/layout :: topbar('<a href=\'/admin/dashboard\'>Dashboard</a> &rsaquo; <a href=\'/admin/petani\'>Data Petani</a> &rsaquo; <span th:text=\'${petani.idPetani != null ? \"Edit\" : \"Tambah\"}\'>Tambah</span>')}"></header>
+        <div class="page-content">
+            <div class="page-header">
+                <h1 th:text="${petani.idPetani != null} ? 'Edit Data Petani' : 'Tambah Data Petani'">Tambah Data Petani</h1>
+                <p>Masukkan informasi detail petani baru ke dalam sistem untuk pelacakan stok dan hasil panen.</p>
+            </div>
+
+            <div class="card" style="max-width:700px;">
+                <div style="display:flex;align-items:center;gap:12px;padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid var(--outline-variant);">
+                    <div style="width:40px;height:40px;border-radius:50%;background:var(--surface-container-high);display:flex;align-items:center;justify-content:center;">
+                        <span class="material-symbols-outlined" style="color:var(--primary);">person</span>
+                    </div>
+                    <span style="font-weight:600;">Informasi Petani</span>
+                </div>
+
+                <form th:action="@{/admin/petani/simpan}" method="post" th:object="${petani}">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <input type="hidden" th:field="*{idPetani}"/>
+
+                    <div class="form-group">
+                        <label for="nama">Nama Lengkap <span class="required">*</span></label>
+                        <input type="text" id="nama" th:field="*{nama}" class="form-control"
+                               th:classappend="${#fields.hasErrors('nama')} ? 'is-invalid'"
+                               placeholder="Masukkan nama lengkap petani" required/>
+                        <div th:if="${#fields.hasErrors('nama')}" class="invalid-feedback" th:errors="*{nama}">Error</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="kelompokTani">Kelompok Tani</label>
+                        <input type="text" id="kelompokTani" th:field="*{kelompokTani}" class="form-control"
+                               placeholder="Contoh: Suka Maju Bersama"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="kontak">Kontak / No. HP <span class="required">*</span></label>
+                        <div class="input-icon">
+                            <span class="material-symbols-outlined">call</span>
+                            <input type="text" id="kontak" th:field="*{kontak}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('kontak')} ? 'is-invalid'"
+                                   placeholder="08xxxxxxxxxx" required/>
+                        </div>
+                        <div th:if="${#fields.hasErrors('kontak')}" class="invalid-feedback" th:errors="*{kontak}">Error</div>
+                    </div>
+
+                    <!-- Login Credentials untuk Portal Petani -->
+                    <div style="display:flex;align-items:center;gap:12px;padding:16px 0;margin:8px 0;border-top:1px solid var(--outline-variant);">
+                        <div style="width:40px;height:40px;border-radius:50%;background:#e3f2fd;display:flex;align-items:center;justify-content:center;">
+                            <span class="material-symbols-outlined" style="color:#1565c0;">key</span>
+                        </div>
+                        <span style="font-weight:600;">Kredensial Login Portal Petani</span>
+                    </div>
+
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" th:field="*{username}" class="form-control"
+                                   placeholder="Username untuk login"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="passwordRaw" class="form-control"
+                                   placeholder="Kosongkan jika tidak diubah"
+                                   th:placeholder="${petani.idPetani != null} ? 'Kosongkan jika tidak diubah' : 'Minimal 6 karakter'"/>
+                        </div>
+                    </div>
+
+                    <div style="display:flex;gap:12px;justify-content:flex-end;padding-top:20px;border-top:1px solid var(--outline-variant);">
+                        <a th:href="@{/admin/petani}" class="btn btn-secondary">Batal</a>
+                        <button type="submit" class="btn btn-primary">
+                            <span class="material-symbols-outlined" style="font-size:18px;">save</span> Simpan Data
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

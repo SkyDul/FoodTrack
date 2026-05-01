@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="SiPangan - Sistem logistik pertanian digital yang menghubungkan petani, gudang, dan pasar."/>
+    <title>SiPangan — Smart Food Security System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<!-- Navbar -->
+<nav class="landing-nav">
+    <div class="nav-brand">
+        <span class="material-symbols-outlined" style="color:var(--secondary-container);font-variation-settings:'FILL' 1;">eco</span>
+        SiPangan
+    </div>
+    <div class="nav-links">
+        <a href="#" class="active">Beranda</a>
+        <a href="#fitur">Fitur</a>
+        <a href="#cara-kerja">Cara Kerja</a>
+        <a href="#tentang">Tentang Kami</a>
+    </div>
+    <div class="nav-actions">
+        <a th:href="@{/admin/login}" class="btn btn-secondary">Login Admin</a>
+        <a th:href="@{/login-petani}" class="btn btn-primary">Portal Petani</a>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero" style="background:var(--surface-container-low);">
+    <div class="hero-text">
+        <h1>Kelola Stok Pangan Lebih Cerdas <span class="highlight">Bersama AI</span></h1>
+        <p>Sistem logistik pertanian digital yang menghubungkan petani, gudang, dan pasar. Optimalkan distribusi, pantau ketersediaan, dan cegah kelangkaan dengan presisi engine modern kami.</p>
+        <div class="hero-actions">
+            <a th:href="@{/login-petani}" class="btn btn-primary" style="padding:14px 28px;">
+                Masuk Portal Petani <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
+            </a>
+            <a th:href="@{/admin/login}" class="btn btn-secondary" style="padding:14px 28px;">Login Admin</a>
+        </div>
+    </div>
+    <div class="hero-image">
+        <img src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&q=80"
+             alt="Petani menggunakan tablet di sawah"
+             style="border-radius:var(--radius-xl);box-shadow:0 8px 32px rgba(0,0,0,0.1);"/>
+    </div>
+</section>
+
+<!-- Stats Bar -->
+<section class="stats-bar">
+    <div class="stat-item">
+        <h3 th:text="${totalPetani != null ? totalPetani : '1.200'} + '+'">1.200+</h3>
+        <p>Petani Aktif</p>
+    </div>
+    <div class="stat-item">
+        <h3>8.500+</h3>
+        <p>Ton Stok Dikelola</p>
+    </div>
+    <div class="stat-item">
+        <h3>45+</h3>
+        <p>Gudang Regional</p>
+    </div>
+    <div class="stat-item">
+        <h3>99.9%</h3>
+        <p>Akurasi Data</p>
+    </div>
+</section>
+
+<!-- Fitur Section -->
+<section id="fitur" style="padding:80px 40px;max-width:1200px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:48px;">
+        <h2 class="text-h2">Fitur Unggulan</h2>
+        <p style="color:var(--on-surface-variant);max-width:600px;margin:8px auto 0;">Solusi lengkap untuk pengelolaan pangan dari hulu ke hilir</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;">
+        <div class="card" style="text-align:center;padding:32px;">
+            <div style="width:64px;height:64px;border-radius:var(--radius-lg);background:#e8f5e9;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                <span class="material-symbols-outlined" style="font-size:32px;color:var(--primary);">inventory_2</span>
+            </div>
+            <h3 style="font-size:1.25rem;font-weight:600;margin-bottom:8px;">Kelola Stok</h3>
+            <p style="color:var(--on-surface-variant);font-size:0.9375rem;">Catat dan pantau stok pangan secara real-time dengan akurasi tinggi.</p>
+        </div>
+        <div class="card" style="text-align:center;padding:32px;">
+            <div style="width:64px;height:64px;border-radius:var(--radius-lg);background:#fff8e1;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                <span class="material-symbols-outlined" style="font-size:32px;color:var(--secondary);">local_shipping</span>
+            </div>
+            <h3 style="font-size:1.25rem;font-weight:600;margin-bottom:8px;">Distribusi</h3>
+            <p style="color:var(--on-surface-variant);font-size:0.9375rem;">Lacak pengiriman dari gudang ke tujuan dengan status real-time.</p>
+        </div>
+        <div class="card" style="text-align:center;padding:32px;">
+            <div style="width:64px;height:64px;border-radius:var(--radius-lg);background:#e3f2fd;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                <span class="material-symbols-outlined" style="font-size:32px;color:#1565c0;">smart_toy</span>
+            </div>
+            <h3 style="font-size:1.25rem;font-weight:600;margin-bottom:8px;">Chatbot AI</h3>
+            <p style="color:var(--on-surface-variant);font-size:0.9375rem;">Tanya asisten AI untuk rekomendasi pertanian berbasis data.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Cara Kerja -->
+<section id="cara-kerja" style="padding:80px 40px;background:var(--surface-container-low);">
+    <div style="max-width:1200px;margin:0 auto;text-align:center;">
+        <h2 class="text-h2" style="margin-bottom:48px;">Cara Kerja</h2>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:40px;">
+            <div>
+                <div style="width:56px;height:56px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;margin:0 auto 16px;">1</div>
+                <h3 style="font-size:1.125rem;font-weight:600;margin-bottom:8px;">Daftar &amp; Login</h3>
+                <p style="color:var(--on-surface-variant);font-size:0.9375rem;">Admin mendaftarkan petani, lalu petani login ke portal mereka.</p>
+            </div>
+            <div>
+                <div style="width:56px;height:56px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;margin:0 auto 16px;">2</div>
+                <h3 style="font-size:1.125rem;font-weight:600;margin-bottom:8px;">Catat Stok Panen</h3>
+                <p style="color:var(--on-surface-variant);font-size:0.9375rem;">Petani mencatat hasil panen dan stok langsung dari portal.</p>
+            </div>
+            <div>
+                <div style="width:56px;height:56px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;margin:0 auto 16px;">3</div>
+                <h3 style="font-size:1.125rem;font-weight:600;margin-bottom:8px;">Distribusi &amp; Monitor</h3>
+                <p style="color:var(--on-surface-variant);font-size:0.9375rem;">Admin mengelola distribusi dan memantau semua data secara terpusat.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="landing-footer">
+    <div class="footer-brand">
+        <span class="material-symbols-outlined" style="color:var(--secondary-container);font-variation-settings:'FILL' 1;">eco</span>
+        SiPangan
+    </div>
+    <p style="font-size:0.8125rem;color:var(--outline);">© 2024 SIPANGAN. DIGITAL AGRICULTURE LOGISTICS ENGINE.</p>
+    <div class="footer-links">
+        <a href="#">Kebijakan Privasi</a>
+        <a href="#">Syarat &amp; Ketentuan</a>
+        <a href="#">Kontak Kami</a>
+    </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${title} + ' — Portal Petani SiPangan'">Portal Petani</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+</head>
+
+<!-- ===== PETANI SIDEBAR ===== -->
+<nav th:fragment="sidebar(active)" class="sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-icon">
+            <span class="material-symbols-outlined" style="color:#fff;font-size:20px;">eco</span>
+        </div>
+        <div>
+            <h2>SiPangan</h2>
+            <div class="brand-sub">Portal Petani Digital</div>
+        </div>
+    </div>
+
+    <div class="sidebar-nav">
+        <a th:href="@{/petani/dashboard}" th:classappend="${active == 'dashboard'} ? 'active'">
+            <span class="material-symbols-outlined">dashboard</span> Dashboard
+        </a>
+        <a th:href="@{/petani/stok}" th:classappend="${active == 'stok'} ? 'active'">
+            <span class="material-symbols-outlined">inventory_2</span> Stok Saya
+        </a>
+        <a th:href="@{/petani/stok/tambah}" th:classappend="${active == 'catat'} ? 'active'">
+            <span class="material-symbols-outlined">add_box</span> Catat Stok
+        </a>
+        <a th:href="@{/petani/distribusi}" th:classappend="${active == 'distribusi'} ? 'active'">
+            <span class="material-symbols-outlined">local_shipping</span> Riwayat Distribusi
+        </a>
+        <a th:href="@{/petani/chatbot}" th:classappend="${active == 'chatbot'} ? 'active'">
+            <span class="material-symbols-outlined">smart_toy</span> Asisten Tani AI
+        </a>
+    </div>
+
+    <div class="sidebar-footer">
+        <form th:action="@{/petani/logout}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" style="display:flex;align-items:center;gap:12px;padding:10px 14px;color:rgba(255,255,255,0.7);font-size:0.9375rem;border:none;background:none;cursor:pointer;width:100%;">
+                <span class="material-symbols-outlined">logout</span> Keluar
+            </button>
+        </form>
+    </div>
+</nav>
+
+<!-- ===== PETANI TOPBAR ===== -->
+<header th:fragment="topbar" class="topbar">
+    <div class="topbar-left">
+        <div class="input-icon" style="width:300px;">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" class="form-control" placeholder="Cari..." style="border:none;background:var(--surface-container-low);"/>
+        </div>
+    </div>
+    <div class="topbar-right">
+        <button class="icon-btn"><span class="material-symbols-outlined">notifications</span></button>
+        <button class="icon-btn"><span class="material-symbols-outlined">settings</span></button>
+        <button class="icon-btn"><span class="material-symbols-outlined">help</span></button>
+        <span style="font-size:0.9375rem;font-weight:500;color:var(--on-surface-variant);">Bantuan</span>
+        <div class="avatar">
+            <span class="material-symbols-outlined" style="font-size:20px;">person</span>
+        </div>
+    </div>
+</header>
+
+<!-- ===== CENTERED POPUP FLASH MESSAGE ===== -->
+<div th:fragment="flash">
+    <div th:if="${successMessage}" class="flash-overlay" onclick="this.remove()">
+        <div class="flash-popup flash-success">
+            <span class="material-symbols-outlined" style="font-size:48px;color:#2e7d32;">check_circle</span>
+            <h3 style="margin:12px 0 4px;font-size:1.25rem;">Berhasil!</h3>
+            <p th:text="${successMessage}" style="color:var(--on-surface-variant);margin-bottom:16px;"></p>
+            <button class="btn btn-primary btn-sm" onclick="this.closest('.flash-overlay').remove()">OK</button>
+        </div>
+    </div>
+    <div th:if="${errorMessage}" class="flash-overlay" onclick="this.remove()">
+        <div class="flash-popup flash-error">
+            <span class="material-symbols-outlined" style="font-size:48px;color:#c62828;">error</span>
+            <h3 style="margin:12px 0 4px;font-size:1.25rem;">Gagal!</h3>
+            <p th:text="${errorMessage}" style="color:var(--on-surface-variant);margin-bottom:16px;"></p>
+            <button class="btn btn-danger btn-sm" onclick="this.closest('.flash-overlay').remove()">OK</button>
+        </div>
+    </div>
+</div>
+
+<style th:fragment="flashStyle">
+.flash-overlay {
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    background:rgba(0,0,0,0.4);z-index:9999;
+    display:flex;align-items:center;justify-content:center;
+    animation:fadeIn 0.3s ease;
+}
+.flash-popup {
+    background:#fff;border-radius:16px;padding:32px 40px;
+    text-align:center;min-width:320px;max-width:420px;
+    box-shadow:0 16px 48px rgba(0,0,0,0.2);
+    animation:popIn 0.3s ease;
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes popIn{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}
+</style>
+
+</html>

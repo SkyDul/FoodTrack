@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{petani/layout :: head('Riwayat Distribusi')}"></head>
+<body>
+<div class="layout">
+    <nav th:replace="~{petani/layout :: sidebar('distribusi')}"></nav>
+    <div class="main-content">
+        <header th:replace="~{petani/layout :: topbar}"></header>
+        <div class="page-content">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
+                <div>
+                    <h1 style="font-size:1.75rem;font-weight:700;">Riwayat Distribusi Saya</h1>
+                    <p style="color:var(--on-surface-variant);">Pantau pergerakan dan status pengiriman komoditas Anda.</p>
+                </div>
+            </div>
+
+            <!-- Summary Banner -->
+            <div style="background:linear-gradient(135deg,var(--primary-container),var(--primary));color:#fff;border-radius:var(--radius-xl);padding:28px 32px;margin-bottom:24px;display:grid;grid-template-columns:repeat(3,1fr);gap:24px;">
+                <div>
+                    <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;opacity:0.8;">TOTAL DISTRIBUSI</div>
+                    <div style="font-size:2.25rem;font-weight:700;" th:text="${totalDistribusi} ?: '0'">1,284</div>
+                </div>
+                <div style="border-left:1px solid rgba(255,255,255,0.2);padding-left:24px;">
+                    <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;opacity:0.8;">SELESAI</div>
+                    <div style="font-size:2.25rem;font-weight:700;" th:text="${totalSelesai} ?: '0'">420</div>
+                </div>
+                <div style="border-left:1px solid rgba(255,255,255,0.2);padding-left:24px;">
+                    <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;opacity:0.8;">DALAM PROSES</div>
+                    <div style="font-size:2.25rem;font-weight:700;" th:text="${totalProses} ?: '0'">56</div>
+                </div>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+                <div style="display:flex;gap:8px;">
+                    <button class="btn btn-primary btn-sm filter-tab active-tab" onclick="filterStatus(this,'')">Semua</button>
+                    <button class="btn btn-secondary btn-sm filter-tab" onclick="filterStatus(this,'Menunggu')">Menunggu</button>
+                    <button class="btn btn-secondary btn-sm filter-tab" onclick="filterStatus(this,'Dikirim')">Dikirim</button>
+                    <button class="btn btn-secondary btn-sm filter-tab" onclick="filterStatus(this,'Selesai')">Selesai</button>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="card">
+                <div class="table-container">
+                    <table id="distTable">
+                        <thead>
+                        <tr>
+                            <th>Komoditas</th>
+                            <th>Tanggal Kirim</th>
+                            <th>Tujuan</th>
+                            <th>Jumlah</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="d : ${listDistribusi}" th:data-status="${d.statusPengiriman}">
+                            <td>
+                                <div>
+                                    <strong th:text="${d.stokPangan.komoditas.namaKomoditas}">Beras IR64 Premium</strong>
+                                </div>
+                            </td>
+                            <td th:text="${d.tanggalKirim != null ? #temporals.format(d.tanggalKirim, 'dd MMM yyyy') : '—'}">12 Okt 2023</td>
+                            <td>
+                                <span style="display:flex;align-items:center;gap:6px;">
+                                    <span class="material-symbols-outlined" style="font-size:18px;color:var(--outline);">warehouse</span>
+                                    <span th:text="${d.tujuan}">Gudang Bulog</span>
+                                </span>
+                            </td>
+                            <td><strong th:text="${d.stokPangan.jumlahMasuk + ' ' + d.stokPangan.komoditas.satuan}">15.5 Ton</strong></td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${d.statusPengiriman == 'Selesai'} ? 'badge-green' : (${d.statusPengiriman == 'Dikirim'} ? 'badge-blue' : 'badge-yellow')"
+                                      th:text="${d.statusPengiriman}">Selesai</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(listDistribusi)}">
+                            <td colspan="5" style="text-align:center;color:var(--outline);padding:48px;">
+                                <span class="material-symbols-outlined" style="font-size:48px;margin-bottom:8px;display:block;">local_shipping</span>
+                                Belum ada riwayat distribusi
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+function filterStatus(btn, status){
+    document.querySelectorAll('.filter-tab').forEach(b=>{b.classList.remove('active-tab','btn-primary');b.classList.add('btn-secondary');});
+    btn.classList.add('active-tab','btn-primary');btn.classList.remove('btn-secondary');
+    document.querySelectorAll('#distTable tbody tr').forEach(r=>{
+        r.style.display=!status||r.dataset.status===status?'':'none';
+    });
+}
+</script>
+</body>
+</html>

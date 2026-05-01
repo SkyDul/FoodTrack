@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('Log Chatbot AI')}"></head>
+<body>
+<div class="layout">
+    <nav th:replace="~{admin/layout :: sidebar('chatbot')}"></nav>
+    <div class="main-content">
+        <header th:replace="~{admin/layout :: topbar('<a href=\'/admin/dashboard\'>Dashboard</a> &rsaquo; <span>Log Chatbot AI</span>')}"></header>
+        <div class="page-content">
+            <div th:replace="~{admin/layout :: flash}"></div>
+            <div class="page-header">
+                <h1>Log Chatbot AI</h1>
+                <p>Riwayat konsultasi petani dengan asisten AI berbasis Gemini</p>
+            </div>
+
+            <!-- Filter -->
+            <div class="filter-bar">
+                <div class="form-group">
+                    <label class="text-label">Petani</label>
+                    <select class="form-control" id="filterPetani">
+                        <option value="">Semua Petani</option>
+                        <option th:each="p : ${listPetani}" th:value="${p.nama}" th:text="${p.nama}">Budi</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="text-label">Tanggal</label>
+                    <input type="date" class="form-control" id="filterDate"/>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-primary btn-sm" onclick="filterLog()">Filter</button>
+                    <button class="btn btn-secondary btn-sm" onclick="resetLogFilter()">Reset</button>
+                </div>
+            </div>
+
+            <!-- Chat Log Cards -->
+            <div id="logContainer">
+                <div th:each="log : ${listChatbotLog}" class="card" style="margin-bottom:20px;">
+                    <!-- Header -->
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div style="width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:0.8125rem;color:#fff;"
+                                 th:style="'background:' + (${log.petani.nama.substring(0,1).hashCode() % 2 == 0} ? 'var(--secondary-container)' : 'var(--tertiary)')">
+                                <span th:text="${log.petani.nama.substring(0,2).toUpperCase()}">BS</span>
+                            </div>
+                            <strong th:text="${log.petani.nama}" data-petani>Budi Santoso</strong>
+                        </div>
+                        <span th:text="${#temporals.format(log.timestamp, 'dd MMM yyyy, HH:mm')}" style="font-size:0.8125rem;color:var(--outline);" data-date>12 Jan 2024, 14:32</span>
+                    </div>
+
+                    <!-- User Prompt -->
+                    <div style="background:var(--surface-container-low);padding:12px 16px;border-radius:var(--radius-lg);margin-bottom:12px;font-size:0.9375rem;">
+                        <span th:text="${log.userPrompt}">Pertanyaan petani...</span>
+                    </div>
+
+                    <!-- AI Response -->
+                    <div style="border-left:3px solid var(--primary-container);padding:12px 16px;margin-bottom:12px;">
+                        <p th:text="${#strings.abbreviate(log.geminiResponse, 200)}" style="font-size:0.9375rem;color:var(--on-surface-variant);">Respons AI...</p>
+                        <span style="font-size:0.75rem;color:var(--outline);font-style:italic;">Powered by Gemini</span>
+                    </div>
+
+                    <!-- Actions -->
+                    <div style="display:flex;justify-content:flex-end;">
+                        <form th:action="@{/admin/chatbot/hapus/{id}(id=${log.idLog})}" method="post"
+                              onsubmit="return confirm('Hapus log chatbot ini?');">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <button type="submit" class="btn btn-danger btn-sm">Hapus Log</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div th:if="${#lists.isEmpty(listChatbotLog)}" class="card" style="text-align:center;padding:48px;color:var(--outline);">
+                    <span class="material-symbols-outlined" style="font-size:48px;margin-bottom:12px;">smart_toy</span>
+                    <p>Belum ada log chatbot AI</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+function filterLog(){
+    const p=document.getElementById('filterPetani').value.toLowerCase();
+    const d=document.getElementById('filterDate').value;
+    document.querySelectorAll('#logContainer > .card').forEach(c=>{
+        const name=(c.querySelector('[data-petani]')?.textContent||'').toLowerCase();
+        const date=c.querySelector('[data-date]')?.textContent||'';
+        const matchP=!p||name.includes(p);
+        const matchD=!d||date.includes(d);
+        c.style.display=matchP&&matchD?'':'none';
+    });
+}
+function resetLogFilter(){
+    document.getElementById('filterPetani').value='';
+    document.getElementById('filterDate').value='';
+    document.querySelectorAll('#logContainer > .card').forEach(c=>c.style.display='');
+}
+</script>
+</body>
+</html>

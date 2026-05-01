@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{petani/layout :: head('Detail Stok')}"></head>
+<body>
+<div class="layout">
+    <nav th:replace="~{petani/layout :: sidebar('stok')}"></nav>
+    <div class="main-content">
+        <header th:replace="~{petani/layout :: topbar}"></header>
+        <div class="page-content">
+            <div style="margin-bottom:24px;">
+                <a th:href="@{/petani/stok}" style="display:flex;align-items:center;gap:4px;color:var(--primary);font-size:0.875rem;margin-bottom:8px;">
+                    <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span> Kembali ke Stok Saya
+                </a>
+                <h1 style="font-size:1.5rem;font-weight:600;">Detail Stok Pangan</h1>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+                <!-- Info Stok -->
+                <div class="card">
+                    <h3 style="font-size:1.125rem;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+                        <span class="material-symbols-outlined" style="color:var(--primary);">inventory_2</span> Informasi Stok
+                    </h3>
+                    <div style="display:grid;gap:12px;">
+                        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--outline-variant);">
+                            <span style="color:var(--on-surface-variant);">Komoditas</span>
+                            <strong th:text="${stok.komoditas.namaKomoditas}">Beras</strong>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--outline-variant);">
+                            <span style="color:var(--on-surface-variant);">Jumlah</span>
+                            <strong th:text="${stok.jumlahMasuk + ' ' + stok.komoditas.satuan}">500 Kg</strong>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--outline-variant);">
+                            <span style="color:var(--on-surface-variant);">Tanggal Panen</span>
+                            <strong th:text="${#temporals.format(stok.tanggalPanen, 'dd MMMM yyyy')}">12 Januari 2024</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Distribusi dari Stok Ini -->
+                <div class="card">
+                    <h3 style="font-size:1.125rem;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+                        <span class="material-symbols-outlined" style="color:var(--secondary);">local_shipping</span> Distribusi
+                    </h3>
+                    <div th:each="d : ${stok.distribusiList}" style="padding:12px;border:1px solid var(--outline-variant);border-radius:var(--radius-lg);margin-bottom:8px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <strong th:text="${d.tujuan}">Gudang Kecamatan</strong>
+                            <span class="badge"
+                                  th:classappend="${d.statusPengiriman == 'Selesai'} ? 'badge-green' : (${d.statusPengiriman == 'Dikirim'} ? 'badge-blue' : 'badge-yellow')"
+                                  th:text="${d.statusPengiriman}">Menunggu</span>
+                        </div>
+                        <div th:if="${d.tanggalKirim != null}" style="font-size:0.8125rem;color:var(--outline);margin-top:4px;"
+                             th:text="'Tanggal kirim: ' + ${#temporals.format(d.tanggalKirim, 'dd MMM yyyy')}">Tanggal kirim: 14 Jan 2024</div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(stok.distribusiList)}" style="text-align:center;color:var(--outline);padding:24px;">
+                        Belum ada distribusi untuk stok ini
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

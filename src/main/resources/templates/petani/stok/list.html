@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{petani/layout :: head('Stok Saya')}"></head>
+<body>
+<div class="layout">
+    <nav th:replace="~{petani/layout :: sidebar('stok')}"></nav>
+    <div class="main-content">
+        <header th:replace="~{petani/layout :: topbar}"></header>
+        <div class="page-content">
+            <div th:replace="~{petani/layout :: flash}"></div>
+
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
+                <div>
+                    <h1 style="font-size:1.5rem;font-weight:600;">Stok Pangan Saya</h1>
+                    <p style="color:var(--on-surface-variant);">Kelola dan pantau ketersediaan hasil panen Anda di gudang.</p>
+                </div>
+                <a th:href="@{/petani/stok/tambah}" class="btn btn-primary">
+                    <span class="material-symbols-outlined">add</span> Catat Stok Baru
+                </a>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div style="display:flex;gap:8px;margin-bottom:24px;">
+                <button class="btn btn-primary btn-sm filter-tab active-tab" onclick="filterByKomoditas(this, '')">Semua</button>
+                <span th:each="k : ${listKomoditas}">
+                    <button class="btn btn-secondary btn-sm filter-tab" th:text="${k.namaKomoditas}"
+                            th:onclick="'filterByKomoditas(this, \'' + ${k.namaKomoditas} + '\')'">Beras</button>
+                </span>
+            </div>
+
+            <!-- Stok Cards Grid -->
+            <div class="stok-cards" id="stokGrid">
+                <div th:each="stok : ${listStok}" class="stok-card" th:data-komoditas="${stok.komoditas.namaKomoditas}">
+                    <div class="stok-header">
+                        <span class="badge" th:classappend="${stok.komoditas.namaKomoditas == 'Beras'} ? 'badge-green' : (${stok.komoditas.namaKomoditas == 'Jagung'} ? 'badge-yellow' : 'badge-blue')"
+                              th:text="${stok.komoditas.namaKomoditas.toUpperCase()}">BERAS</span>
+                        <span style="display:flex;align-items:center;gap:4px;font-size:0.8125rem;color:var(--outline);">
+                            <span class="material-symbols-outlined" style="font-size:16px;">calendar_today</span>
+                            <span th:text="${#temporals.format(stok.tanggalPanen, 'dd MMM yyyy')}">12 Jan 2024</span>
+                        </span>
+                    </div>
+
+                    <div class="stok-jumlah">
+                        <span th:text="${stok.jumlahMasuk}">500</span>
+                        <span th:text="${stok.komoditas.satuan}" style="font-size:1rem;font-weight:400;color:var(--on-surface-variant);">Kg</span>
+                    </div>
+
+                    <a th:href="@{/petani/stok/{id}(id=${stok.idStok})}" class="stok-distribusi" style="display:flex;align-items:center;gap:4px;">
+                        0 distribusi <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span>
+                    </a>
+                </div>
+
+                <div th:if="${#lists.isEmpty(listStok)}" style="grid-column:1/-1;text-align:center;padding:48px;color:var(--outline);">
+                    <span class="material-symbols-outlined" style="font-size:48px;margin-bottom:12px;">inventory_2</span>
+                    <p>Belum ada data stok. Mulai catat stok panen Anda!</p>
+                    <a th:href="@{/petani/stok/tambah}" class="btn btn-primary" style="margin-top:16px;">
+                        <span class="material-symbols-outlined">add</span> Catat Stok Baru
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+function filterByKomoditas(btn, komoditas){
+    document.querySelectorAll('.filter-tab').forEach(b=>{b.classList.remove('active-tab');b.classList.add('btn-secondary');b.classList.remove('btn-primary');});
+    btn.classList.add('active-tab','btn-primary');btn.classList.remove('btn-secondary');
+    document.querySelectorAll('.stok-card').forEach(c=>{
+        c.style.display=!komoditas||c.dataset.komoditas===komoditas?'':'none';
+    });
+}
+</script>
+</body>
+</html>

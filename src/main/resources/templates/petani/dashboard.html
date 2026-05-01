@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{petani/layout :: head('Dashboard')}"></head>
+<body>
+<div class="layout">
+    <nav th:replace="~{petani/layout :: sidebar('dashboard')}"></nav>
+    <div class="main-content">
+        <header th:replace="~{petani/layout :: topbar}"></header>
+        <div class="page-content">
+            <div th:replace="~{petani/layout :: flash}"></div>
+
+            <!-- Welcome Banner -->
+            <div class="welcome-banner">
+                <h2>Selamat datang, <span th:text="${petaniName} ?: 'Petani'">Budi</span>! 🌾</h2>
+                <div class="welcome-info">
+                    <span style="display:flex;align-items:center;gap:6px;">
+                        <span class="material-symbols-outlined" style="font-size:18px;">group</span>
+                        Kelompok Tani: <strong th:text="${kelompokTani} ?: '-'">Tani Makmur</strong>
+                    </span>
+                    <span style="display:flex;align-items:center;gap:6px;">
+                        <span class="material-symbols-outlined" style="font-size:18px;">calendar_today</span>
+                        <span th:text="${#temporals.format(#temporals.createNow(), 'EEEE, dd MMMM yyyy')}">Rabu, 24 Mei 2024</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Stat Cards -->
+            <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);">
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <span class="material-symbols-outlined">inventory_2</span>
+                    </div>
+                    <div>
+                        <div class="stat-label">STOK SAYA</div>
+                        <div class="stat-value"><span th:text="${totalStok} ?: '0'">5</span> <small style="font-size:0.875rem;font-weight:400;">entries</small></div>
+                    </div>
+                    <span class="badge badge-gray" style="margin-left:auto;font-size:0.75rem;">Update: Hari ini</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon yellow">
+                        <span class="material-symbols-outlined">local_shipping</span>
+                    </div>
+                    <div>
+                        <div class="stat-label">DISTRIBUSI</div>
+                        <div class="stat-value"><span th:text="${totalDistribusi} ?: '0'">12</span> <small style="font-size:0.875rem;font-weight:400;">times</small></div>
+                    </div>
+                    <span class="badge badge-gray" style="margin-left:auto;font-size:0.75rem;">Bulan ini</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <span class="material-symbols-outlined">smart_toy</span>
+                    </div>
+                    <div>
+                        <div class="stat-label">KONSULTASI AI</div>
+                        <div class="stat-value"><span th:text="${totalChatbot} ?: '0'">8</span> <small style="font-size:0.875rem;font-weight:400;">sessions</small></div>
+                    </div>
+                    <span class="badge badge-gray" style="margin-left:auto;font-size:0.75rem;">Total</span>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;">
+                <!-- Stok Terbaru Saya -->
+                <div class="card">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                        <h3 style="display:flex;align-items:center;gap:8px;font-size:1.25rem;font-weight:600;">
+                            <span class="material-symbols-outlined" style="color:var(--primary);">schedule</span>
+                            Stok Terbaru Saya
+                        </h3>
+                        <a th:href="@{/petani/stok}" style="color:var(--primary);font-weight:500;font-size:0.875rem;">Lihat Semua ›</a>
+                    </div>
+
+                    <div th:each="stok : ${recentStok}" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border:1px solid var(--outline-variant);border-radius:var(--radius-lg);margin-bottom:10px;">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div style="width:40px;height:40px;border-radius:var(--radius-md);background:#e8f5e9;display:flex;align-items:center;justify-content:center;">
+                                <span class="material-symbols-outlined" style="color:var(--primary);font-size:20px;">eco</span>
+                            </div>
+                            <div>
+                                <strong th:text="${stok.komoditas.namaKomoditas}">Padi Ciherang</strong>
+                                <div th:text="${#temporals.format(stok.tanggalPanen, 'dd MMM yyyy')}" style="font-size:0.8125rem;color:var(--outline);">22 Mei 2024</div>
+                            </div>
+                        </div>
+                        <div style="text-align:right;">
+                            <strong th:text="${stok.jumlahMasuk + ' ' + stok.komoditas.satuan}">2.5 Ton</strong>
+                            <div style="font-size:0.75rem;color:var(--outline);">Volume</div>
+                        </div>
+                    </div>
+
+                    <div th:if="${#lists.isEmpty(recentStok)}" style="text-align:center;color:var(--outline);padding:32px;">
+                        Belum ada data stok
+                    </div>
+                </div>
+
+                <!-- AI Banner -->
+                <div class="ai-banner">
+                    <div>
+                        <div style="width:48px;height:48px;border-radius:var(--radius-lg);background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+                            <span class="material-symbols-outlined" style="font-size:28px;">smart_toy</span>
+                        </div>
+                        <h3>Tanya AI Sekarang</h3>
+                        <p>Dapatkan saran ahli untuk meningkatkan hasil panen, mengatasi hama, atau strategi...</p>
+                    </div>
+                    <a th:href="@{/petani/chatbot}" class="btn-ai">
+                        Mulai Tanya <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

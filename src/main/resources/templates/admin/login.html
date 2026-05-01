@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Login — SiPangan Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<div class="login-page">
+    <!-- Left Illustration -->
+    <div class="login-illustration">
+        <div class="overlay"></div>
+        <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1200&q=80"
+             alt="Farmers in rice field"/>
+    </div>
+
+    <!-- Right Form Panel -->
+    <div class="login-form-panel">
+        <div class="login-form-box">
+            <div class="login-brand">
+                <h1>
+                    <span class="material-symbols-outlined" style="color:var(--secondary-container);font-size:36px;font-variation-settings:'FILL' 1;">eco</span>
+                    SiPangan
+                </h1>
+                <p class="text-body-lg">Kelola Stok Pangan dengan Cerdas</p>
+            </div>
+
+            <!-- Error Alert -->
+            <div th:if="${param.error}" class="alert alert-error">
+                <span class="material-symbols-outlined">error</span>
+                Username atau password salah. Coba lagi.
+            </div>
+
+            <!-- Logout Alert -->
+            <div th:if="${param.logout}" class="alert alert-success">
+                <span class="material-symbols-outlined">check_circle</span>
+                Anda telah berhasil keluar.
+            </div>
+
+            <div class="login-card">
+                <form th:action="@{/admin/login}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <div class="input-icon">
+                            <span class="material-symbols-outlined">person</span>
+                            <input type="text" id="username" name="username" class="form-control"
+                                   placeholder="Masukkan username" required autofocus/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Kata Sandi</label>
+                        <div class="input-icon">
+                            <span class="material-symbols-outlined">lock</span>
+                            <input type="password" id="password" name="password" class="form-control"
+                                   placeholder="Masukkan kata sandi" required/>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="display:flex;align-items:center;gap:8px;">
+                        <input type="checkbox" id="remember" name="remember-me" style="width:16px;height:16px;accent-color:var(--primary);"/>
+                        <label for="remember" style="margin:0;font-weight:400;font-size:0.875rem;color:var(--on-surface-variant);">Ingat Saya</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;">
+                        Masuk
+                    </button>
+                </form>
+            </div>
+
+            <div class="login-footer">
+                © 2024 Dinas Pertanian — Sistem Informasi Pangan
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{petani/layout :: head('Asisten Tani AI')}"></head>
+<body>
+<div class="layout">
+    <nav th:replace="~{petani/layout :: sidebar('chatbot')}"></nav>
+    <div class="main-content">
+        <header th:replace="~{petani/layout :: topbar}"></header>
+        <div class="page-content" style="padding-bottom:0;">
+            <div class="chat-container">
+                <!-- Chat Header -->
+                <div class="chat-header">
+                    <div style="width:44px;height:44px;border-radius:50%;background:var(--primary-container);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <span class="material-symbols-outlined" style="color:#fff;font-size:24px;">smart_toy</span>
+                    </div>
+                    <div style="flex:1;">
+                        <strong style="font-size:1.125rem;">Asisten Tani AI</strong>
+                        <div style="display:flex;align-items:center;gap:4px;font-size:0.8125rem;color:var(--primary);">
+                            <span style="width:6px;height:6px;border-radius:50%;background:var(--primary);display:inline-block;"></span>
+                            Selalu aktif untuk membantu Anda
+                        </div>
+                    </div>
+                    <form th:if="${not #lists.isEmpty(chatHistory)}" th:action="@{/petani/chatbot/hapus-semua}" method="post"
+                          onsubmit="return confirm('Hapus semua riwayat chat?');">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="btn-icon delete" title="Hapus riwayat">
+                            <span class="material-symbols-outlined">delete</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Chat Messages -->
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Empty State -->
+                    <div th:if="${#lists.isEmpty(chatHistory)}" style="text-align:center;color:var(--outline);padding:48px 0;">
+                        <span class="material-symbols-outlined" style="font-size:64px;margin-bottom:12px;color:var(--primary-container);">smart_toy</span>
+                        <h3 style="font-size:1.25rem;font-weight:600;color:var(--on-surface);margin-bottom:8px;">Halo! Saya Asisten Tani AI</h3>
+                        <p>Tanyakan apa saja tentang pertanian — stok, cuaca, hama, atau strategi panen.</p>
+                    </div>
+
+                    <!-- Chat History -->
+                    <div th:each="log : ${chatHistory}">
+                        <!-- User Message -->
+                        <div class="chat-msg user">
+                            <span th:text="${log.userPrompt}">Pertanyaan dari petani...</span>
+                            <div class="msg-time" th:text="${#temporals.format(log.timestamp, 'HH:mm')}">10:24</div>
+                        </div>
+                        <!-- AI Response -->
+                        <div class="chat-msg bot">
+                            <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+                                <span class="material-symbols-outlined" style="font-size:16px;color:var(--primary);">auto_awesome</span>
+                                <span style="font-size:0.75rem;font-weight:600;color:var(--primary);">SiPangan AI</span>
+                            </div>
+                            <div th:utext="${log.geminiResponse}">Respons AI...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Suggestion Chips -->
+                <div th:if="${#lists.isEmpty(chatHistory)}" style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+                    <button class="btn btn-secondary btn-sm" onclick="setSuggestion('Berapa dosis pupuk KCL?')">Berapa dosis pupuk KCL?</button>
+                    <button class="btn btn-secondary btn-sm" onclick="setSuggestion('Ciri-ciri padi terserang jamur')">Ciri-ciri padi terserang jamur</button>
+                    <button class="btn btn-secondary btn-sm" onclick="setSuggestion('Prediksi cuaca minggu ini')">Prediksi cuaca minggu ini</button>
+                </div>
+
+                <!-- Chat Input -->
+                <form th:action="@{/petani/chatbot/kirim}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <div class="chat-input-bar">
+                        <span class="material-symbols-outlined" style="color:var(--outline);font-size:20px;">mic</span>
+                        <input type="text" name="prompt" id="promptInput"
+                               placeholder="Ketik pertanyaan tentang stok, cuaca, atau hama..." required autocomplete="off"/>
+                        <button type="submit">
+                            <span class="material-symbols-outlined" style="font-size:20px;">send</span>
+                        </button>
+                    </div>
+                </form>
+                <p style="text-align:center;font-size:0.75rem;color:var(--outline);margin-top:8px;padding-bottom:12px;">
+                    SiPangan AI dapat memberikan informasi yang tidak akurat. Harap verifikasi info penting.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+// Auto-scroll to bottom
+const chatEl = document.getElementById('chatMessages');
+if(chatEl) chatEl.scrollTop = chatEl.scrollHeight;
+
+function setSuggestion(text){
+    document.getElementById('promptInput').value = text;
+    document.getElementById('promptInput').focus();
+}
+</script>
+</body>
+</html>
