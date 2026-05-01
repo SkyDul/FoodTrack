@@ -5,38 +5,38 @@
 <div class="layout">
     <nav th:replace="~{petani/layout :: sidebar('distribusi')}"></nav>
     <div class="main-content">
-        <header th:replace="~{petani/layout :: topbar}"></header>
+        <header th:replace="~{petani/layout :: topbar('<a href=\'/petani/dashboard\' style=\'color:var(--primary);text-decoration:none;font-weight:500;\'>Dashboard</a> <span style=\'color:var(--outline);margin:0 4px;\'>&rsaquo;</span> <span style=\'font-weight:600;color:var(--on-surface);\'>Riwayat Distribusi</span>')}"></header>
         <div class="page-content">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
                 <div>
-                    <h1 style="font-size:1.75rem;font-weight:700;">Riwayat Distribusi Saya</h1>
-                    <p style="color:var(--on-surface-variant);">Pantau pergerakan dan status pengiriman komoditas Anda.</p>
+                    <h1 style="font-size:1.25rem;font-weight:700;">Riwayat Distribusi Saya</h1>
+                    <p style="font-size:0.875rem; color:var(--on-surface-variant);">Pantau pergerakan dan status pengiriman komoditas Anda.</p>
                 </div>
             </div>
 
             <!-- Summary Banner -->
-            <div style="background:linear-gradient(135deg,var(--primary-container),var(--primary));color:#fff;border-radius:var(--radius-xl);padding:28px 32px;margin-bottom:24px;display:grid;grid-template-columns:repeat(3,1fr);gap:24px;">
-                <div>
-                    <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;opacity:0.8;">TOTAL DISTRIBUSI</div>
-                    <div style="font-size:2.25rem;font-weight:700;" th:text="${totalDistribusi} ?: '0'">1,284</div>
+            <div style="background: linear-gradient(135deg, #096430, #148f47); color: #fff; border-radius: 20px; padding: 24px; margin-bottom: 24px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; box-shadow: 0 10px 30px rgba(9, 100, 48, 0.15);">
+                <div style="text-align: center;">
+                    <div style="font-size: 0.625rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; margin-bottom: 4px;">TOTAL KIRIM</div>
+                    <div style="font-size: 1.75rem; font-weight: 700;" th:text="${totalDistribusi} ?: '0'">1,284</div>
                 </div>
-                <div style="border-left:1px solid rgba(255,255,255,0.2);padding-left:24px;">
-                    <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;opacity:0.8;">SELESAI</div>
-                    <div style="font-size:2.25rem;font-weight:700;" th:text="${totalSelesai} ?: '0'">420</div>
+                <div style="text-align: center; border-left: 1px solid rgba(255, 255, 255, 0.2);">
+                    <div style="font-size: 0.625rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; margin-bottom: 4px;">BERHASIL</div>
+                    <div style="font-size: 1.75rem; font-weight: 700;" th:text="${totalSelesai} ?: '0'">420</div>
                 </div>
-                <div style="border-left:1px solid rgba(255,255,255,0.2);padding-left:24px;">
-                    <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;opacity:0.8;">DALAM PROSES</div>
-                    <div style="font-size:2.25rem;font-weight:700;" th:text="${totalProses} ?: '0'">56</div>
+                <div style="text-align: center; border-left: 1px solid rgba(255, 255, 255, 0.2);">
+                    <div style="font-size: 0.625rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; margin-bottom: 4px;">PROSES</div>
+                    <div style="font-size: 1.75rem; font-weight: 700;" th:text="${totalProses} ?: '0'">56</div>
                 </div>
             </div>
 
             <!-- Filter Tabs -->
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-                <div style="display:flex;gap:8px;">
-                    <button class="btn btn-primary btn-sm filter-tab active-tab" onclick="filterStatus(this,'')">Semua</button>
-                    <button class="btn btn-secondary btn-sm filter-tab" onclick="filterStatus(this,'Menunggu')">Menunggu</button>
-                    <button class="btn btn-secondary btn-sm filter-tab" onclick="filterStatus(this,'Dikirim')">Dikirim</button>
-                    <button class="btn btn-secondary btn-sm filter-tab" onclick="filterStatus(this,'Selesai')">Selesai</button>
+            <div style="margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; gap: 10px; background: var(--surface-container-low); padding: 6px; border-radius: 12px; border: 1px solid var(--outline-variant);">
+                    <button class="btn btn-primary btn-sm filter-tab active-tab" onclick="filterStatus(this,'')" style="border-radius: 8px; padding: 6px 16px;">Semua</button>
+                    <button class="btn btn-secondary btn-sm filter-tab" onclick="filterStatus(this,'Menunggu')" style="border-radius: 8px; padding: 6px 16px; border:none; background:transparent;">Menunggu</button>
+                    <button class="btn btn-secondary btn-sm filter-tab" onclick="filterStatus(this,'Dikirim')" style="border-radius: 8px; padding: 6px 16px; border:none; background:transparent;">Dikirim</button>
+                    <button class="btn btn-secondary btn-sm filter-tab" onclick="filterStatus(this,'Selesai')" style="border-radius: 8px; padding: 6px 16px; border:none; background:transparent;">Selesai</button>
                 </div>
             </div>
 
@@ -70,8 +70,11 @@
                             <td><strong th:text="${d.stokPangan.jumlahMasuk + ' ' + d.stokPangan.komoditas.satuan}">15.5 Ton</strong></td>
                             <td>
                                 <span class="badge"
-                                      th:classappend="${d.statusPengiriman == 'Selesai'} ? 'badge-green' : (${d.statusPengiriman == 'Dikirim'} ? 'badge-blue' : 'badge-yellow')"
-                                      th:text="${d.statusPengiriman}">Selesai</span>
+                                      th:classappend="${d.statusPengiriman == 'Selesai'} ? 'badge-green' : (${d.statusPengiriman == 'Dikirim'} ? 'badge-blue' : 'badge-yellow')">
+                                    <span class="material-symbols-outlined" 
+                                          th:text="${d.statusPengiriman == 'Selesai'} ? 'check_circle' : (${d.statusPengiriman == 'Dikirim'} ? 'local_shipping' : 'schedule')">schedule</span>
+                                    <span th:text="${d.statusPengiriman}">Selesai</span>
+                                </span>
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(listDistribusi)}">

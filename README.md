@@ -64,9 +64,8 @@ Saat aplikasi pertama kali dijalankan, sistem akan otomatis membuat tabel dan me
 
 ### 🌾 Akun Petani
 * **URL Login:** http://localhost:8080/login-petani
-* **Username:** `budi` | **Password:** `budi123`
-* **Username:** `siti` | **Password:** `siti123`
-* **Username:** `agus` | **Password:** `agus123`
+* **Username:** `ahmad` | **Password:** `ahmad123`
+* **Username:** `lify` | **Password:** `lify123`
 
 ## 🔗 Link Penting
 * **Halaman Utama (Public):** http://localhost:8080

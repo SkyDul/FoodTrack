@@ -21,6 +21,7 @@ public class AdminWebController {
     private final StokPanganService stokPanganService;
     private final DistribusiService distribusiService;
     private final ChatbotService chatbotService;
+    private final NotificationService notificationService;
     private final PasswordEncoder passwordEncoder;
 
     // ====== LOGIN ======
@@ -32,7 +33,13 @@ public class AdminWebController {
     public String dashboard(Model model) {
         model.addAttribute("totalPetani", petaniService.count());
         model.addAttribute("totalKomoditas", komoditasService.count());
-        model.addAttribute("totalStok", stokPanganService.count());
+        
+        // Count today's stock only
+        long todayStok = stokPanganService.findAll().stream()
+            .filter(s -> s.getCreatedAt() != null && s.getCreatedAt().toLocalDate().equals(java.time.LocalDate.now()))
+            .count();
+        model.addAttribute("totalStok", todayStok);
+        
         model.addAttribute("totalDistribusi", distribusiService.count());
         model.addAttribute("recentStok", stokPanganService.findRecent());
         model.addAttribute("recentChatbotLogs", chatbotService.findRecent());
@@ -69,23 +76,29 @@ public class AdminWebController {
         if (result.hasErrors()) return "admin/petani/form";
 
         boolean isNew = petani.getIdPetani() == null;
-        // Set default password for new petani if username provided
-        if (isNew && petani.getUsername() != null && !petani.getUsername().isBlank()) {
-            if (petani.getPassword() == null || petani.getPassword().isBlank()) {
-                petani.setPassword(passwordEncoder.encode("password123"));
-            } else {
-                petani.setPassword(passwordEncoder.encode(petani.getPassword()));
-            }
+        // Password hashing is handled in PetaniService.save()
+        if (isNew && (petani.getPassword() == null || petani.getPassword().isBlank())) {
+            petani.setPassword("password123");
         }
         petaniService.save(petani);
+        notificationService.createNotification(
+            isNew ? "Petani baru '" + petani.getNama() + "' telah ditambahkan." : "Data petani '" + petani.getNama() + "' diperbarui.",
+            "success", "group", "PETANI", null, "ROLE_ADMIN"
+        );
         ra.addFlashAttribute("successMessage", isNew ? "Data petani berhasil ditambahkan!" : "Data petani berhasil diperbarui!");
         return "redirect:/admin/petani";
     }
 
     @PostMapping("/petani/hapus/{id}")
     public String hapusPetani(@PathVariable Integer id, RedirectAttributes ra) {
-        petaniService.deleteById(id);
-        ra.addFlashAttribute("successMessage", "Data petani berhasil dihapus.");
+        try {
+            petaniService.deleteById(id);
+            ra.addFlashAttribute("successMessage", "Data petani berhasil dihapus.");
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            ra.addFlashAttribute("errorMessage", "Gagal menghapus! Petani ini masih memiliki data stok pangan atau riwayat chatbot yang terhubung. Harap hapus data terkait terlebih dahulu.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("errorMessage", "Terjadi kesalahan saat menghapus data petani.");
+        }
         return "redirect:/admin/petani";
     }
 
@@ -119,6 +132,10 @@ public class AdminWebController {
         if (result.hasErrors()) return "admin/komoditas/form";
         boolean isNew = komoditas.getIdKomoditas() == null;
         komoditasService.save(komoditas);
+        notificationService.createNotification(
+            isNew ? "Komoditas baru '" + komoditas.getNamaKomoditas() + "' telah ditambahkan." : "Komoditas '" + komoditas.getNamaKomoditas() + "' diperbarui.",
+            "success", "agriculture", "KOMODITAS", null, "ROLE_ADMIN"
+        );
         ra.addFlashAttribute("successMessage", isNew ? "Komoditas berhasil ditambahkan!" : "Komoditas berhasil diperbarui!");
         return "redirect:/admin/komoditas";
     }
@@ -167,6 +184,11 @@ public class AdminWebController {
         petaniService.findById(stokPangan.getPetani().getIdPetani()).ifPresent(stokPangan::setPetani);
         komoditasService.findById(stokPangan.getKomoditas().getIdKomoditas()).ifPresent(stokPangan::setKomoditas);
         stokPanganService.save(stokPangan);
+        notificationService.createNotification(
+            "Stok baru: " + stokPangan.getJumlahMasuk() + " " + stokPangan.getKomoditas().getSatuan() + " " + stokPangan.getKomoditas().getNamaKomoditas() + " dari " + stokPangan.getPetani().getNama(),
+            "info", "inventory_2", "STOK",
+            stokPangan.getPetani().getIdPetani(), "ROLE_PETANI"
+        );
         ra.addFlashAttribute("successMessage", isNew ? "Stok pangan berhasil ditambahkan!" : "Stok pangan berhasil diperbarui!");
         return "redirect:/admin/stok";
     }
@@ -188,7 +210,8 @@ public class AdminWebController {
     @GetMapping("/distribusi/tambah")
     public String tambahDistribusi(Model model) {
         model.addAttribute("distribusi", new Distribusi());
-        model.addAttribute("listStok", stokPanganService.findAll());
+        model.addAttribute("listStok", stokPanganService.findAvailable());
+        model.addAttribute("listPetani", petaniService.findAll());
         return "admin/distribusi/form";
     }
 
@@ -198,6 +221,11 @@ public class AdminWebController {
         stokPanganService.findById(distribusi.getStokPangan().getIdStok()).ifPresent(distribusi::setStokPangan);
         if (distribusi.getStatusPengiriman() == null) distribusi.setStatusPengiriman("Menunggu");
         distribusiService.save(distribusi);
+        notificationService.createNotification(
+            "Distribusi " + distribusi.getStokPangan().getKomoditas().getNamaKomoditas() + " ke " + distribusi.getTujuan() + " telah dicatat.",
+            "info", "local_shipping", "DISTRIBUSI",
+            distribusi.getStokPangan().getPetani().getIdPetani(), "ROLE_PETANI"
+        );
         ra.addFlashAttribute("successMessage", isNew ? "Distribusi berhasil ditambahkan!" : "Distribusi berhasil diperbarui!");
         return "redirect:/admin/distribusi";
     }
@@ -229,5 +257,37 @@ public class AdminWebController {
         chatbotService.deleteById(id);
         ra.addFlashAttribute("successMessage", "Log chatbot berhasil dihapus.");
         return "redirect:/admin/chatbot";
+    }
+
+    @GetMapping("/settings")
+    public String settings(Model model) {
+        return "admin/settings";
+    }
+
+    @GetMapping("/laporan")
+    public String globalReport(Model model) {
+        System.out.println(">>> DEBUG: Entering globalReport mapping...");
+        model.addAttribute("active", "laporan");
+        
+        System.out.println(">>> DEBUG: Counting Petani...");
+        model.addAttribute("totalPetani", petaniService.count());
+        
+        System.out.println(">>> DEBUG: Counting Komoditas...");
+        model.addAttribute("totalKomoditas", komoditasService.count());
+        
+        System.out.println(">>> DEBUG: Counting Stok...");
+        model.addAttribute("totalStok", stokPanganService.count());
+        
+        System.out.println(">>> DEBUG: Counting Distribusi...");
+        model.addAttribute("totalDistribusi", distribusiService.count());
+        
+        System.out.println(">>> DEBUG: Fetching all Stok...");
+        model.addAttribute("listStok", stokPanganService.findAll());
+        
+        System.out.println(">>> DEBUG: Fetching all Distribusi...");
+        model.addAttribute("listDistribusi", distribusiService.findAll());
+        
+        System.out.println(">>> DEBUG: Rendering admin/laporan/global...");
+        return "admin/laporan/global";
     }
 }

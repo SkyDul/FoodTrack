@@ -9,8 +9,8 @@
         <div class="page-content">
             <div th:replace="~{admin/layout :: flash}"></div>
 
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
-                <h1 class="text-h2">Data Petani</h1>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <h1 style="font-size:1.3rem; font-weight:700;">Data Petani</h1>
                 <a th:href="@{/admin/petani/tambah}" class="btn btn-primary">
                     <span class="material-symbols-outlined">add</span> Tambah Petani
                 </a>
@@ -55,8 +55,7 @@
                                     <span class="material-symbols-outlined">edit</span>
                                 </a>
                                 <form th:action="@{/admin/petani/hapus/{id}(id=${petani.idPetani})}" method="post" style="display:inline;"
-                                      onsubmit="return confirm('Yakin ingin menghapus data petani ini?');">
-                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                      th:onsubmit="handleConfirm(event, 'Yakin ingin menghapus data petani ini?', 'delete')">
                                     <button type="submit" class="btn-icon delete" title="Hapus">
                                         <span class="material-symbols-outlined">delete</span>
                                     </button>
@@ -81,5 +80,6 @@ function filterTable(){
     });
 }
 </script>
+<div th:replace="~{admin/layout :: confirmModal}"></div>
 </body>
 </html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Daftar Petani — SiPangan</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background: #096430; /* Solid Green */
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .register-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            width: 100%;
+            max-width: 500px;
+            padding: 32px;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        .brand-icon {
+            width: 36px; height: 36px;
+            background: #096430;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin: 0;
+        }
+        
+        .form-header { text-align: center; margin-bottom: 24px; }
+        .form-header h1 { font-size: 1.125rem; font-weight: 700; color: #1e293b; margin: 0; }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        @media (max-width: 480px) { .form-grid { grid-template-columns: 1fr; } }
+        
+        .form-group { margin-bottom: 12px; }
+        .form-label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+        .form-control {
+            width: 100%;
+            height: 40px;
+            padding: 0 12px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            font-size: 0.875rem;
+        }
+        .form-control:focus {
+            border-color: #096430;
+            background: #fff;
+            outline: none;
+        }
+
+        .terms-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 16px 0;
+            font-size: 0.8125rem;
+            color: #64748b;
+        }
+        .terms-link {
+            color: #096430;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .terms-link:hover { text-decoration: underline; }
+        
+        .btn-register {
+            width: 100%;
+            height: 48px;
+            background: #096430;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9375rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        .btn-register:hover { background: #074d24; transform: translateY(-1px); }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 0.8125rem;
+            color: #64748b;
+        }
+        .login-link a { color: #096430; font-weight: 700; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="register-card">
+        <div class="brand">
+            <span class="material-symbols-outlined" style="color:#F59E0B; font-size:28px; font-variation-settings:'FILL' 1;">eco</span>
+            <h1 class="brand-name" style="color:#096430; font-weight:800; font-size:1.5rem; letter-spacing:-0.5px; margin:0;">SiPangan</h1>
+        </div>
+
+        <div class="form-header">
+            <h1>Daftar Akun Petani</h1>
+        </div>
+
+        <form th:action="@{/register-petani}" method="post" th:object="${petani}" onsubmit="return validateForm()">
+            <div class="form-group">
+                <label class="form-label">Nama Lengkap</label>
+                <input type="text" th:field="*{nama}" class="form-control" placeholder="Nama Anda" required/>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Kelompok Tani</label>
+                    <input type="text" th:field="*{kelompokTani}" class="form-control" placeholder="Nama kelompok" required/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Kontak</label>
+                    <input type="text" th:field="*{kontak}" class="form-control" placeholder="08xxxxxxxx" required/>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" th:field="*{username}" class="form-control" placeholder="username" required/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div style="position:relative;">
+                        <input type="password" th:field="*{password}" id="regPwd" class="form-control" placeholder="••••••••" required/>
+                        <span class="material-symbols-outlined" onclick="togglePwd('regPwd', this)" style="position:absolute; right:12px; top:10px; cursor:pointer; color:#64748b; font-size:20px;">visibility</span>
+                    </div>
+                </div>
+            </div>
+
+            <label class="terms-group">
+                <input type="checkbox" id="termsCheck" required/>
+                <span>Saya menyetujui <a href="javascript:void(0)" onclick="openTerms()" class="terms-link">Syarat dan Ketentuan</a> yang berlaku.</span>
+            </label>
+
+            <button type="submit" class="btn-register">Buat Akun</button>
+            <div class="login-link">
+                Sudah punya akun? <a th:href="@{/login-petani}">Masuk di sini</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Terms Modal -->
+    <div id="termsModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; backdrop-filter:blur(4px); padding:20px;">
+        <div style="background:#fff; border-radius:20px; width:100%; max-width:450px; padding:32px; box-shadow:0 20px 60px rgba(0,0,0,0.15); animation:popIn 0.3s ease;">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px; color:#096430;">
+                <span class="material-symbols-outlined" style="font-size:32px;">description</span>
+                <h2 style="font-size:1.25rem; font-weight:800; margin:0;">Syarat dan Ketentuan</h2>
+            </div>
+            <div style="color:#475569; line-height:1.6; font-size:0.9375rem; margin-bottom:24px;">
+                <p style="margin-bottom:12px; font-weight:600;">Dengan mendaftar di SiPangan, Anda menyetujui:</p>
+                <ul style="padding-left:20px; margin-bottom:0;">
+                    <li style="margin-bottom:8px;"><strong>Akurasi Data:</strong> Semua data hasil panen dan stok yang diberikan harus akurat dan benar.</li>
+                    <li style="margin-bottom:8px;"><strong>Penggunaan Akun:</strong> Akun hanya digunakan untuk kepentingan pengelolaan ketahanan pangan.</li>
+                    <li style="margin-bottom:8px;"><strong>Privasi:</strong> SiPangan menjamin kerahasiaan data pribadi dan informasi stok Anda.</li>
+                </ul>
+            </div>
+            <button onclick="closeTerms()" style="width:100%; height:48px; background:#096430; color:#fff; border:none; border-radius:12px; font-weight:700; cursor:pointer; transition:all 0.2s;">Saya Mengerti</button>
+        </div>
+    </div>
+
+    <style>
+        @keyframes popIn { from { transform:scale(0.9); opacity:0; } to { transform:scale(1); opacity:1; } }
+    </style>
+
+    <script>
+        function togglePwd(id, icon) {
+            const input = document.getElementById(id);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.innerText = 'visibility_off';
+            } else {
+                input.type = 'password';
+                icon.innerText = 'visibility';
+            }
+        }
+        function openTerms() {
+            document.getElementById('termsModal').style.display = 'flex';
+        }
+        function closeTerms() {
+            document.getElementById('termsModal').style.display = 'none';
+        }
+        function validateForm() {
+            if (!document.getElementById('termsCheck').checked) {
+                // We use the system-wide custom modal if available, 
+                // but since this is a standalone page, we'll just focus the check
+                return true;
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>

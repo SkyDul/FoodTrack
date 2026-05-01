@@ -1,53 +1,96 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{petani/layout :: head('Stok Saya')}"></head>
+<head th:replace="~{petani/layout :: head('Stok Pangan')}"></head>
 <body>
 <div class="layout">
     <nav th:replace="~{petani/layout :: sidebar('stok')}"></nav>
     <div class="main-content">
-        <header th:replace="~{petani/layout :: topbar}"></header>
+        <header th:replace="~{petani/layout :: topbar('<a href=\'/petani/dashboard\' style=\'color:var(--primary);text-decoration:none;font-weight:500;\'>Dashboard</a> <span style=\'color:var(--outline);margin:0 4px;\'>&rsaquo;</span> <span style=\'font-weight:600;color:var(--on-surface);\'>Stok Pangan</span>')}"></header>
         <div class="page-content">
             <div th:replace="~{petani/layout :: flash}"></div>
 
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
                 <div>
-                    <h1 style="font-size:1.5rem;font-weight:600;">Stok Pangan Saya</h1>
-                    <p style="color:var(--on-surface-variant);">Kelola dan pantau ketersediaan hasil panen Anda di gudang.</p>
+                    <h1 style="font-size:1.15rem;font-weight:700;">Stok Pangan Saya</h1>
+                    <p style="font-size:0.875rem; color:var(--on-surface-variant);">Kelola dan pantau ketersediaan hasil panen Anda di gudang.</p>
                 </div>
                 <a th:href="@{/petani/stok/tambah}" class="btn btn-primary">
                     <span class="material-symbols-outlined">add</span> Catat Stok Baru
                 </a>
             </div>
 
+            <style>
+                .filter-tab {
+                    border: 1px solid var(--outline-variant);
+                    background: var(--surface);
+                    color: var(--on-surface-variant);
+                    border-radius: 99px;
+                    padding: 8px 24px;
+                    font-size: 0.875rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                }
+                .filter-tab:hover {
+                    border-color: var(--primary);
+                    color: var(--primary);
+                    background: var(--surface-container-low);
+                }
+                .filter-tab.active-tab {
+                    background: var(--primary);
+                    border-color: var(--primary);
+                    color: #ffffff;
+                    font-weight: 600;
+                    box-shadow: 0 4px 12px rgba(9, 100, 48, 0.15);
+                }
+            </style>
+
             <!-- Filter Tabs -->
-            <div style="display:flex;gap:8px;margin-bottom:24px;">
-                <button class="btn btn-primary btn-sm filter-tab active-tab" onclick="filterByKomoditas(this, '')">Semua</button>
-                <span th:each="k : ${listKomoditas}">
-                    <button class="btn btn-secondary btn-sm filter-tab" th:text="${k.namaKomoditas}"
-                            th:onclick="'filterByKomoditas(this, \'' + ${k.namaKomoditas} + '\')'">Beras</button>
-                </span>
+            <div style="display:flex;gap:10px;margin-bottom:32px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none;">
+                <button class="filter-tab active-tab" onclick="filterByKomoditas(this, '')">Semua</button>
+                <div th:each="k : ${listKomoditas}" style="display:contents;">
+                    <button class="filter-tab" 
+                            th:text="${k.namaKomoditas}"
+                            th:data-komoditas="${k.namaKomoditas}"
+                            onclick="filterByKomoditas(this, this.getAttribute('data-komoditas'))">Beras</button>
+                </div>
             </div>
 
             <!-- Stok Cards Grid -->
-            <div class="stok-cards" id="stokGrid">
-                <div th:each="stok : ${listStok}" class="stok-card" th:data-komoditas="${stok.komoditas.namaKomoditas}">
-                    <div class="stok-header">
-                        <span class="badge" th:classappend="${stok.komoditas.namaKomoditas == 'Beras'} ? 'badge-green' : (${stok.komoditas.namaKomoditas == 'Jagung'} ? 'badge-yellow' : 'badge-blue')"
-                              th:text="${stok.komoditas.namaKomoditas.toUpperCase()}">BERAS</span>
-                        <span style="display:flex;align-items:center;gap:4px;font-size:0.8125rem;color:var(--outline);">
-                            <span class="material-symbols-outlined" style="font-size:16px;">calendar_today</span>
+            <div class="stok-cards" id="stokGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:24px;">
+                <div th:each="stok : ${listStok}" class="stok-card" th:data-komoditas="${stok.komoditas.namaKomoditas}"
+                     style="background:#fff; border-radius:16px; padding:24px; box-shadow:0 4px 12px rgba(0,0,0,0.05); border: 1px solid var(--outline-variant); transition: transform 0.2s; cursor:pointer;"
+                     onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+                    
+                    <div class="stok-header" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px;">
+                        <div>
+                            <span th:if="${stok.komoditas.namaKomoditas == 'Beras'}" class="badge badge-green" style="background:#e8f5e9; color:#2e7d32; border:1px solid #c8e6c9;">BERAS</span>
+                            <span th:if="${stok.komoditas.namaKomoditas == 'Jagung'}" class="badge badge-yellow" style="background:#fff8e1; color:#f57f17; border:1px solid #ffecb3;">JAGUNG</span>
+                            <span th:if="${stok.komoditas.namaKomoditas != 'Beras' && stok.komoditas.namaKomoditas != 'Jagung'}" class="badge badge-blue" style="background:#e3f2fd; color:#1565c0; border:1px solid #bbdefb;" th:text="${stok.komoditas.namaKomoditas.toUpperCase()}">KOMODITAS</span>
+                        </div>
+                        <span style="display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--outline);font-weight:500; background:var(--surface-container-low); padding:4px 10px; border-radius:20px;">
+                            <span class="material-symbols-outlined" style="font-size:14px;">calendar_today</span>
                             <span th:text="${#temporals.format(stok.tanggalPanen, 'dd MMM yyyy')}">12 Jan 2024</span>
                         </span>
                     </div>
 
-                    <div class="stok-jumlah">
-                        <span th:text="${stok.jumlahMasuk}">500</span>
-                        <span th:text="${stok.komoditas.satuan}" style="font-size:1rem;font-weight:400;color:var(--on-surface-variant);">Kg</span>
+                    <div class="stok-body" style="margin-bottom:16px;">
+                        <div style="font-size:0.75rem; color:var(--on-surface-variant); margin-bottom:2px; font-weight:500;">Total Stok Tersedia</div>
+                        <div style="display:flex; align-items:baseline; gap:6px;">
+                            <span th:text="${stok.jumlahMasuk}" style="font-size:1.75rem; font-weight:800; color:var(--on-surface); letter-spacing:-0.5px;">500</span>
+                            <span th:text="${stok.komoditas.satuan}" style="font-size:1rem; font-weight:600; color:var(--on-surface-variant);">Kg</span>
+                        </div>
                     </div>
 
-                    <a th:href="@{/petani/stok/{id}(id=${stok.idStok})}" class="stok-distribusi" style="display:flex;align-items:center;gap:4px;">
-                        0 distribusi <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span>
-                    </a>
+                    <div style="display:flex; align-items:center; justify-content:space-between; padding-top:16px; border-top:1px solid var(--outline-variant);">
+                        <a th:href="@{/petani/stok/{id}(id=${stok.idStok})}" class="btn btn-secondary btn-sm" style="font-size:0.75rem; border-radius:8px;">
+                            Detail Stok
+                        </a>
+                        <span style="font-size:0.75rem; color:var(--outline); display:flex; align-items:center; gap:4px;">
+                            <span class="material-symbols-outlined" style="font-size:14px;">history</span>
+                            Terakhir diupdate
+                        </span>
+                    </div>
                 </div>
 
                 <div th:if="${#lists.isEmpty(listStok)}" style="grid-column:1/-1;text-align:center;padding:48px;color:var(--outline);">
@@ -63,10 +106,10 @@
 </div>
 <script>
 function filterByKomoditas(btn, komoditas){
-    document.querySelectorAll('.filter-tab').forEach(b=>{b.classList.remove('active-tab');b.classList.add('btn-secondary');b.classList.remove('btn-primary');});
-    btn.classList.add('active-tab','btn-primary');btn.classList.remove('btn-secondary');
-    document.querySelectorAll('.stok-card').forEach(c=>{
-        c.style.display=!komoditas||c.dataset.komoditas===komoditas?'':'none';
+    document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active-tab'));
+    btn.classList.add('active-tab');
+    document.querySelectorAll('.stok-card').forEach(c => {
+        c.style.display = !komoditas || c.dataset.komoditas === komoditas ? '' : 'none';
     });
 }
 </script>

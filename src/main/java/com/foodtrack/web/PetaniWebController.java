@@ -19,6 +19,7 @@ public class PetaniWebController {
     private final StokPanganService stokPanganService;
     private final DistribusiService distribusiService;
     private final ChatbotService chatbotService;
+    private final NotificationService notificationService;
 
     /** Helper: get logged-in Petani entity */
     private Petani getLoggedInPetani(Authentication auth) {
@@ -64,6 +65,11 @@ public class PetaniWebController {
         stokPangan.setPetani(petani);
         komoditasService.findById(stokPangan.getKomoditas().getIdKomoditas()).ifPresent(stokPangan::setKomoditas);
         stokPanganService.save(stokPangan);
+        notificationService.createNotification(
+            "Petani " + petani.getNama() + " mencatat panen " + stokPangan.getJumlahMasuk() + " " + stokPangan.getKomoditas().getSatuan() + " " + stokPangan.getKomoditas().getNamaKomoditas(),
+            "success", "eco", "STOK",
+            petani.getIdPetani(), "ROLE_PETANI"
+        );
         ra.addFlashAttribute("successMessage", "Stok panen berhasil dicatat!");
         return "redirect:/petani/stok";
     }
@@ -124,5 +130,66 @@ public class PetaniWebController {
         chatbotService.deleteByPetaniId(petani.getIdPetani());
         ra.addFlashAttribute("successMessage", "Riwayat chat berhasil dihapus.");
         return "redirect:/petani/chatbot";
+    }
+
+    @GetMapping("/profile")
+    public String profile(Model model, Authentication auth) {
+        Petani petani = getLoggedInPetani(auth);
+        if (petani == null) return "redirect:/login-petani";
+        model.addAttribute("petani", petani);
+        model.addAttribute("currentUserInitial", petani.getNama().substring(0, 1).toUpperCase());
+        return "petani/profile";
+    }
+
+    @PostMapping("/profile/update")
+    public String updateProfile(@RequestParam("nama") String nama,
+                                @RequestParam("kelompokTani") String kelompokTani,
+                                @RequestParam("kontak") String kontak,
+                                Authentication auth, RedirectAttributes ra) {
+        Petani petani = getLoggedInPetani(auth);
+        if (petani != null) {
+            petani.setNama(nama);
+            petani.setKelompokTani(kelompokTani);
+            petani.setKontak(kontak);
+            petaniService.save(petani);
+            ra.addFlashAttribute("successMessage", "Profil berhasil diperbarui!");
+        }
+        return "redirect:/petani/profile";
+    }
+
+    @PostMapping("/profile/password/update")
+    public String updatePassword(@RequestParam("oldPassword") String oldPassword,
+                                 @RequestParam("newPassword") String newPassword,
+                                 Authentication auth, RedirectAttributes ra) {
+        Petani petani = getLoggedInPetani(auth);
+        if (petani != null) {
+            if (petaniService.changePassword(petani.getIdPetani(), oldPassword, newPassword)) {
+                ra.addFlashAttribute("successMessage", "Kata sandi berhasil diubah!");
+            } else {
+                ra.addFlashAttribute("errorMessage", "Kata sandi lama salah.");
+            }
+        }
+        return "redirect:/petani/profile";
+    }
+
+    @PostMapping("/profile/foto/upload")
+    @ResponseBody
+    public void uploadFoto(@RequestBody java.util.Map<String, String> data, Authentication auth) {
+        Petani petani = getLoggedInPetani(auth);
+        if (petani != null && data.containsKey("image")) {
+            petani.setFotoProfile(data.get("image"));
+            petaniService.save(petani);
+        }
+    }
+
+    @PostMapping("/profile/foto/hapus")
+    public String hapusFoto(Authentication auth, RedirectAttributes ra) {
+        Petani petani = getLoggedInPetani(auth);
+        if (petani != null) {
+            petani.setFotoProfile(null);
+            petaniService.save(petani);
+            ra.addFlashAttribute("successMessage", "Foto profil berhasil dihapus.");
+        }
+        return "redirect:/petani/profile";
     }
 }

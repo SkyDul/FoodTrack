@@ -5,103 +5,184 @@
 <div class="layout">
     <nav th:replace="~{petani/layout :: sidebar('dashboard')}"></nav>
     <div class="main-content">
-        <header th:replace="~{petani/layout :: topbar}"></header>
+        <header th:replace="~{petani/layout :: topbar('<span style=\'font-weight:600;color:var(--on-surface);\'>Dashboard</span>')}"></header>
         <div class="page-content">
             <div th:replace="~{petani/layout :: flash}"></div>
 
             <!-- Welcome Banner -->
-            <div class="welcome-banner">
-                <h2>Selamat datang, <span th:text="${petaniName} ?: 'Petani'">Budi</span>! 🌾</h2>
-                <div class="welcome-info">
-                    <span style="display:flex;align-items:center;gap:6px;">
-                        <span class="material-symbols-outlined" style="font-size:18px;">group</span>
-                        Kelompok Tani: <strong th:text="${kelompokTani} ?: '-'">Tani Makmur</strong>
-                    </span>
-                    <span style="display:flex;align-items:center;gap:6px;">
-                        <span class="material-symbols-outlined" style="font-size:18px;">calendar_today</span>
-                        <span th:text="${#temporals.format(#temporals.createNow(), 'EEEE, dd MMMM yyyy')}">Rabu, 24 Mei 2024</span>
-                    </span>
+            <!-- Welcome Banner with Pattern -->
+            <div class="welcome-banner" style="background: linear-gradient(135deg, #096430, #148f47); border-radius: 24px; padding: 24px 32px; color: #fff; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(9, 100, 48, 0.15); position: relative; overflow: hidden; display: flex; justify-content: space-between; align-items: center;">
+                <div style="position: absolute; inset: 0; opacity: 0.1; background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 20px 20px;"></div>
+                <div style="position: relative; z-index: 2;">
+                    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 8px;">Selamat datang kembali, <span th:text="${currentUserName ?: petaniName} ?: 'Petani'">Budi</span>! 👋</h2>
+                    <p style="opacity: 0.9; font-size: 0.9375rem; margin-bottom: 20px; max-width: 400px;">Pantau hasil panen Anda dan kelola distribusi pangan dengan lebih efisien hari ini.</p>
+                    <div style="display: flex; gap: 12px;">
+                        <a th:href="@{/petani/stok/tambah}" style="background: #fff; color: #096430; padding: 8px 20px; border-radius: 12px; font-weight: 700; font-size: 0.875rem; text-decoration: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">add_circle</span> Catat Panen
+                        </a>
+                        <a th:href="@{/petani/chatbot}" style="background: rgba(255,255,255,0.15); color: #fff; padding: 8px 20px; border-radius: 12px; font-weight: 600; font-size: 0.875rem; text-decoration: none; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.2);">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">smart_toy</span> Tanya AI
+                        </a>
+                    </div>
+                </div>
+                <div style="position: relative; z-index: 2; width: 140px; height: 140px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);">
+                    <span class="material-symbols-outlined" style="font-size: 80px; color: #feae2c; opacity: 0.9;">agriculture</span>
                 </div>
             </div>
 
-            <!-- Stat Cards -->
-            <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);">
-                <div class="stat-card">
-                    <div class="stat-icon green">
-                        <span class="material-symbols-outlined">inventory_2</span>
+            <!-- Quick Navigation Row -->
+            <div style="display: flex; gap: 16px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 8px;">
+                <a th:href="@{/petani/stok}" style="flex: 1; min-width: 140px; background: var(--surface); padding: 16px; border-radius: 20px; border: 1px solid var(--outline-variant); display: flex; flex-direction: column; align-items: center; gap: 10px; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.borderColor='var(--primary)'; this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='var(--outline-variant)'; this.style.transform='none'">
+                    <div style="width: 40px; height: 40px; border-radius: 12px; background: #e8f5e9; color: #2e7d32; display: flex; align-items: center; justify-content: center;">
+                        <span class="material-symbols-outlined">inventory</span>
                     </div>
-                    <div>
-                        <div class="stat-label">STOK SAYA</div>
-                        <div class="stat-value"><span th:text="${totalStok} ?: '0'">5</span> <small style="font-size:0.875rem;font-weight:400;">entries</small></div>
-                    </div>
-                    <span class="badge badge-gray" style="margin-left:auto;font-size:0.75rem;">Update: Hari ini</span>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon yellow">
+                    <span style="font-size: 0.8125rem; font-weight: 700; color: var(--on-surface);">Stok Saya</span>
+                </a>
+                <a th:href="@{/petani/distribusi}" style="flex: 1; min-width: 140px; background: var(--surface); padding: 16px; border-radius: 20px; border: 1px solid var(--outline-variant); display: flex; flex-direction: column; align-items: center; gap: 10px; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.borderColor='#f59e0b'; this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='var(--outline-variant)'; this.style.transform='none'">
+                    <div style="width: 40px; height: 40px; border-radius: 12px; background: #fff8e1; color: #f57f17; display: flex; align-items: center; justify-content: center;">
                         <span class="material-symbols-outlined">local_shipping</span>
                     </div>
-                    <div>
-                        <div class="stat-label">DISTRIBUSI</div>
-                        <div class="stat-value"><span th:text="${totalDistribusi} ?: '0'">12</span> <small style="font-size:0.875rem;font-weight:400;">times</small></div>
+                    <span style="font-size: 0.8125rem; font-weight: 700; color: var(--on-surface);">Riwayat Kirim</span>
+                </a>
+                <a th:href="@{/petani/profile}" style="flex: 1; min-width: 140px; background: var(--surface); padding: 16px; border-radius: 20px; border: 1px solid var(--outline-variant); display: flex; flex-direction: column; align-items: center; gap: 10px; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.borderColor='#3b82f6'; this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='var(--outline-variant)'; this.style.transform='none'">
+                    <div style="width: 40px; height: 40px; border-radius: 12px; background: #e3f2fd; color: #1565c0; display: flex; align-items: center; justify-content: center;">
+                        <span class="material-symbols-outlined">person_settings</span>
                     </div>
-                    <span class="badge badge-gray" style="margin-left:auto;font-size:0.75rem;">Bulan ini</span>
+                    <span style="font-size: 0.8125rem; font-weight: 700; color: var(--on-surface);">Edit Profil</span>
+                </a>
+            </div>
+
+            <!-- Stat Cards with Modern Style -->
+            <div class="stat-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-bottom:32px;">
+                <!-- Stok Aktif -->
+                <div class="card" style="padding: 20px; border: 1px solid var(--outline-variant); border-left: 6px solid #10b981; position: relative;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <div style="font-size: 0.8125rem; font-weight: 600; color: var(--outline); margin-bottom: 8px;">TOTAL STOK AKTIF</div>
+                            <div style="font-size: 1.75rem; font-weight: 800; color: var(--on-surface);">
+                                <span th:text="${totalStok} ?: '0'">0</span> 
+                                <small style="font-size: 0.875rem; color: var(--outline); font-weight: 500;">Log</small>
+                            </div>
+                        </div>
+                        <div style="width: 48px; height: 48px; border-radius: 16px; background: rgba(16, 185, 129, 0.1); color: #10b981; display: flex; align-items: center; justify-content: center;">
+                            <span class="material-symbols-outlined" style="font-size: 24px;">inventory_2</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 12px; font-size: 0.75rem; color: #10b981; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                        <span class="material-symbols-outlined" style="font-size: 14px;">trending_up</span> Diperbarui hari ini
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon blue">
-                        <span class="material-symbols-outlined">smart_toy</span>
+
+                <!-- Distribusi -->
+                <div class="card" style="padding: 20px; border: 1px solid var(--outline-variant); border-left: 6px solid #f59e0b; position: relative;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <div style="font-size: 0.8125rem; font-weight: 600; color: var(--outline); margin-bottom: 8px;">TOTAL DISTRIBUSI</div>
+                            <div style="font-size: 1.75rem; font-weight: 800; color: var(--on-surface);">
+                                <span th:text="${totalDistribusi} ?: '0'">0</span>
+                                <small style="font-size: 0.875rem; color: var(--outline); font-weight: 500;">Kirim</small>
+                            </div>
+                        </div>
+                        <div style="width: 48px; height: 48px; border-radius: 16px; background: rgba(245, 158, 11, 0.1); color: #f59e0b; display: flex; align-items: center; justify-content: center;">
+                            <span class="material-symbols-outlined" style="font-size: 24px;">local_shipping</span>
+                        </div>
                     </div>
-                    <div>
-                        <div class="stat-label">KONSULTASI AI</div>
-                        <div class="stat-value"><span th:text="${totalChatbot} ?: '0'">8</span> <small style="font-size:0.875rem;font-weight:400;">sessions</small></div>
+                    <div style="margin-top: 12px; font-size: 0.75rem; color: var(--outline); font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                        <span class="material-symbols-outlined" style="font-size: 14px;">schedule</span> Semua waktu
                     </div>
-                    <span class="badge badge-gray" style="margin-left:auto;font-size:0.75rem;">Total</span>
+                </div>
+
+                <!-- Asisten AI -->
+                <div class="card" style="padding: 20px; border: 1px solid var(--outline-variant); border-left: 6px solid #3b82f6; position: relative;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <div style="font-size: 0.8125rem; font-weight: 600; color: var(--outline); margin-bottom: 8px;">KONSULTASI AI</div>
+                            <div style="font-size: 1.75rem; font-weight: 800; color: var(--on-surface);">
+                                <span th:text="${totalChatbot} ?: '0'">0</span>
+                                <small style="font-size: 0.875rem; color: var(--outline); font-weight: 500;">Sesi</small>
+                            </div>
+                        </div>
+                        <div style="width: 48px; height: 48px; border-radius: 16px; background: rgba(59, 130, 246, 0.1); color: #3b82f6; display: flex; align-items: center; justify-content: center;">
+                            <span class="material-symbols-outlined" style="font-size: 24px;">psychology</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 12px; font-size: 0.75rem; color: #3b82f6; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                        <span class="material-symbols-outlined" style="font-size: 14px;">auto_awesome</span> Asisten Cerdas Aktif
+                    </div>
                 </div>
             </div>
 
-            <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;">
+            <div style="display:grid;grid-template-columns:1.8fr 1.2fr;gap:24px;">
                 <!-- Stok Terbaru Saya -->
-                <div class="card">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-                        <h3 style="display:flex;align-items:center;gap:8px;font-size:1.25rem;font-weight:600;">
-                            <span class="material-symbols-outlined" style="color:var(--primary);">schedule</span>
-                            Stok Terbaru Saya
+                <div class="card" style="border-radius:24px; padding:24px; border: 1px solid var(--outline-variant);">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+                        <h3 style="display:flex;align-items:center;gap:12px;font-size:1.15rem;font-weight:800;color:var(--on-surface);">
+                            <div style="width:36px; height:36px; background:rgba(9, 100, 48, 0.1); border-radius:10px; display:flex; align-items:center; justify-content:center;">
+                                <span class="material-symbols-outlined" style="color:#096430; font-size:20px;">history</span>
+                            </div>
+                            Update Stok Terbaru
                         </h3>
-                        <a th:href="@{/petani/stok}" style="color:var(--primary);font-weight:500;font-size:0.875rem;">Lihat Semua ›</a>
+                        <a th:href="@{/petani/stok}" style="color:var(--primary); font-weight:700; font-size:0.875rem; text-decoration:none; display: flex; align-items:center; gap: 4px;">
+                            Lihat Semua <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
+                        </a>
                     </div>
 
-                    <div th:each="stok : ${recentStok}" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border:1px solid var(--outline-variant);border-radius:var(--radius-lg);margin-bottom:10px;">
-                        <div style="display:flex;align-items:center;gap:12px;">
-                            <div style="width:40px;height:40px;border-radius:var(--radius-md);background:#e8f5e9;display:flex;align-items:center;justify-content:center;">
-                                <span class="material-symbols-outlined" style="color:var(--primary);font-size:20px;">eco</span>
+                    <div style="display:flex; flex-direction:column; gap:16px;">
+                        <div th:each="stok : ${recentStok}" style="display:flex;align-items:center;justify-content:space-between;padding:16px;background: var(--surface-container-low); border:1px solid var(--outline-variant);border-radius:16px; transition: all 0.3s; cursor:pointer;" onmouseover="this.style.borderColor='var(--primary)'; this.style.background='var(--surface)'" onmouseout="this.style.borderColor='var(--outline-variant)'; this.style.background='var(--surface-container-low)'">
+                            <div style="display:flex;align-items:center;gap:16px;">
+                                <div style="width:48px;height:48px;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center; border:1px solid var(--outline-variant); box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <span class="material-symbols-outlined" style="color:var(--primary);font-size:24px;">eco</span>
+                                </div>
+                                <div>
+                                    <div th:text="${stok.komoditas.namaKomoditas}" style="font-weight:750; color:var(--on-surface); font-size:1rem; margin-bottom: 2px;">Padi Ciherang</div>
+                                    <div style="display: flex; align-items: center; gap: 4px; font-size:0.8125rem;color:var(--outline);">
+                                        <span class="material-symbols-outlined" style="font-size: 14px;">calendar_month</span>
+                                        <span th:text="${#temporals.format(stok.tanggalPanen, 'dd MMM yyyy')}">22 Mei 2024</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <strong th:text="${stok.komoditas.namaKomoditas}">Padi Ciherang</strong>
-                                <div th:text="${#temporals.format(stok.tanggalPanen, 'dd MMM yyyy')}" style="font-size:0.8125rem;color:var(--outline);">22 Mei 2024</div>
+                            <div style="text-align:right;">
+                                <div style="font-size:1.125rem; font-weight:850; color:var(--on-surface);" th:text="${stok.jumlahMasuk + ' ' + stok.komoditas.satuan}">2.5 Ton</div>
+                                <div class="badge badge-green" style="font-size: 0.625rem; padding: 2px 8px; margin-top: 4px;">PANEN</div>
                             </div>
-                        </div>
-                        <div style="text-align:right;">
-                            <strong th:text="${stok.jumlahMasuk + ' ' + stok.komoditas.satuan}">2.5 Ton</strong>
-                            <div style="font-size:0.75rem;color:var(--outline);">Volume</div>
                         </div>
                     </div>
 
-                    <div th:if="${#lists.isEmpty(recentStok)}" style="text-align:center;color:var(--outline);padding:32px;">
-                        Belum ada data stok
+                    <div th:if="${#lists.isEmpty(recentStok)}" style="text-align:center;color:var(--outline);padding:48px;">
+                        <div style="width: 80px; height: 80px; background: var(--surface-container); border-radius: 50%; display: flex; align-items:center; justify-content: center; margin: 0 auto 16px;">
+                            <span class="material-symbols-outlined" style="font-size:40px; opacity:0.3;">inventory_2</span>
+                        </div>
+                        <p style="font-weight: 600;">Belum ada data stok terbaru</p>
+                        <p style="font-size: 0.8125rem; opacity: 0.7;">Mulai catat panen Anda sekarang!</p>
                     </div>
                 </div>
 
-                <!-- AI Banner -->
-                <div class="ai-banner">
-                    <div>
-                        <div style="width:48px;height:48px;border-radius:var(--radius-lg);background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
-                            <span class="material-symbols-outlined" style="font-size:28px;">smart_toy</span>
+                <!-- AI Premium Card -->
+                <div style="display: flex; flex-direction: column; gap: 24px;">
+                    <div class="ai-banner" style="background: linear-gradient(180deg, #096430, #074d24); border-radius: 24px; padding: 28px; color: #fff; display: flex; flex-direction: column; justify-content: space-between; min-height: 280px; position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(9, 100, 48, 0.25);">
+                        <div style="position: absolute; right: -20px; top: -20px; width: 150px; height: 150px; background: rgba(255,255,255,0.05); border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);"></div>
+                        <div style="position: relative; z-index: 2;">
+                            <div style="width:52px;height:52px;border-radius:14px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;margin-bottom:24px; border:1px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px);">
+                                <span class="material-symbols-outlined" style="font-size:32px; color: #feae2c; font-variation-settings: 'FILL' 1;">smart_toy</span>
+                            </div>
+                            <h3 style="font-size:1.35rem; font-weight:800; margin-bottom:12px; line-height:1.2; letter-spacing: -0.5px;">Butuh Saran Pertanian?</h3>
+                            <p style="font-size:0.875rem; opacity:0.9; line-height:1.6; margin-bottom:24px;">Asisten AI kami siap membantu Anda dengan teknik tanam, hama, hingga harga pasar terkini.</p>
                         </div>
-                        <h3>Tanya AI Sekarang</h3>
-                        <p>Dapatkan saran ahli untuk meningkatkan hasil panen, mengatasi hama, atau strategi...</p>
+                        <a th:href="@{/petani/chatbot}" style="background:#feae2c; color:#096430; font-weight:800; padding:14px; border-radius:14px; text-align:center; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:8px; transition: all 0.3s; border:none; font-size: 0.9375rem; box-shadow: 0 4px 12px rgba(254, 174, 44, 0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(254, 174, 44, 0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(254, 174, 44, 0.3)'">
+                            Buka Chat Tani AI <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
+                        </a>
                     </div>
-                    <a th:href="@{/petani/chatbot}" class="btn-ai">
-                        Mulai Tanya <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
-                    </a>
+                    
+                    <!-- Tips Card -->
+                    <div class="card" style="padding: 20px; background: var(--surface-container-low); border: 1px dashed var(--outline-variant); border-radius: 20px;">
+                        <div style="display: flex; gap: 12px; align-items: flex-start;">
+                            <span class="material-symbols-outlined" style="color: #f59e0b;">lightbulb</span>
+                            <div>
+                                <div style="font-weight: 700; font-size: 0.875rem; color: var(--on-surface); margin-bottom: 4px;">Tips Hari Ini</div>
+                                <p style="font-size: 0.8125rem; color: var(--outline); line-height: 1.5; margin: 0;">Pastikan kelembapan gudang tetap terjaga untuk menjaga kualitas gabah hasil panen.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

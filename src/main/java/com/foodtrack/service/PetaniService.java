@@ -12,11 +12,38 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PetaniService {
     private final PetaniRepository petaniRepository;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     public List<Petani> findAll() { return petaniRepository.findAll(); }
     public Optional<Petani> findById(Integer id) { return petaniRepository.findById(id); }
     public Optional<Petani> findByUsername(String username) { return petaniRepository.findByUsername(username); }
-    public Petani save(Petani petani) { return petaniRepository.save(petani); }
+    
+    @Transactional
+    public Petani save(Petani petani) { 
+        // Encode password if it's new or being changed (check for BCrypt prefixes $2a$, $2b$, $2y$)
+        if (petani.getPassword() != null && 
+            !(petani.getPassword().startsWith("$2a$") || 
+              petani.getPassword().startsWith("$2b$") || 
+              petani.getPassword().startsWith("$2y$"))) {
+            petani.setPassword(passwordEncoder.encode(petani.getPassword()));
+        }
+        return petaniRepository.save(petani); 
+    }
+    
     public void deleteById(Integer id) { petaniRepository.deleteById(id); }
     public long count() { return petaniRepository.count(); }
+
+    @Transactional
+    public boolean changePassword(Integer idPetani, String oldPassword, String newPassword) {
+        Optional<Petani> pOpt = petaniRepository.findById(idPetani);
+        if (pOpt.isPresent()) {
+            Petani p = pOpt.get();
+            if (passwordEncoder.matches(oldPassword, p.getPassword())) {
+                p.setPassword(passwordEncoder.encode(newPassword));
+                petaniRepository.save(p);
+                return true;
+            }
+        }
+        return false;
+    }
 }

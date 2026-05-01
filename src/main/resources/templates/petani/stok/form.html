@@ -5,21 +5,20 @@
 <div class="layout">
     <nav th:replace="~{petani/layout :: sidebar('catat')}"></nav>
     <div class="main-content">
-        <header th:replace="~{petani/layout :: topbar}"></header>
+        <header th:replace="~{petani/layout :: topbar('<a href=\'/petani/dashboard\' style=\'color:var(--primary);text-decoration:none;font-weight:500;\'>Dashboard</a> <span style=\'color:var(--outline);margin:0 4px;\'>&rsaquo;</span> <a href=\'/petani/stok\' style=\'color:var(--primary);text-decoration:none;font-weight:500;\'>Stok Pangan</a> <span style=\'color:var(--outline);margin:0 4px;\'>&rsaquo;</span> <span style=\'font-weight:600;color:var(--on-surface);\'>Form Stok</span>')}"></header>
         <div class="page-content">
-            <div class="page-header">
-                <h1>Catat Stok Panen</h1>
-                <p>Masukkan rincian hasil panen terbaru Anda untuk diperbarui di sistem inventaris.</p>
+            <div class="page-header" style="margin-bottom: 24px;">
+                <h1 style="font-size: 1.5rem; font-weight: 700;">Catat Stok Panen</h1>
+                <p style="font-size: 0.875rem;">Masukkan rincian hasil panen terbaru Anda untuk diperbarui di sistem inventaris.</p>
             </div>
 
-            <div class="card" style="max-width:700px;">
+            <div class="card" style="padding: 32px; border-radius: 20px;">
                 <form th:action="@{/petani/stok/simpan}" method="post" th:object="${stokPangan}">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
                     <!-- 1. Pilih Komoditas -->
                     <div class="form-group">
-                        <label style="font-size:1.125rem;font-weight:600;margin-bottom:12px;">1. Pilih Komoditas</label>
-                        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:8px;">
+                        <label style="font-size:1.125rem;font-weight:600;margin-bottom:16px;display:block;">1. Pilih Komoditas</label>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));gap:16px;margin-top:8px;">
                             <div th:each="k : ${listKomoditas}">
                                 <input type="radio" th:field="*{komoditas.idKomoditas}" th:value="${k.idKomoditas}"
                                        th:id="'kom_' + ${k.idKomoditas}" style="display:none;" class="komoditas-radio"/>
@@ -33,22 +32,18 @@
                         </div>
                     </div>
 
-                    <!-- 2. Jumlah Panen -->
-                    <div class="form-group">
-                        <label style="font-size:1.125rem;font-weight:600;">2. Jumlah Panen</label>
-                        <div style="display:flex;gap:12px;align-items:center;margin-top:8px;">
-                            <input type="number" th:field="*{jumlahMasuk}" class="form-control" placeholder="0"
-                                   min="0" required style="flex:1;"/>
-                        </div>
-                    </div>
-
-                    <!-- 3. Tanggal Panen -->
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                    <!-- 2 & 3. Jumlah & Tanggal (Side by Side on Desktop) -->
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:24px;margin-top:32px;">
                         <div class="form-group">
-                            <label style="font-size:1.125rem;font-weight:600;">3. Tanggal Panen</label>
-                            <div class="input-icon" style="margin-top:8px;">
+                            <label style="font-size:1.125rem;font-weight:600;display:block;margin-bottom:8px;">2. Jumlah Panen</label>
+                            <input type="number" th:field="*{jumlahMasuk}" class="form-control" placeholder="0"
+                                   min="0" required style="height:48px;"/>
+                        </div>
+                        <div class="form-group">
+                            <label style="font-size:1.125rem;font-weight:600;display:block;margin-bottom:8px;">3. Tanggal Panen</label>
+                            <div class="input-icon">
                                 <span class="material-symbols-outlined">calendar_today</span>
-                                <input type="date" th:field="*{tanggalPanen}" class="form-control" required/>
+                                <input type="date" th:field="*{tanggalPanen}" class="form-control" required style="height:48px;"/>
                             </div>
                         </div>
                     </div>
