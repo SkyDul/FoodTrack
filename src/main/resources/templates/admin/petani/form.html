@@ -5,14 +5,19 @@
 <div class="layout">
     <nav th:replace="~{admin/layout :: sidebar('petani')}"></nav>
     <div class="main-content">
-        <header th:replace="~{admin/layout :: topbar('<a href=\'/admin/dashboard\'>Dashboard</a> &rsaquo; <a href=\'/admin/petani\'>Data Petani</a> &rsaquo; <span th:text=\'${petani.idPetani != null ? \"Edit\" : \"Tambah\"}\'>Tambah</span>')}"></header>
+        <th:block th:if="${petani.idPetani == null}">
+            <header th:replace="~{admin/layout :: topbar('<a href=\'/admin/dashboard\'>Dashboard</a> &rsaquo; <a href=\'/admin/petani\'>Data Petani</a> &rsaquo; <span>Tambah</span>')}"></header>
+        </th:block>
+        <th:block th:if="${petani.idPetani != null}">
+            <header th:replace="~{admin/layout :: topbar('<a href=\'/admin/dashboard\'>Dashboard</a> &rsaquo; <a href=\'/admin/petani\'>Data Petani</a> &rsaquo; <span>Edit</span>')}"></header>
+        </th:block>
         <div class="page-content">
-            <div class="page-header">
+            <div class="page-header" style="margin-bottom: 20px;">
                 <h1 th:text="${petani.idPetani != null} ? 'Edit Data Petani' : 'Tambah Data Petani'">Tambah Data Petani</h1>
                 <p>Masukkan informasi detail petani baru ke dalam sistem untuk pelacakan stok dan hasil panen.</p>
             </div>
 
-            <div class="card" style="max-width:700px;">
+            <div class="card">
                 <div style="display:flex;align-items:center;gap:12px;padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid var(--outline-variant);">
                     <div style="width:40px;height:40px;border-radius:50%;background:var(--surface-container-high);display:flex;align-items:center;justify-content:center;">
                         <span class="material-symbols-outlined" style="color:var(--primary);">person</span>
@@ -21,7 +26,6 @@
                 </div>
 
                 <form th:action="@{/admin/petani/simpan}" method="post" th:object="${petani}">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                     <input type="hidden" th:field="*{idPetani}"/>
 
                     <div class="form-group">

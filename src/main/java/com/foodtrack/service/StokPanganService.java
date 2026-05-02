@@ -19,4 +19,5 @@ public class StokPanganService {
     public StokPangan save(StokPangan s) { return stokPanganRepository.save(s); }
     public void deleteById(Integer id) { stokPanganRepository.deleteById(id); }
     public long count() { return stokPanganRepository.count(); }
+    public List<StokPangan> findAvailable() { return stokPanganRepository.findAvailableStock(); }
 }

@@ -5,7 +5,7 @@
 <div class="layout">
     <nav th:replace="~{petani/layout :: sidebar('stok')}"></nav>
     <div class="main-content">
-        <header th:replace="~{petani/layout :: topbar}"></header>
+        <header th:replace="~{petani/layout :: topbar('<a href=\'/petani/dashboard\' style=\'color:var(--primary);text-decoration:none;font-weight:500;\'>Dashboard</a> <span style=\'color:var(--outline);margin:0 4px;\'>&rsaquo;</span> <a href=\'/petani/stok\' style=\'color:var(--primary);text-decoration:none;font-weight:500;\'>Stok Pangan</a> <span style=\'color:var(--outline);margin:0 4px;\'>&rsaquo;</span> <span style=\'font-weight:600;color:var(--on-surface);\'>Detail Stok</span>')}"></header>
         <div class="page-content">
             <div style="margin-bottom:24px;">
                 <a th:href="@{/petani/stok}" style="display:flex;align-items:center;gap:4px;color:var(--primary);font-size:0.875rem;margin-bottom:8px;">

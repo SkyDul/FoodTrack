@@ -13,14 +13,13 @@
 <!-- Navbar -->
 <nav class="landing-nav">
     <div class="nav-brand">
-        <span class="material-symbols-outlined" style="color:var(--secondary-container);font-variation-settings:'FILL' 1;">eco</span>
-        SiPangan
+        <span class="material-symbols-outlined" style="color:#ffb300; font-size:32px; font-variation-settings:'FILL' 1;">eco</span>
+        <span style="color:#1a5c2a; font-weight:800; font-size:1.5rem; letter-spacing:-0.5px;">SiPangan</span>
     </div>
     <div class="nav-links">
-        <a href="#" class="active">Beranda</a>
+        <a href="#hero" class="active">Beranda</a>
         <a href="#fitur">Fitur</a>
         <a href="#cara-kerja">Cara Kerja</a>
-        <a href="#tentang">Tentang Kami</a>
     </div>
     <div class="nav-actions">
         <a th:href="@{/admin/login}" class="btn btn-secondary">Login Admin</a>
@@ -29,92 +28,97 @@
 </nav>
 
 <!-- Hero Section -->
-<section class="hero" style="background:var(--surface-container-low);">
-    <div class="hero-text">
-        <h1>Kelola Stok Pangan Lebih Cerdas <span class="highlight">Bersama AI</span></h1>
-        <p>Sistem logistik pertanian digital yang menghubungkan petani, gudang, dan pasar. Optimalkan distribusi, pantau ketersediaan, dan cegah kelangkaan dengan presisi engine modern kami.</p>
-        <div class="hero-actions">
-            <a th:href="@{/login-petani}" class="btn btn-primary" style="padding:14px 28px;">
-                Masuk Portal Petani <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
-            </a>
-            <a th:href="@{/admin/login}" class="btn btn-secondary" style="padding:14px 28px;">Login Admin</a>
+<section id="hero" class="hero-wrapper" style="background:var(--surface-container-low); border-bottom: 1px solid var(--outline-variant);">
+    <div class="hero">
+        <div class="hero-text">
+            <h1>Kelola Stok Pangan Lebih Cerdas <span class="highlight">Bersama AI</span></h1>
+            <p>Sistem logistik pertanian digital yang menghubungkan petani, gudang, dan pasar. Optimalkan distribusi, pantau ketersediaan, dan cegah kelangkaan dengan presisi engine modern kami.</p>
+            <div class="hero-actions">
+                <a th:href="@{/login-petani}" class="btn btn-primary" style="padding:16px 32px; border-radius:12px;">
+                    Masuk Portal Petani <span class="material-symbols-outlined" style="font-size:20px;">arrow_forward</span>
+                </a>
+                <a th:href="@{/admin/login}" class="btn btn-secondary" style="padding:16px 32px; border-radius:12px;">Login Admin</a>
+            </div>
         </div>
-    </div>
-    <div class="hero-image">
-        <img src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&q=80"
-             alt="Petani menggunakan tablet di sawah"
-             style="border-radius:var(--radius-xl);box-shadow:0 8px 32px rgba(0,0,0,0.1);"/>
+        <div class="hero-image">
+            <img src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&q=80"
+                 alt="Petani menggunakan tablet di sawah"
+            style="border-radius:24px; box-shadow: 0 32px 64px -16px rgba(26, 92, 42, 0.2);"/>
+        </div>
     </div>
 </section>
 
 <!-- Stats Bar -->
 <section class="stats-bar">
     <div class="stat-item">
-        <h3 th:text="${totalPetani != null ? totalPetani : '1.200'} + '+'">1.200+</h3>
+        <h3 th:text="${totalPetani != null ? totalPetani : '0'}">1.200+</h3>
         <p>Petani Aktif</p>
     </div>
     <div class="stat-item">
-        <h3>8.500+</h3>
-        <p>Ton Stok Dikelola</p>
+        <h3 th:text="${totalStok != null ? totalStok : '0'} + ' Kg'">8.500+</h3>
+        <p>Stok Dikelola</p>
     </div>
     <div class="stat-item">
-        <h3>45+</h3>
-        <p>Gudang Regional</p>
+        <h3 th:text="${totalKomoditas != null ? totalKomoditas : '0'}">45+</h3>
+        <p>Jenis Komoditas</p>
     </div>
     <div class="stat-item">
-        <h3>99.9%</h3>
-        <p>Akurasi Data</p>
+        <h3 th:text="${distribusiSelesai != null ? distribusiSelesai : '0'}">99.9%</h3>
+        <p>Distribusi Selesai</p>
     </div>
 </section>
 
 <!-- Fitur Section -->
-<section id="fitur" style="padding:80px 40px;max-width:1200px;margin:0 auto;">
-    <div style="text-align:center;margin-bottom:48px;">
-        <h2 class="text-h2">Fitur Unggulan</h2>
-        <p style="color:var(--on-surface-variant);max-width:600px;margin:8px auto 0;">Solusi lengkap untuk pengelolaan pangan dari hulu ke hilir</p>
+<section id="fitur" class="landing-section">
+    <div style="text-align:center;margin-bottom:64px;">
+        <h2 class="text-h2" style="font-size: 2.5rem; letter-spacing: -0.02em;">Fitur Unggulan</h2>
+        <p style="color:var(--on-surface-variant);max-width:600px;margin:16px auto 0; font-size: 1.125rem;">Solusi lengkap untuk pengelolaan pangan dari hulu ke hilir</p>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;">
-        <div class="card" style="text-align:center;padding:32px;">
-            <div style="width:64px;height:64px;border-radius:var(--radius-lg);background:#e8f5e9;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
-                <span class="material-symbols-outlined" style="font-size:32px;color:var(--primary);">inventory_2</span>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:32px;">
+        <!-- Fitur 1 -->
+        <div class="card" style="text-align:center;padding:48px 32px;background:var(--primary);color:#fff;border:none;border-radius:24px;">
+            <div style="width:72px;height:72px;border-radius:20px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;backdrop-filter:blur(4px);">
+                <span class="material-symbols-outlined" style="font-size:32px;color:#fff;">inventory_2</span>
             </div>
-            <h3 style="font-size:1.25rem;font-weight:600;margin-bottom:8px;">Kelola Stok</h3>
-            <p style="color:var(--on-surface-variant);font-size:0.9375rem;">Catat dan pantau stok pangan secara real-time dengan akurasi tinggi.</p>
+            <h3 style="font-size:1.5rem;font-weight:700;margin-bottom:12px;">Kelola Stok</h3>
+            <p style="color:rgba(255,255,255,0.9);font-size:1rem;line-height:1.6;">Catat dan pantau stok pangan secara real-time dengan akurasi tinggi.</p>
         </div>
-        <div class="card" style="text-align:center;padding:32px;">
-            <div style="width:64px;height:64px;border-radius:var(--radius-lg);background:#fff8e1;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
-                <span class="material-symbols-outlined" style="font-size:32px;color:var(--secondary);">local_shipping</span>
+        <!-- Fitur 2 -->
+        <div class="card" style="text-align:center;padding:48px 32px;background:var(--primary);color:#fff;border:none;border-radius:24px;">
+            <div style="width:72px;height:72px;border-radius:20px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;backdrop-filter:blur(4px);">
+                <span class="material-symbols-outlined" style="font-size:32px;color:#fff;">local_shipping</span>
             </div>
-            <h3 style="font-size:1.25rem;font-weight:600;margin-bottom:8px;">Distribusi</h3>
-            <p style="color:var(--on-surface-variant);font-size:0.9375rem;">Lacak pengiriman dari gudang ke tujuan dengan status real-time.</p>
+            <h3 style="font-size:1.5rem;font-weight:700;margin-bottom:12px;">Distribusi</h3>
+            <p style="color:rgba(255,255,255,0.9);font-size:1rem;line-height:1.6;">Lacak pengiriman dari gudang ke tujuan dengan status real-time.</p>
         </div>
-        <div class="card" style="text-align:center;padding:32px;">
-            <div style="width:64px;height:64px;border-radius:var(--radius-lg);background:#e3f2fd;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
-                <span class="material-symbols-outlined" style="font-size:32px;color:#1565c0;">smart_toy</span>
+        <!-- Fitur 3 -->
+        <div class="card" style="text-align:center;padding:48px 32px;background:var(--primary);color:#fff;border:none;border-radius:24px;">
+            <div style="width:72px;height:72px;border-radius:20px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;backdrop-filter:blur(4px);">
+                <span class="material-symbols-outlined" style="font-size:32px;color:#fff;">smart_toy</span>
             </div>
-            <h3 style="font-size:1.25rem;font-weight:600;margin-bottom:8px;">Chatbot AI</h3>
-            <p style="color:var(--on-surface-variant);font-size:0.9375rem;">Tanya asisten AI untuk rekomendasi pertanian berbasis data.</p>
+            <h3 style="font-size:1.5rem;font-weight:700;margin-bottom:12px;">Chatbot AI</h3>
+            <p style="color:rgba(255,255,255,0.9);font-size:1rem;line-height:1.6;">Tanya asisten AI untuk rekomendasi pertanian berbasis data.</p>
         </div>
     </div>
 </section>
 
 <!-- Cara Kerja -->
-<section id="cara-kerja" style="padding:80px 40px;background:var(--surface-container-low);">
-    <div style="max-width:1200px;margin:0 auto;text-align:center;">
-        <h2 class="text-h2" style="margin-bottom:48px;">Cara Kerja</h2>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:40px;">
-            <div>
-                <div style="width:56px;height:56px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;margin:0 auto 16px;">1</div>
+<section id="cara-kerja" style="background:var(--surface-container-low); border-top: 1px solid var(--outline-variant); border-bottom: 1px solid var(--outline-variant);">
+    <div class="landing-section" style="text-align:center;">
+        <h2 class="text-h2" style="margin-bottom:64px; font-size: 2.5rem; letter-spacing: -0.02em;">Cara Kerja</h2>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:60px;">
+            <div class="step-card">
+                <div class="step-icon">1</div>
                 <h3 style="font-size:1.125rem;font-weight:600;margin-bottom:8px;">Daftar &amp; Login</h3>
                 <p style="color:var(--on-surface-variant);font-size:0.9375rem;">Admin mendaftarkan petani, lalu petani login ke portal mereka.</p>
             </div>
-            <div>
-                <div style="width:56px;height:56px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;margin:0 auto 16px;">2</div>
+            <div class="step-card">
+                <div class="step-icon">2</div>
                 <h3 style="font-size:1.125rem;font-weight:600;margin-bottom:8px;">Catat Stok Panen</h3>
                 <p style="color:var(--on-surface-variant);font-size:0.9375rem;">Petani mencatat hasil panen dan stok langsung dari portal.</p>
             </div>
-            <div>
-                <div style="width:56px;height:56px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;margin:0 auto 16px;">3</div>
+            <div class="step-card">
+                <div class="step-icon">3</div>
                 <h3 style="font-size:1.125rem;font-weight:600;margin-bottom:8px;">Distribusi &amp; Monitor</h3>
                 <p style="color:var(--on-surface-variant);font-size:0.9375rem;">Admin mengelola distribusi dan memantau semua data secara terpusat.</p>
             </div>
@@ -130,9 +134,9 @@
     </div>
     <p style="font-size:0.8125rem;color:var(--outline);">© 2024 SIPANGAN. DIGITAL AGRICULTURE LOGISTICS ENGINE.</p>
     <div class="footer-links">
-        <a href="#">Kebijakan Privasi</a>
-        <a href="#">Syarat &amp; Ketentuan</a>
-        <a href="#">Kontak Kami</a>
+        <a href="#hero">Beranda</a>
+        <a href="#fitur">Fitur</a>
+        <a href="#cara-kerja">Cara Kerja</a>
     </div>
 </footer>
 </body>

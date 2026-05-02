@@ -34,6 +34,10 @@ public class Petani extends BaseEntity {
     @Column(length = 255)
     private String password;
 
+    @Lob
+    @Column(name = "foto_profile", columnDefinition = "LONGTEXT")
+    private String fotoProfile;
+
     @OneToMany(mappedBy = "petani", cascade = CascadeType.ALL)
     private List<StokPangan> stokPanganList;
 

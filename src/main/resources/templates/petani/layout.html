@@ -4,24 +4,20 @@
 <head th:fragment="head(title)">
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title th:text="${title} + ' — Portal Petani SiPangan'">Portal Petani</title>
+    <title th:text="${title} + ' - Portal Petani SiPangan'">Portal Petani</title>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 </head>
 
 <!-- ===== PETANI SIDEBAR ===== -->
-<nav th:fragment="sidebar(active)" class="sidebar">
-    <div class="sidebar-brand">
-        <div class="brand-icon">
-            <span class="material-symbols-outlined" style="color:#fff;font-size:20px;">eco</span>
-        </div>
-        <div>
-            <h2>SiPangan</h2>
-            <div class="brand-sub">Portal Petani Digital</div>
+<nav th:fragment="sidebar(activePage)" class="sidebar">
+    <div class="sidebar-brand" style="padding: 32px 24px;">
+        <div class="logo-wrapper" style="display: flex; align-items: center; justify-content: flex-start; gap: 8px;">
+            <span class="material-symbols-outlined" style="color:#ffb300; font-size:36px; font-variation-settings:'FILL' 1;">eco</span>
+            <h2 style="color:#ffffff; font-size: 1.75rem; font-weight: 800; letter-spacing: -0.5px; margin: 0;">SiPangan</h2>
         </div>
     </div>
-
     <div class="sidebar-nav">
         <a th:href="@{/petani/dashboard}" th:classappend="${active == 'dashboard'} ? 'active'">
             <span class="material-symbols-outlined">dashboard</span> Dashboard
@@ -42,68 +38,350 @@
 
     <div class="sidebar-footer">
         <form th:action="@{/petani/logout}" method="post">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-            <button type="submit" style="display:flex;align-items:center;gap:12px;padding:10px 14px;color:rgba(255,255,255,0.7);font-size:0.9375rem;border:none;background:none;cursor:pointer;width:100%;">
-                <span class="material-symbols-outlined">logout</span> Keluar
+            <button type="submit" class="sidebar-logout-btn">
+                <span class="material-symbols-outlined">logout</span>
+                <span>Keluar Aplikasi</span>
             </button>
         </form>
     </div>
 </nav>
 
 <!-- ===== PETANI TOPBAR ===== -->
-<header th:fragment="topbar" class="topbar">
+<header th:fragment="topbar(breadcrumb)" class="topbar">
     <div class="topbar-left">
-        <div class="input-icon" style="width:300px;">
-            <span class="material-symbols-outlined">search</span>
-            <input type="text" class="form-control" placeholder="Cari..." style="border:none;background:var(--surface-container-low);"/>
-        </div>
+        <button class="icon-btn" onclick="toggleSidebar()" id="menuToggle">
+            <span class="material-symbols-outlined">menu</span>
+        </button>
+        <div class="breadcrumb" th:utext="${breadcrumb}">Dashboard</div>
     </div>
     <div class="topbar-right">
-        <button class="icon-btn"><span class="material-symbols-outlined">notifications</span></button>
-        <button class="icon-btn"><span class="material-symbols-outlined">settings</span></button>
-        <button class="icon-btn"><span class="material-symbols-outlined">help</span></button>
-        <span style="font-size:0.9375rem;font-weight:500;color:var(--on-surface-variant);">Bantuan</span>
-        <div class="avatar">
-            <span class="material-symbols-outlined" style="font-size:20px;">person</span>
+        <button class="icon-btn" onclick="toggleTheme()" title="Ganti Tema">
+            <span class="material-symbols-outlined" id="themeIcon">dark_mode</span>
+        </button>
+        <div class="dropdown" id="notifContainer">
+            <button class="icon-btn" onclick="toggleDropdown('notifContainer')" title="Notifikasi">
+                <span class="material-symbols-outlined">notifications</span>
+                <span class="notif-badge" th:if="${unreadNotifCount > 0}" th:text="${unreadNotifCount}">0</span>
+            </button>
+            <div class="dropdown-menu">
+            <div class="dropdown-header" style="display:flex; justify-content:space-between; align-items:center;">
+                Notifikasi Terbaru
+                <button onclick="markAllRead()" style="background:none; border:none; color:var(--primary); font-size:0.75rem; font-weight:600; cursor:pointer;">Tandai Terbaca</button>
+            </div>
+                <div th:if="${#lists.isEmpty(globalNotifications)}" class="dropdown-item" style="justify-content:center; padding:32px; color:var(--outline);">
+                    Belum ada notifikasi.
+                </div>
+                <div th:each="n : ${globalNotifications}" class="dropdown-item" 
+                     th:onclick="'markAsRead(' + ${n.id} + ', this)'"
+                     th:style="${n.read} ? 'opacity:0.6; cursor:default;' : 'background:rgba(26, 92, 42, 0.04); cursor:pointer;'">
+                    <div style="width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;"
+                         th:styleappend="${n.read} ? 'background:var(--surface-container-low);' : 'background:rgba(26, 92, 42, 0.1);'">
+                        <span class="material-symbols-outlined" th:text="${n.icon}" 
+                              th:style="'font-size:20px; color:' + (${n.read ? 'var(--outline)' : (n.type == 'error' ? 'var(--error)' : n.type == 'warning' ? 'var(--secondary)' : 'var(--primary)')})">inventory_2</span>
+                    </div>
+                    <div style="flex:1;">
+                        <div th:style="${n.read} ? 'font-weight:500; color:var(--on-surface-variant);' : 'font-weight:700; color:var(--on-surface);'" th:text="${n.message}">Pesan Notifikasi</div>
+                        <div style="font-size:0.75rem; color:var(--outline); margin-top:2px;" th:text="${n.relativeTime}">10 menit yang lalu</div>
+                    </div>
+                    <div th:if="${!n.read}" style="width:8px; height:8px; background:var(--primary); border-radius:50%; margin-left:8px;"></div>
+                </div>
+            </div>
+        </div>
+        <a th:href="@{/petani/profile}" class="icon-btn" title="Profil Saya">
+            <span class="material-symbols-outlined">settings</span>
+        </a>
+        <div class="avatar" style="overflow:hidden; display:flex; align-items:center; justify-content:center;">
+            <img th:if="${currentUserPhoto != null}" th:src="${currentUserPhoto}" style="width:100%; height:100%; object-fit:cover;"/>
+            <span th:if="${currentUserPhoto == null}" th:text="${currentUserInitial ?: 'P'}">P</span>
         </div>
     </div>
+
+    <!-- Mobile Overlay & Script -->
+    <div id="sidebarOverlay" onclick="toggleSidebar()" style="position:fixed; inset:0; background:rgba(0,0,0,0.3); z-index:90; display:none;"></div>
+    <script>
+        function toggleTheme() {
+            const root = document.documentElement;
+            const currentTheme = root.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            root.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            document.getElementById('themeIcon').innerText = newTheme === 'dark' ? 'light_mode' : 'dark_mode';
+        }
+
+        async function markAsRead(id, element) {
+            if (element.style.opacity === '0.6') return; 
+            try {
+                const res = await fetch(`/api/notifications/${id}/mark-read`, { method: 'POST' });
+                if (res.ok) {
+                    const data = await res.json();
+                    updateBadge(data.count);
+                    element.style.opacity = '0.6';
+                    element.style.cursor = 'default';
+                    const icon = element.querySelector('.material-symbols-outlined');
+                    if (icon) icon.style.color = 'var(--outline)';
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        async function markAllRead() {
+            try {
+                const res = await fetch('/api/notifications/mark-all-read', { method: 'POST' });
+                if (res.ok) {
+                    updateBadge(0);
+                    document.querySelectorAll('.dropdown-item').forEach(item => {
+                        item.style.opacity = '0.6';
+                        item.style.cursor = 'default';
+                        const icon = item.querySelector('.material-symbols-outlined');
+                        if (icon) icon.style.color = 'var(--outline)';
+                    });
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        function updateBadge(count) {
+            const badgeContainer = document.querySelector('[onclick*="notifContainer"]');
+            if (!badgeContainer) return;
+            let badge = badgeContainer.querySelector('.notif-badge');
+            if (count > 0) {
+                if (!badge) {
+                    badge = document.createElement('span');
+                    badge.className = 'notif-badge';
+                    badgeContainer.appendChild(badge);
+                }
+                badge.innerText = count;
+            } else if (badge) {
+                badge.remove();
+            }
+        }
+
+        async function pollNotifications() {
+            try {
+                const res = await fetch('/api/notifications/unread-count');
+                const data = await res.json();
+                updateBadge(data.count);
+            } catch (err) { console.error(err); }
+        }
+
+        setInterval(pollNotifications, 30000);
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.addEventListener('DOMContentLoaded', () => {
+                const icon = document.getElementById('themeIcon');
+                if (icon) icon.innerText = savedTheme === 'dark' ? 'light_mode' : 'dark_mode';
+            });
+        }
+
+        function toggleDropdown(id) {
+            const container = document.getElementById(id);
+            container.classList.toggle('active');
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.dropdown')) {
+                document.querySelectorAll('.dropdown.active').forEach(d => d.classList.remove('active'));
+            }
+        });
+
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (window.innerWidth <= 768) {
+                const isOpen = sidebar.classList.toggle('open');
+                overlay.style.display = isOpen ? 'block' : 'none';
+                document.body.style.overflow = isOpen ? 'hidden' : '';
+            } else {
+                const isHidden = sidebar.classList.toggle('desktop-hidden');
+                if (isHidden) {
+                    sidebar.style.transform = 'translateX(-100%)';
+                    mainContent.classList.add('full-width');
+                } else {
+                    sidebar.style.transform = 'translateX(0)';
+                    mainContent.classList.remove('full-width');
+                }
+            }
+        }
+        
+        window.addEventListener('resize', () => {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (window.innerWidth > 768) {
+                if (sidebar) sidebar.style.transform = sidebar.classList.contains('desktop-hidden') ? 'translateX(-100%)' : 'translateX(0)';
+                if (overlay) overlay.style.display = 'none';
+                document.body.style.overflow = '';
+            } else {
+                if (sidebar) {
+                    sidebar.style.transform = sidebar.classList.contains('open') ? 'translateX(0)' : 'translateX(-100%)';
+                }
+            }
+        });
+    </script>
 </header>
 
-<!-- ===== CENTERED POPUP FLASH MESSAGE ===== -->
+<!-- ===== PREMIUM CENTERED POPUP FLASH MESSAGE ===== -->
 <div th:fragment="flash">
-    <div th:if="${successMessage}" class="flash-overlay" onclick="this.remove()">
-        <div class="flash-popup flash-success">
-            <span class="material-symbols-outlined" style="font-size:48px;color:#2e7d32;">check_circle</span>
-            <h3 style="margin:12px 0 4px;font-size:1.25rem;">Berhasil!</h3>
-            <p th:text="${successMessage}" style="color:var(--on-surface-variant);margin-bottom:16px;"></p>
-            <button class="btn btn-primary btn-sm" onclick="this.closest('.flash-overlay').remove()">OK</button>
+    <!-- Success Messages -->
+    <div th:if="${successMessage != null or param.successMsg != null}" class="flash-overlay" id="flashSuccess" onclick="closeFlash(this)">
+        <div class="flash-popup success">
+            <div class="flash-icon">
+                <span class="material-symbols-outlined">check_circle</span>
+            </div>
+            <div class="flash-content">
+                <h3>Berhasil!</h3>
+                <p th:text="${successMessage ?: param.successMsg}">Status berhasil diperbarui.</p>
+            </div>
+            <div class="flash-progress">
+                <div class="bar"></div>
+            </div>
         </div>
     </div>
-    <div th:if="${errorMessage}" class="flash-overlay" onclick="this.remove()">
-        <div class="flash-popup flash-error">
-            <span class="material-symbols-outlined" style="font-size:48px;color:#c62828;">error</span>
-            <h3 style="margin:12px 0 4px;font-size:1.25rem;">Gagal!</h3>
-            <p th:text="${errorMessage}" style="color:var(--on-surface-variant);margin-bottom:16px;"></p>
-            <button class="btn btn-danger btn-sm" onclick="this.closest('.flash-overlay').remove()">OK</button>
+    <!-- Error Messages -->
+    <div th:if="${errorMessage != null or param.errorMsg != null}" class="flash-overlay" id="flashError" onclick="closeFlash(this)">
+        <div class="flash-popup error">
+            <div class="flash-icon">
+                <span class="material-symbols-outlined">error</span>
+            </div>
+            <div class="flash-content">
+                <h3>Terjadi Kesalahan</h3>
+                <p th:text="${errorMessage ?: param.errorMsg}">Ada kendala sistem.</p>
+            </div>
+            <div class="flash-progress">
+                <div class="bar"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function closeFlash(el) {
+            el.style.opacity = '0';
+            setTimeout(() => el.remove(), 300);
+        }
+        document.querySelectorAll('.flash-overlay').forEach(flash => {
+            setTimeout(() => closeFlash(flash), 5000);
+        });
+    </script>
+</div>
+
+<!-- ===== CUSTOM CONFIRM MODAL ===== -->
+<div th:fragment="confirmModal">
+<div id="customConfirm" class="confirm-overlay">
+    <div class="confirm-box">
+        <div class="confirm-header">
+            <div class="icon" id="confirmIcon"><span class="material-symbols-outlined">help</span></div>
+            <div class="confirm-title" id="confirmTitle">Konfirmasi</div>
+        </div>
+        <div class="confirm-body" id="confirmMessage">Apakah Anda yakin ingin melanjutkan?</div>
+        <div class="confirm-footer">
+            <button class="btn btn-secondary btn-sm" onclick="closeConfirm(false)">Batal</button>
+            <button class="btn btn-primary btn-sm" id="confirmOkBtn">Ya, Lanjutkan</button>
         </div>
     </div>
 </div>
 
+<script>
+    let confirmResolve;
+    function showCustomConfirm(message, options = {}) {
+        const overlay = document.getElementById('customConfirm');
+        const msgEl = document.getElementById('confirmMessage');
+        const okBtn = document.getElementById('confirmOkBtn');
+        const titleEl = document.getElementById('confirmTitle');
+        const iconBox = document.getElementById('confirmIcon');
+        
+        const isDelete = options.type === 'delete';
+        
+        msgEl.innerText = message;
+        titleEl.innerText = options.title || (isDelete ? 'Hapus Data' : 'Konfirmasi');
+        okBtn.innerText = options.okText || 'Ya, Lanjutkan';
+        okBtn.style.background = isDelete ? 'var(--error)' : 'var(--primary)';
+        okBtn.style.borderColor = isDelete ? 'var(--error)' : 'var(--primary)';
+        iconBox.style.background = isDelete ? 'var(--error-container)' : 'var(--primary-light)';
+        iconBox.style.color = isDelete ? 'var(--error)' : 'var(--primary)';
+        
+        overlay.classList.add('show');
+        
+        return new Promise((resolve) => {
+            confirmResolve = resolve;
+            okBtn.onclick = () => {
+                overlay.classList.remove('show');
+                resolve(true);
+            };
+        });
+    }
+
+    function closeConfirm(val) {
+        document.getElementById('customConfirm').classList.remove('show');
+        if (confirmResolve) confirmResolve(val);
+    }
+
+    async function handleConfirm(event, message, type = 'confirm') {
+        event.preventDefault();
+        const ok = await showCustomConfirm(message, { type: type });
+        if (ok) {
+            const form = event.target.closest('form');
+            if (form) form.submit();
+            else if (event.target.tagName === 'A') window.location.href = event.target.href;
+        }
+    }
+</script>
+</div>
+
 <style th:fragment="flashStyle">
 .flash-overlay {
-    position:fixed;top:0;left:0;width:100%;height:100%;
-    background:rgba(0,0,0,0.4);z-index:9999;
-    display:flex;align-items:center;justify-content:center;
-    animation:fadeIn 0.3s ease;
+    position: fixed; top: 24px; left: 50%; transform: translateX(-50%); z-index: 10000;
+    width: 100%; max-width: 420px; padding: 0 20px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
 }
 .flash-popup {
-    background:#fff;border-radius:16px;padding:32px 40px;
-    text-align:center;min-width:320px;max-width:420px;
-    box-shadow:0 16px 48px rgba(0,0,0,0.2);
-    animation:popIn 0.3s ease;
+    background: var(--surface); border-radius: 20px; padding: 16px 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12), 0 0 0 1px var(--outline-variant);
+    display: flex; align-items: center; gap: 16px; position: relative;
+    overflow: hidden; pointer-events: auto;
+    animation: toastIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    backdrop-filter: blur(10px);
 }
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes popIn{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}
+.flash-icon {
+    width: 48px; height: 48px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.flash-icon span { font-size: 28px; font-variation-settings: 'FILL' 1; }
+
+.flash-popup.success .flash-icon { background: rgba(16, 185, 129, 0.12); color: #10b981; }
+.flash-popup.success { border-left: 5px solid #10b981; }
+
+.flash-popup.error .flash-icon { background: rgba(239, 68, 68, 0.12); color: #ef4444; }
+.flash-popup.error { border-left: 5px solid #ef4444; }
+
+.flash-content { flex: 1; }
+.flash-content h3 { font-size: 1rem; font-weight: 800; color: var(--on-surface); margin: 0; }
+.flash-content p { color: var(--on-surface-variant); font-size: 0.875rem; margin: 2px 0 0; font-weight: 500; }
+
+.flash-close { cursor: pointer; color: var(--outline); transition: color 0.2s; }
+.flash-close:hover { color: var(--on-surface); }
+
+.flash-progress { position: absolute; bottom: 0; left: 0; height: 3px; width: 100%; background: var(--surface-container-low); }
+.flash-progress .bar { height: 100%; }
+.flash-popup.success .bar { background: #10b981; animation: shrink 4s linear forwards; }
+.flash-popup.error .bar { background: #ef4444; animation: shrink 4s linear forwards; }
+
+@keyframes toastIn {
+    from { transform: translateY(-40px) scale(0.9); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+}
+@keyframes shrink { from { width: 100%; } to { width: 0%; } }
+
+/* Additional Responsive Fixes */
+@media (max-width: 768px) {
+    #menuToggle { display: flex !important; margin-right: 12px; }
+    .topbar { padding: 0 16px; }
+    .page-content { padding: 16px; }
+    .stat-grid { grid-template-columns: 1fr !important; }
+    .welcome-banner { padding: 20px !important; }
+}
 </style>
 
 </html>

@@ -5,6 +5,9 @@ spring:
   application:
     name: sipangan
 
+  session:
+    store-type: none   # Disable Spring Session — prevents conflict with Remember Me cookies
+
   datasource:
     url: jdbc:mysql://localhost:3306/sipangan_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=Asia/Jakarta&allowPublicKeyRetrieval=true
     username: root
@@ -29,3 +32,7 @@ logging:
   level:
     com.foodtrack: DEBUG
     org.springframework.security: WARN
+
+gemini:
+  api:
+    key: "AIzaSyA73rKLWhVqKK3BhaxMuYZB_av8Mek-h0s"

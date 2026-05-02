@@ -20,6 +20,7 @@ public class Distribusi extends BaseEntity {
     @Column(nullable = false, length = 200)
     private String tujuan;
 
+    @Builder.Default
     @Column(name = "status_pengiriman", length = 20)
     private String statusPengiriman = "Menunggu";
 
