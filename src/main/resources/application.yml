@@ -6,12 +6,12 @@ spring:
     name: sipangan
 
   session:
-    store-type: none   # Disable Spring Session — prevents conflict with Remember Me cookies
+    store-type: none # Disable Spring Session — prevents conflict with Remember Me cookies
 
   datasource:
     url: jdbc:mysql://localhost:3306/sipangan_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=Asia/Jakarta&allowPublicKeyRetrieval=true
     username: root
-    password: 
+    password: tarikolot
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -35,4 +35,4 @@ logging:
 
 gemini:
   api:
-    key: "AIzaSyA73rKLWhVqKK3BhaxMuYZB_av8Mek-h0s"
+    key: "AIzaSyAlTspesomqclH9V7RsxyAGSWaVYa8O7do"
