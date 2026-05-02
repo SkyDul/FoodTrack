@@ -33,7 +33,7 @@ public class DataSeeder implements CommandLineRunner {
         Admin admin = Admin.builder()
             .username("admin")
             .password(passwordEncoder.encode("admin123"))
-            .email("admin@sipangan.id")
+            .email("admin@foodtrack.id")
             .build();
         adminRepository.save(admin);
 

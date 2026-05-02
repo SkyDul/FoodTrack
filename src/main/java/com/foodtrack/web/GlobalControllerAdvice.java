@@ -27,6 +27,7 @@ public class GlobalControllerAdvice {
         if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
             String name = auth.getName();
             model.addAttribute("currentUserName", name);
+            model.addAttribute("currentUsername", name);
             model.addAttribute("currentUserInitial", name != null && !name.isEmpty() ? name.substring(0, 1).toUpperCase() : "U");
             
             // Check roles

@@ -48,7 +48,7 @@
                             </div>
                             <div>
                                 <div style="font-size: 0.75rem; color: var(--outline);">Terdaftar Sejak</div>
-                                <div style="font-size: 0.875rem; font-weight: 600; color: var(--on-surface);">Januari 2024</div>
+                                <div style="font-size: 0.875rem; font-weight: 600; color: var(--on-surface);" th:text="${petani.createdAt != null ? #temporals.format(petani.createdAt, 'MMMM yyyy') : 'Baru Terdaftar'}">Januari 2024</div>
                             </div>
                         </div>
                         <button type="button" th:if="${petani.fotoProfile != null}" onclick="confirmDeletePhoto()" 
