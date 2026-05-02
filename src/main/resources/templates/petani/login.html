@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Login Petani — SiPangan</title>
+    <title>Login Petani — FoodTrack</title>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -191,7 +191,7 @@
 
         <div class="brand">
             <span class="material-symbols-outlined" style="color:#ffb300; font-size:36px; font-variation-settings:'FILL' 1;">eco</span>
-            <h1 class="brand-name" style="color:#1a5c2a; font-weight:800; font-size:1.75rem; letter-spacing:-0.5px; margin:0;">SiPangan</h1>
+            <h1 class="brand-name" style="color:#1a5c2a; font-weight:800; font-size:1.75rem; letter-spacing:-0.5px; margin:0;">FoodTrack</h1>
         </div>
 
         <div class="form-header">
@@ -222,7 +222,7 @@
                 <label class="remember-me">
                     <input type="checkbox" name="remember-me"/> Ingat Saya
                 </label>
-                <a href="javascript:alert('Silakan hubungi Kelompok Tani atau Admin untuk reset password.')" class="forgot-pwd">Lupa Password?</a>
+                <a th:href="@{/lupa-password}" class="forgot-pwd">Lupa Password?</a>
             </div>
 
             <button type="submit" class="btn-login">Masuk Portal</button>
@@ -255,21 +255,21 @@
             const passwordInput = document.querySelector('input[name="password"]');
             const rememberCheckbox = document.querySelector('input[name="remember-me"]');
             
-            if (localStorage.getItem('sipangan_petani_remember') === 'true') {
-                usernameInput.value = localStorage.getItem('sipangan_petani_username') || '';
-                passwordInput.value = localStorage.getItem('sipangan_petani_password') || '';
+            if (localStorage.getItem('foodtrack_petani_remember') === 'true') {
+                usernameInput.value = localStorage.getItem('foodtrack_petani_username') || '';
+                passwordInput.value = localStorage.getItem('foodtrack_petani_password') || '';
                 rememberCheckbox.checked = true;
             }
 
             document.querySelector('form').addEventListener('submit', () => {
                 if (rememberCheckbox.checked) {
-                    localStorage.setItem('sipangan_petani_remember', 'true');
-                    localStorage.setItem('sipangan_petani_username', usernameInput.value);
-                    localStorage.setItem('sipangan_petani_password', passwordInput.value);
+                    localStorage.setItem('foodtrack_petani_remember', 'true');
+                    localStorage.setItem('foodtrack_petani_username', usernameInput.value);
+                    localStorage.setItem('foodtrack_petani_password', passwordInput.value);
                 } else {
-                    localStorage.removeItem('sipangan_petani_remember');
-                    localStorage.removeItem('sipangan_petani_username');
-                    localStorage.removeItem('sipangan_petani_password');
+                    localStorage.removeItem('foodtrack_petani_remember');
+                    localStorage.removeItem('foodtrack_petani_username');
+                    localStorage.removeItem('foodtrack_petani_password');
                 }
             });
         });

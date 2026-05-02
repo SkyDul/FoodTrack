@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: sipangan
+    name: foodtrack
 
   session:
     store-type: none   # Disable Spring Session — prevents conflict with Remember Me cookies
@@ -35,4 +35,4 @@ logging:
 
 gemini:
   api:
-    key: "AIzaSyA73rKLWhVqKK3BhaxMuYZB_av8Mek-h0s"
+    key: "AIzaSyD-sXnNiooGtu459X6bCVMbuQ3mHqzKQDg"
