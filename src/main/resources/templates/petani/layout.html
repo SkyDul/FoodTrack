@@ -4,7 +4,7 @@
 <head th:fragment="head(title)">
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title th:text="${title} + ' - Portal Petani SiPangan'">Portal Petani</title>
+    <title th:text="${title} + ' - Portal Petani FoodTrack'">Portal Petani</title>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -15,7 +15,7 @@
     <div class="sidebar-brand" style="padding: 32px 24px;">
         <div class="logo-wrapper" style="display: flex; align-items: center; justify-content: flex-start; gap: 8px;">
             <span class="material-symbols-outlined" style="color:#ffb300; font-size:36px; font-variation-settings:'FILL' 1;">eco</span>
-            <h2 style="color:#ffffff; font-size: 1.75rem; font-weight: 800; letter-spacing: -0.5px; margin: 0;">SiPangan</h2>
+            <h2 style="color:#ffffff; font-size: 1.75rem; font-weight: 800; letter-spacing: -0.5px; margin: 0;">FoodTrack</h2>
         </div>
     </div>
     <div class="sidebar-nav">
@@ -35,6 +35,7 @@
             <span class="material-symbols-outlined">smart_toy</span> Asisten Tani AI
         </a>
     </div>
+
 
     <div class="sidebar-footer">
         <form th:action="@{/petani/logout}" method="post">
@@ -87,12 +88,28 @@
                 </div>
             </div>
         </div>
-        <a th:href="@{/petani/profile}" class="icon-btn" title="Profil Saya">
-            <span class="material-symbols-outlined">settings</span>
-        </a>
-        <div class="avatar" style="overflow:hidden; display:flex; align-items:center; justify-content:center;">
-            <img th:if="${currentUserPhoto != null}" th:src="${currentUserPhoto}" style="width:100%; height:100%; object-fit:cover;"/>
-            <span th:if="${currentUserPhoto == null}" th:text="${currentUserInitial ?: 'P'}">P</span>
+
+        <div class="dropdown profile-dropdown" id="profileContainer">
+            <div class="profile-pill" onclick="toggleDropdown('profileContainer')">
+                <div class="pill-avatar">
+                    <img th:if="${currentUserPhoto != null}" th:src="${currentUserPhoto}"/>
+                    <span th:if="${currentUserPhoto == null}" th:text="${currentUserInitial ?: 'P'}">P</span>
+                </div>
+                <div class="pill-info">
+                    <div class="pill-name" th:text="${#authentication.name}">Petani</div>
+                    <div class="pill-role">Petani SiPangan</div>
+                </div>
+                <span class="material-symbols-outlined" style="font-size: 18px; color: var(--outline);">expand_more</span>
+            </div>
+            <div class="dropdown-menu">
+                <div class="dropdown-header" style="background:none; color:var(--on-surface); padding: 12px 16px 4px;">
+                    Akun Saya
+                </div>
+                <a th:href="@{/petani/profile}" class="dropdown-item">
+                    <span class="material-symbols-outlined">person_filled</span>
+                    <span>Profil Saya</span>
+                </a>
+            </div>
         </div>
     </div>
 

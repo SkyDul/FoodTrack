@@ -14,14 +14,14 @@
             <div class="welcome-banner" style="background: linear-gradient(135deg, #096430, #148f47); border-radius: 24px; padding: 24px 32px; color: #fff; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(9, 100, 48, 0.15); position: relative; overflow: hidden; display: flex; justify-content: space-between; align-items: center;">
                 <div style="position: absolute; inset: 0; opacity: 0.1; background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 20px 20px;"></div>
                 <div style="position: relative; z-index: 2;">
-                    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 8px;">Selamat datang kembali, <span th:text="${currentUserName ?: petaniName} ?: 'Petani'">Budi</span>! 👋</h2>
+                    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 8px;">Selamat datang kembali, <span th:text="${currentUserName ?: petaniName} ?: 'Petani'">Budi</span>!</h2>
                     <p style="opacity: 0.9; font-size: 0.9375rem; margin-bottom: 20px; max-width: 400px;">Pantau hasil panen Anda dan kelola distribusi pangan dengan lebih efisien hari ini.</p>
                     <div style="display: flex; gap: 12px;">
                         <a th:href="@{/petani/stok/tambah}" style="background: #fff; color: #096430; padding: 8px 20px; border-radius: 12px; font-weight: 700; font-size: 0.875rem; text-decoration: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                             <span class="material-symbols-outlined" style="font-size: 18px;">add_circle</span> Catat Panen
                         </a>
                         <a th:href="@{/petani/chatbot}" style="background: rgba(255,255,255,0.15); color: #fff; padding: 8px 20px; border-radius: 12px; font-weight: 600; font-size: 0.875rem; text-decoration: none; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.2);">
-                            <span class="material-symbols-outlined" style="font-size: 18px;">smart_toy</span> Tanya AI
+                            <span class="material-symbols-outlined" style="font-size: 18px;">support_agent</span> Tanya AI
                         </a>
                     </div>
                 </div>
@@ -103,11 +103,11 @@
                             </div>
                         </div>
                         <div style="width: 48px; height: 48px; border-radius: 16px; background: rgba(59, 130, 246, 0.1); color: #3b82f6; display: flex; align-items: center; justify-content: center;">
-                            <span class="material-symbols-outlined" style="font-size: 24px;">psychology</span>
+                            <span class="material-symbols-outlined" style="font-size: 24px;">chat_bubble</span>
                         </div>
                     </div>
                     <div style="margin-top: 12px; font-size: 0.75rem; color: #3b82f6; font-weight: 600; display: flex; align-items: center; gap: 4px;">
-                        <span class="material-symbols-outlined" style="font-size: 14px;">auto_awesome</span> Asisten Cerdas Aktif
+                        <span class="material-symbols-outlined" style="font-size: 14px;">tips_and_updates</span> Asisten Cerdas Aktif
                     </div>
                 </div>
             </div>
@@ -163,7 +163,7 @@
                         <div style="position: absolute; right: -20px; top: -20px; width: 150px; height: 150px; background: rgba(255,255,255,0.05); border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);"></div>
                         <div style="position: relative; z-index: 2;">
                             <div style="width:52px;height:52px;border-radius:14px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;margin-bottom:24px; border:1px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px);">
-                                <span class="material-symbols-outlined" style="font-size:32px; color: #feae2c; font-variation-settings: 'FILL' 1;">smart_toy</span>
+                                <span class="material-symbols-outlined" style="font-size:32px; color: #feae2c; font-variation-settings: 'FILL' 1;">support_agent</span>
                             </div>
                             <h3 style="font-size:1.35rem; font-weight:800; margin-bottom:12px; line-height:1.2; letter-spacing: -0.5px;">Butuh Saran Pertanian?</h3>
                             <p style="font-size:0.875rem; opacity:0.9; line-height:1.6; margin-bottom:24px;">Asisten AI kami siap membantu Anda dengan teknik tanam, hama, hingga harga pasar terkini.</p>

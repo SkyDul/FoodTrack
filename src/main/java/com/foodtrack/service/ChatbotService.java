@@ -63,7 +63,7 @@ public class ChatbotService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         
         Map<String, Object> parts = new HashMap<>();
-        parts.put("text", "Anda adalah Asisten Pakar Pertanian SiPangan. Anda ahli dalam ketahanan pangan Indonesia, teknik budidaya tanaman lokal (padi, jagung, kedelai, cabai, dll), dan solusi ramah lingkungan. " +
+        parts.put("text", "Anda adalah Asisten Pakar Pertanian FoodTrack. Anda ahli dalam ketahanan pangan Indonesia, teknik budidaya tanaman lokal (padi, jagung, kedelai, cabai, dll), dan solusi ramah lingkungan. " +
                          "Jawablah dalam Bahasa Indonesia yang profesional, empatik, dan praktis. Fokuslah pada solusi yang bisa diterapkan petani di lahan mereka: " + prompt);
         
         Map<String, Object> content = new HashMap<>();
@@ -90,10 +90,10 @@ public class ChatbotService {
             log.error("Gemini API returned unexpected response structure: {}", body);
         } catch (org.springframework.web.client.HttpStatusCodeException e) {
             log.error("Gemini API HTTP Error: {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
-            return "Maaf, asisten AI sedang mengoptimalkan jawaban. Sebagai saran ahli SiPangan: " + getSimulatedResponse(prompt);
+            return "Maaf, asisten AI sedang mengoptimalkan jawaban. Sebagai saran ahli FoodTrack: " + getSimulatedResponse(prompt);
         } catch (Exception e) {
             log.error("Gemini API General Error ({}): {}", e.getClass().getSimpleName(), e.getMessage());
-            return "Maaf, asisten AI sedang beristirahat sejenak. Sebagai saran ahli SiPangan: " + getSimulatedResponse(prompt);
+            return "Maaf, asisten AI sedang beristirahat sejenak. Sebagai saran ahli FoodTrack: " + getSimulatedResponse(prompt);
         }
         return getSimulatedResponse(prompt);
     }
@@ -127,13 +127,13 @@ public class ChatbotService {
         
         // Priority 4: Harvest/Market (General crop names)
         if (p.contains("panen") || p.contains("harga") || p.contains("pasar") || p.contains("untung") || p.contains("jual")) {
-            return "Pastikan memanen saat kematangan optimal (90% gabah menguning untuk padi). Untuk harga terbaik, pantau harga pasar melalui SiPangan atau jual melalui koperasi kelompok tani untuk memperkuat posisi tawar Anda.";
+            return "Pastikan memanen saat kematangan optimal (90% gabah menguning untuk padi). Untuk harga terbaik, pantau harga pasar melalui FoodTrack atau jual melalui koperasi kelompok tani untuk memperkuat posisi tawar Anda.";
         }
         
         if (p.contains("tanam") || p.contains("bibit") || p.contains("unggul") || p.contains("padi") || p.contains("jagung")) {
             return "Gunakan benih bersertifikat (seperti Inpari untuk padi). Benih unggul memiliki daya tahan lebih baik terhadap perubahan iklim dan serangan penyakit lokal di lahan Indonesia.";
         }
 
-        return "Sebagai mitra digital Anda, SiPangan menyarankan untuk selalu menjaga kualitas hasil panen dan kebersihan lahan. Pertanian yang cerdas dimulai dari pencatatan data yang baik di aplikasi ini. Ada hal spesifik lain yang ingin Anda konsultasikan?";
+        return "Sebagai mitra digital Anda, FoodTrack menyarankan untuk selalu menjaga kualitas hasil panen dan kebersihan lahan. Pertanian yang cerdas dimulai dari pencatatan data yang baik di aplikasi ini. Ada hal spesifik lain yang ingin Anda konsultasikan?";
     }
 }

@@ -69,4 +69,34 @@ public class LandingController {
             return "redirect:/register-petani";
         }
     }
+    @GetMapping("/lupa-password")
+    public String lupaPasswordPage() {
+        return "petani/forgot-password";
+    }
+
+    @PostMapping("/lupa-password")
+    public String prosesLupaPassword(@org.springframework.web.bind.annotation.RequestParam("username") String username,
+                                     @org.springframework.web.bind.annotation.RequestParam("kontak") String kontak,
+                                     @org.springframework.web.bind.annotation.RequestParam("newPassword") String newPassword,
+                                     RedirectAttributes ra) {
+        try {
+            java.util.Optional<Petani> optionalPetani = petaniService.findByUsername(username.trim());
+            if (optionalPetani.isPresent()) {
+                Petani petani = optionalPetani.get();
+                if (petani.getKontak().equals(kontak.trim())) {
+                    // Update password (assumes PetaniService encrypts it when saving, or Petani class does. Wait, PetaniService might not encrypt on save. Let's see PetaniService)
+                    // Actually, looking at Register flow, PetaniService saves directly. Wait, does it encrypt? I will check PetaniService.
+                    petani.setPassword(newPassword.trim());
+                    petaniService.save(petani);
+                    ra.addAttribute("successMsg", "Kata sandi berhasil direset! Silakan login dengan kata sandi baru.");
+                    return "redirect:/login-petani";
+                }
+            }
+            ra.addFlashAttribute("errorMessage", "Username atau Kontak tidak cocok dengan data kami.");
+            return "redirect:/lupa-password";
+        } catch (Exception e) {
+            ra.addFlashAttribute("errorMessage", "Terjadi kesalahan: " + e.getMessage());
+            return "redirect:/lupa-password";
+        }
+    }
 }

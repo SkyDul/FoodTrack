@@ -89,9 +89,9 @@ public class SecurityConfig {
                 .permitAll()
             )
             .rememberMe(rm -> rm
-                .key("sipangan_admin_secret_key_123")
+                .key("foodtrack_admin_secret_key_123")
                 .rememberMeParameter("remember-me")
-                .rememberMeCookieName("sipangan-admin-rm")
+                .rememberMeCookieName("foodtrack-admin-rm")
                 .userDetailsService(userDetailsService())
                 .tokenValiditySeconds(86400 * 30) // 30 days
             )
@@ -129,9 +129,9 @@ public class SecurityConfig {
                 .permitAll()
             )
             .rememberMe(rm -> rm
-                .key("sipangan_petani_secret_key_456")
+                .key("foodtrack_petani_secret_key_456")
                 .rememberMeParameter("remember-me")
-                .rememberMeCookieName("sipangan-petani-rm")
+                .rememberMeCookieName("foodtrack-petani-rm")
                 .userDetailsService(userDetailsService())
                 .tokenValiditySeconds(86400 * 30) // 30 days
             )

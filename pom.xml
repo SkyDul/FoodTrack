@@ -10,10 +10,10 @@
         <relativePath/>
     </parent>
     <groupId>com.foodtrack</groupId>
-    <artifactId>sipangan</artifactId>
+    <artifactId>foodtrack</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>SiPangan</name>
-    <description>SiPangan - Smart Food Security System</description>
+    <name>FoodTrack</name>
+    <description>FoodTrack - Smart Food Security System</description>
 
     <properties>
         <java.version>17</java.version>
