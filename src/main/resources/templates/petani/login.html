@@ -8,149 +8,306 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <style>
+        :root {
+            --primary-green: #1a5c2a;
+            --accent-yellow: #ffb300;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
             font-family: 'Inter', sans-serif;
-            margin: 0;
-            background: #1a5c2a;
+            background-color: var(--primary-green);
+            background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1.5px, transparent 1.5px);
+            background-size: 40px 40px;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
-        .login-card {
-            background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+        .login-wrapper {
             width: 100%;
-            max-width: 400px;
-            padding: 32px;
-            animation: fadeIn 0.5s ease;
+            max-width: 880px;
+            background: #fff;
+            border-radius: 24px;
+            overflow: hidden;
+            display: flex;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.35);
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
         }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-        
-        .brand {
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Illustration Side */
+        .login-illustration {
+            width: 42%;
+            position: relative;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 40px;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .illustration-bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+            transition: transform 10s linear;
+        }
+
+        .login-wrapper:hover .illustration-bg {
+            transform: scale(1.1);
+        }
+
+        .illustration-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(26, 92, 42, 0.9), rgba(26, 92, 42, 0.2));
+            z-index: 1;
+        }
+
+        .illustration-content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .brand-hub {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 24px;
-            justify-content: center;
+            gap: 10px;
         }
+
         .brand-icon {
-            width: 40px; height: 40px;
-            background: #096430;
-            border-radius: 10px;
+            width: 32px;
+            height: 32px;
+            background: var(--accent-yellow);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
+            color: var(--primary-green);
         }
+
         .brand-name {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 800;
-            color: #1e293b;
             letter-spacing: -0.5px;
-            margin: 0;
         }
-        .brand-name span { color: #096430; }
-        
-        .form-header { text-align: center; margin-bottom: 24px; }
-        .form-header h1 { font-size: 1.125rem; font-weight: 700; color: #1e293b; margin: 0; }
-        
-        .form-group { margin-bottom: 16px; }
+
+        .illustration-footer h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .illustration-footer p {
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            opacity: 0.9;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Form Side */
+        .login-form-side {
+            flex: 1;
+            padding: 48px 56px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: #fff;
+        }
+
+        .form-header {
+            margin-bottom: 40px;
+        }
+
+        .form-header h1 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .form-header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
         .form-label {
             display: block;
             font-size: 0.75rem;
-            font-weight: 600;
-            color: #64748b;
-            margin-bottom: 6px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper .material-symbols-outlined {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 20px;
+        }
+
         .form-control {
             width: 100%;
-            height: 44px;
+            height: 50px;
             padding: 0 16px;
-            border-radius: 10px;
-            border: 1px solid #e2e8f0;
+            padding-right: 48px;
+            border-radius: 12px;
+            border: 2px solid #f1f5f9;
             background: #f8fafc;
             font-size: 0.9375rem;
-            transition: all 0.2s;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
         }
+
         .form-control:focus {
-            border-color: #1a5c2a;
-            background: #fff;
             outline: none;
-            box-shadow: 0 0 0 3px rgba(26, 92, 42, 0.12);
+            border-color: var(--primary-green);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(26, 92, 42, 0.1);
         }
-        
-        .form-options {
+
+        .form-actions {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            font-size: 0.8125rem;
+            margin-bottom: 32px;
+            font-size: 0.875rem;
         }
+
         .remember-me {
             display: flex;
             align-items: center;
             gap: 8px;
-            color: #64748b;
+            color: var(--text-dark);
+            font-weight: 500;
             cursor: pointer;
         }
+
+        .remember-me input {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            accent-color: var(--primary-green);
+        }
+
         .forgot-pwd {
-            color: #1a5c2a;
-            font-weight: 600;
+            color: var(--text-dark);
+            font-weight: 700;
             text-decoration: none;
         }
-        .forgot-pwd:hover { text-decoration: underline; }
 
-        .btn-login {
+        .btn-submit {
             width: 100%;
-            height: 48px;
-            background: #1a5c2a;
+            height: 52px;
+            background: #062f18;
             color: #fff;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 0.9375rem;
             font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(6, 47, 24, 0.2);
         }
-        .btn-login:hover { background: #2e7d32; transform: translateY(-1px); }
-        
+
+        .btn-submit:hover {
+            background: #0a4d27;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(6, 47, 24, 0.3);
+        }
+
         .register-link {
             text-align: center;
-            margin-top: 16px;
+            margin-top: 20px;
             font-size: 0.875rem;
-            color: #64748b;
+            color: var(--text-muted);
         }
+
         .register-link a {
-            color: #1a5c2a;
+            color: var(--primary-green);
             font-weight: 700;
             text-decoration: none;
         }
 
-        .footer-links {
-            margin-top: 24px;
-            padding-top: 16px;
-            border-top: 1px solid #f1f5f9;
-            text-align: center;
-        }
         .back-link {
-            display: inline-flex;
+            margin-top: 40px;
+            display: flex;
             align-items: center;
-            gap: 6px;
-            color: #64748b;
+            gap: 8px;
+            color: var(--text-dark);
             text-decoration: none;
-            font-size: 0.8125rem;
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 0.9375rem;
+            transition: color 0.2s;
         }
-        .back-link:hover { color: #1a5c2a; }
-        
+
+        .back-link:hover {
+            color: var(--primary-green);
+        }
+
+        .help-fab {
+            position: absolute;
+            right: 24px;
+            bottom: 24px;
+            width: 48px;
+            height: 48px;
+            background: var(--accent-yellow);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-green);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .help-fab:hover {
+            transform: scale(1.1) rotate(15deg);
+        }
+
+        /* Flash Popup */
         .flash-overlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 10000;
             display: flex; align-items: center; justify-content: center;
-            backdrop-filter: blur(8px); transition: opacity 0.3s ease;
-            animation: fadeInOverlay 0.3s ease;
+            backdrop-filter: blur(8px); animation: fadeInOverlay 0.3s ease;
         }
         .flash-popup {
             background: #fff; border-radius: 24px; padding: 0;
@@ -158,23 +315,58 @@
             box-shadow: 0 24px 64px rgba(0,0,0,0.2);
             animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex; flex-direction: column; align-items: center;
-            border: 1px solid #f1f5f9;
         }
         .flash-icon-box {
             width: 100%; padding: 40px 0 24px; display: flex; justify-content: center;
             background: #f8fafc; border-bottom: 1px solid #f1f5f9;
         }
-        .flash-icon-box span { font-size: 72px; color: #1a5c2a; }
+        .flash-icon-box span { font-size: 72px; color: var(--primary-green); }
         .flash-content { padding: 32px; text-align: center; }
-        .flash-content h3 { font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 8px; }
-        .flash-content p { color: #64748b; font-size: 0.9375rem; line-height: 1.6; margin-bottom: 24px; }
+        .flash-content h3 { font-size: 1.5rem; font-weight: 800; color: var(--text-dark); margin-bottom: 8px; }
+        .flash-content p { color: var(--text-muted); font-size: 0.9375rem; line-height: 1.6; margin-bottom: 24px; }
         
         @keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
         @keyframes popIn { from { transform: scale(0.85) translateY(20px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+
+        /* Help Modal */
+        .help-modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 10000;
+            display: none; align-items: center; justify-content: center;
+            backdrop-filter: blur(8px); animation: fadeInOverlay 0.3s ease;
+            padding: 20px;
+        }
+        .help-modal-box {
+            background: #fff; border-radius: 24px; padding: 32px;
+            width: 100%; max-width: 400px; box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .help-modal-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; color: var(--primary-green); }
+        .help-modal-header h2 { font-size: 1.25rem; font-weight: 800; margin: 0; }
+        .help-item {
+            display: flex; gap: 16px; margin-bottom: 20px; padding: 16px;
+            background: #f8fafc; border-radius: 16px; border: 1px solid #f1f5f9;
+            transition: all 0.2s;
+        }
+        .help-item:hover { transform: translateY(-2px); border-color: var(--primary-green); background: #fff; }
+        .help-icon-circle {
+            width: 40px; height: 40px; border-radius: 50%; background: var(--primary-green);
+            color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .help-text h3 { font-size: 0.9375rem; font-weight: 700; color: var(--text-dark); margin-bottom: 4px; }
+        .help-text p { font-size: 0.8125rem; color: var(--text-muted); line-height: 1.4; }
+
+        @keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { from { transform: scale(0.85) translateY(20px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+
+        @media (max-width: 900px) {
+            .login-illustration { display: none; }
+            .login-wrapper { max-width: 500px; }
+            .login-form-side { padding: 40px; }
+        }
     </style>
 </head>
 <body>
-    <div class="login-card">
+    <div class="login-wrapper">
         <!-- Flash Messages -->
         <div th:if="${successMessage != null or param.successMsg != null}" class="flash-overlay" onclick="this.remove()">
             <div class="flash-popup" onclick="event.stopPropagation()">
@@ -184,61 +376,135 @@
                 <div class="flash-content">
                     <h3>Pendaftaran Berhasil!</h3>
                     <p th:text="${successMessage ?: param.successMsg}">Akun Anda kini aktif. Silakan login untuk mulai mengelola stok pangan.</p>
-                    <button class="btn-login" style="height:48px;" onclick="this.closest('.flash-overlay').remove()">Mulai Sekarang</button>
+                    <button class="btn-submit" style="height:48px;" onclick="this.closest('.flash-overlay').remove()">Mulai Sekarang</button>
                 </div>
             </div>
         </div>
 
-        <div class="brand">
-            <span class="material-symbols-outlined" style="color:#ffb300; font-size:36px; font-variation-settings:'FILL' 1;">eco</span>
-            <h1 class="brand-name" style="color:#1a5c2a; font-weight:800; font-size:1.75rem; letter-spacing:-0.5px; margin:0;">FoodTrack</h1>
-        </div>
-
-        <div class="form-header">
-            <h1>Portal Petani</h1>
-        </div>
-
-        <div th:if="${param.errorMsg != null}" style="background:#fef2f2; color:#dc2626; padding:10px; border-radius:8px; font-size:0.8125rem; margin-bottom:16px; text-align:center; border:1px solid #fee2e2;">
-            <span th:text="${param.errorMsg}">Username atau password salah.</span>
-        </div>
-        <div th:if="${param.error != null and param.errorMsg == null}" style="background:#fef2f2; color:#dc2626; padding:10px; border-radius:8px; font-size:0.8125rem; margin-bottom:16px; text-align:center; border:1px solid #fee2e2;">
-            Username atau password salah.
-        </div>
-
-        <form th:action="@{/login-petani}" method="post">
-            <div class="form-group">
-                <label class="form-label">Username</label>
-                <input type="text" name="username" class="form-control" placeholder="username Anda" required autofocus/>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Password</label>
-                <div style="position:relative;">
-                    <input type="password" name="password" id="loginPwd" class="form-control" placeholder="••••••••" required/>
-                    <span class="material-symbols-outlined" onclick="togglePwd('loginPwd', this)" style="position:absolute; right:12px; top:12px; cursor:pointer; color:#64748b; font-size:20px;">visibility</span>
+        <!-- Illustration Side -->
+        <div class="login-illustration">
+            <img th:src="@{/img/login-bg.png}" class="illustration-bg" alt="Vegetables"/>
+            <div class="illustration-overlay"></div>
+            <div class="illustration-content">
+                <div class="brand-hub">
+                    <div class="brand-icon">
+                        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">eco</span>
+                    </div>
+                    <span class="brand-name">FoodTrack</span>
+                </div>
+                
+                <div class="illustration-footer">
+                    <h2>Verdant Logistics Solution</h2>
+                    <p>Mengoptimalkan rantai pasok pangan dengan teknologi pelacakan real-time yang presisi dan ramah lingkungan.</p>
                 </div>
             </div>
+        </div>
 
-            <div class="form-options">
-                <label class="remember-me">
-                    <input type="checkbox" name="remember-me"/> Ingat Saya
-                </label>
-                <a th:href="@{/lupa-password}" class="forgot-pwd">Lupa Password?</a>
+        <!-- Form Side -->
+        <div class="login-form-side">
+            <div class="form-header">
+                <h1>Portal Petani</h1>
+                <p>Silakan masuk untuk mengelola stok pangan Anda</p>
             </div>
 
-            <button type="submit" class="btn-login">Masuk Portal</button>
-            <div class="register-link">
-                Belum punya akun? <a th:href="@{/register-petani}">Daftar di sini</a>
+            <div th:if="${param.errorMsg != null}" style="background:#fef2f2; color:#dc2626; padding:14px; border-radius:12px; font-size:0.875rem; margin-bottom:24px; border:1px solid #fee2e2; display:flex; align-items:center; gap:10px;">
+                <span class="material-symbols-outlined">error</span>
+                <span th:text="${param.errorMsg}">Username atau password salah.</span>
             </div>
-        </form>
+            <div th:if="${param.error != null and param.errorMsg == null}" style="background:#fef2f2; color:#dc2626; padding:14px; border-radius:12px; font-size:0.875rem; margin-bottom:24px; border:1px solid #fee2e2; display:flex; align-items:center; gap:10px;">
+                <span class="material-symbols-outlined">error</span>
+                <span>Username atau password salah.</span>
+            </div>
 
-        <div class="footer-links">
+            <form th:action="@{/login-petani}" method="post">
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <div class="input-wrapper">
+                        <input type="text" name="username" class="form-control" placeholder="Masukkan username" required autofocus/>
+                        <span class="material-symbols-outlined">person</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" name="password" id="loginPwd" class="form-control" placeholder="••••••••" required/>
+                        <span class="material-symbols-outlined" id="toggleIcon" onclick="togglePwd('loginPwd', this)" style="cursor:pointer;">visibility</span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <label class="remember-me">
+                        <input type="checkbox" name="remember-me"/>
+                        <span>Ingat Saya</span>
+                    </label>
+                    <a th:href="@{/lupa-password}" class="forgot-pwd">Lupa Password?</a>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    Masuk Portal
+                    <span class="material-symbols-outlined">login</span>
+                </button>
+                
+                <div class="register-link">
+                    Belum punya akun? <a th:href="@{/register-petani}">Daftar di sini</a>
+                </div>
+            </form>
+
             <a th:href="@{/}" class="back-link">
-                <span class="material-symbols-outlined" style="font-size:16px;">home</span>
+                <span class="material-symbols-outlined">home</span>
                 Beranda
             </a>
         </div>
+
+        <!-- Help FAB -->
+        <div class="help-fab" onclick="toggleHelp()">
+            <span class="material-symbols-outlined">help</span>
+        </div>
     </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="help-modal-overlay" onclick="toggleHelp()">
+        <div class="help-modal-box" onclick="event.stopPropagation()">
+            <div class="help-modal-header">
+                <span class="material-symbols-outlined">support_agent</span>
+                <h2>Pusat Bantuan</h2>
+            </div>
+            <div class="help-content">
+                <div class="help-item">
+                    <div class="help-icon-circle">
+                        <span class="material-symbols-outlined">login</span>
+                    </div>
+                    <div class="help-text">
+                        <h3>Masalah Login?</h3>
+                        <p>Pastikan username Anda sesuai dengan saat pendaftaran. Hubungi pengurus kelompok tani jika lupa.</p>
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <div class="help-icon-circle">
+                        <span class="material-symbols-outlined">smart_toy</span>
+                    </div>
+                    <div class="help-text">
+                        <h3>AI Assistant</h3>
+                        <p>Gunakan chatbot AI kami di dashboard untuk panduan penggunaan stok pangan.</p>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-submit" style="margin-top: 12px;" onclick="toggleHelp()">Tutup</button>
+        </div>
+    </div>
+
     <script>
+        function toggleHelp() {
+            const modal = document.getElementById('helpModal');
+            if (modal.style.display === 'flex') {
+                modal.style.display = 'none';
+            } else {
+                modal.style.display = 'flex';
+            }
+        }
+
         function togglePwd(id, icon) {
             const input = document.getElementById(id);
             if (input.type === 'password') {

@@ -72,14 +72,31 @@ public class AdminWebController {
 
     @PostMapping("/petani/simpan")
     public String simpanPetani(@Valid @ModelAttribute("petani") Petani petani,
-                               BindingResult result, RedirectAttributes ra) {
+                               BindingResult result, 
+                               @RequestParam(value = "passwordRaw", required = false) String passwordRaw,
+                               RedirectAttributes ra) {
         if (result.hasErrors()) return "admin/petani/form";
 
         boolean isNew = petani.getIdPetani() == null;
-        // Password hashing is handled in PetaniService.save()
-        if (isNew && (petani.getPassword() == null || petani.getPassword().isBlank())) {
-            petani.setPassword("password123");
+        
+        if (isNew) {
+            // New user: use provided password or default 'password123'
+            if (passwordRaw == null || passwordRaw.isBlank()) {
+                petani.setPassword("password123");
+            } else {
+                petani.setPassword(passwordRaw);
+            }
+        } else {
+            // Edit user: if password field is empty, keep the old one from database
+            if (passwordRaw == null || passwordRaw.isBlank()) {
+                petaniService.findById(petani.getIdPetani()).ifPresent(old -> {
+                    petani.setPassword(old.getPassword());
+                });
+            } else {
+                petani.setPassword(passwordRaw);
+            }
         }
+        
         petaniService.save(petani);
         notificationService.createNotification(
             isNew ? "Petani baru '" + petani.getNama() + "' telah ditambahkan." : "Data petani '" + petani.getNama() + "' diperbarui.",

@@ -8,189 +8,360 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <style>
+        :root {
+            --primary-green: #1a5c2a;
+            --accent-yellow: #ffb300;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
             font-family: 'Inter', sans-serif;
-            margin: 0;
-            background: #1a5c2a;
+            background-color: var(--primary-green);
+            background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1.5px, transparent 1.5px);
+            background-size: 40px 40px;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
-        .login-card {
-            background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+        .login-wrapper {
             width: 100%;
-            max-width: 400px;
-            padding: 32px;
-            animation: fadeIn 0.5s ease;
+            max-width: 880px;
+            background: #fff;
+            border-radius: 24px;
+            overflow: hidden;
+            display: flex;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.35);
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
         }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-        
-        .brand {
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Illustration Side */
+        .login-illustration {
+            width: 42%;
+            position: relative;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 40px;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .illustration-bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+            transition: transform 10s linear;
+        }
+
+        .login-wrapper:hover .illustration-bg {
+            transform: scale(1.1);
+        }
+
+        .illustration-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(26, 92, 42, 0.9), rgba(26, 92, 42, 0.2));
+            z-index: 1;
+        }
+
+        .illustration-content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .brand-hub {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 24px;
-            justify-content: center;
+            gap: 10px;
         }
+
         .brand-icon {
-            width: 40px; height: 40px;
-            background: #096430;
-            border-radius: 10px;
+            width: 32px;
+            height: 32px;
+            background: var(--accent-yellow);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
+            color: var(--primary-green);
         }
+
         .brand-name {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 800;
-            color: #1e293b;
             letter-spacing: -0.5px;
-            margin: 0;
         }
-        .brand-name span { color: #096430; }
-        
-        .form-header { text-align: center; margin-bottom: 24px; }
-        .form-header h1 { font-size: 1.125rem; font-weight: 700; color: #1e293b; margin: 0; }
-        
-        .form-group { margin-bottom: 16px; }
+
+        .illustration-footer h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .illustration-footer p {
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            opacity: 0.9;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Form Side */
+        .login-form-side {
+            flex: 1;
+            padding: 48px 56px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: #fff;
+        }
+
+        .form-header {
+            margin-bottom: 40px;
+        }
+
+        .form-header h1 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .form-header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
         .form-label {
             display: block;
             font-size: 0.75rem;
-            font-weight: 600;
-            color: #64748b;
-            margin-bottom: 6px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper .material-symbols-outlined {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 20px;
+        }
+
         .form-control {
             width: 100%;
-            height: 44px;
+            height: 50px;
             padding: 0 16px;
-            border-radius: 10px;
-            border: 1px solid #e2e8f0;
+            padding-right: 48px;
+            border-radius: 12px;
+            border: 2px solid #f1f5f9;
             background: #f8fafc;
             font-size: 0.9375rem;
-            transition: all 0.2s;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
         }
+
         .form-control:focus {
-            border-color: #1a5c2a;
-            background: #fff;
             outline: none;
-            box-shadow: 0 0 0 3px rgba(26, 92, 42, 0.12);
+            border-color: var(--primary-green);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(26, 92, 42, 0.1);
         }
-        
-        /* Remember & Forgot Password Row */
-        .form-options {
+
+        .form-actions {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            font-size: 0.8125rem;
+            margin-bottom: 32px;
+            font-size: 0.875rem;
         }
+
         .remember-me {
             display: flex;
             align-items: center;
             gap: 8px;
-            color: #64748b;
+            color: var(--text-dark);
+            font-weight: 500;
             cursor: pointer;
         }
+
+        .remember-me input {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            accent-color: var(--primary-green);
+        }
+
         .forgot-pwd {
-            color: #1a5c2a;
-            font-weight: 600;
+            color: var(--text-dark);
+            font-weight: 700;
             text-decoration: none;
         }
-        .forgot-pwd:hover { text-decoration: underline; }
 
-        .btn-login {
+        .btn-submit {
             width: 100%;
-            height: 48px;
-            background: #1a5c2a;
+            height: 52px;
+            background: #062f18;
             color: #fff;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 0.9375rem;
             font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-login:hover { background: #2e7d32; transform: translateY(-1px); }
-        
-        .footer-links {
-            margin-top: 24px;
-            padding-top: 16px;
-            border-top: 1px solid #f1f5f9;
-            text-align: center;
-        }
-        .back-link {
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            gap: 6px;
-            color: #64748b;
-            text-decoration: none;
-            font-size: 0.8125rem;
-            font-weight: 500;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(6, 47, 24, 0.2);
         }
-        .back-link:hover { color: #1a5c2a; }
-        
+
+        .btn-submit:hover {
+            background: #0a4d27;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(6, 47, 24, 0.3);
+        }
+
+        .back-link {
+            margin-top: 40px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9375rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary-green);
+        }
+
+
         .error-msg {
             background: #fef2f2;
             color: #dc2626;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.8125rem;
-            margin-bottom: 16px;
-            text-align: center;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            margin-bottom: 24px;
             border: 1px solid #fee2e2;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+
+        @media (max-width: 900px) {
+            .login-illustration { display: none; }
+            .login-wrapper { max-width: 500px; }
+            .login-form-side { padding: 40px; }
         }
     </style>
 </head>
 <body>
-    <div class="login-card">
-        <div class="brand">
-            <span class="material-symbols-outlined" style="color:#ffb300; font-size:36px; font-variation-settings:'FILL' 1;">eco</span>
-            <h1 class="brand-name" style="color:#1a5c2a; font-weight:800; font-size:1.75rem; letter-spacing:-0.5px; margin:0;">FoodTrack</h1>
-        </div>
-
-        <div class="form-header">
-            <h1>Login Admin</h1>
-        </div>
-
-        <div th:if="${param.errorMsg != null}" class="error-msg">
-            <span th:text="${param.errorMsg}">Username atau password salah.</span>
-        </div>
-        <div th:if="${param.error != null and param.errorMsg == null}" class="error-msg">
-            Username atau password salah.
-        </div>
-
-        <form th:action="@{/admin/login}" method="post">
-            <div class="form-group">
-                <label class="form-label">Username</label>
-                <input type="text" name="username" class="form-control" placeholder="admin" required autofocus/>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Password</label>
-                <div style="position:relative;">
-                    <input type="password" name="password" id="adminPwd" class="form-control" placeholder="••••••••" required/>
-                    <span class="material-symbols-outlined" onclick="togglePwd('adminPwd', this)" style="position:absolute; right:12px; top:12px; cursor:pointer; color:#64748b; font-size:20px;">visibility</span>
+    <div class="login-wrapper">
+        <!-- Illustration Side -->
+        <div class="login-illustration">
+            <img th:src="@{/img/login-bg.png}" class="illustration-bg" alt="Vegetables"/>
+            <div class="illustration-overlay"></div>
+            <div class="illustration-content">
+                <div class="brand-hub">
+                    <div class="brand-icon">
+                        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">eco</span>
+                    </div>
+                    <span class="brand-name">FoodTrack</span>
+                </div>
+                
+                <div class="illustration-footer">
+                    <h2>Verdant Logistics Solution</h2>
+                    <p>Mengoptimalkan rantai pasok pangan dengan teknologi pelacakan real-time yang presisi dan ramah lingkungan.</p>
                 </div>
             </div>
+        </div>
 
-            <div class="form-options">
-                <label class="remember-me">
-                    <input type="checkbox" name="remember-me"/> Ingat Saya
-                </label>
+        <!-- Form Side -->
+        <div class="login-form-side">
+            <div class="form-header">
+                <h1>Login Admin</h1>
+                <p>Silakan masuk untuk mengelola logistik Anda</p>
             </div>
 
-            <button type="submit" class="btn-login">Masuk Dashboard</button>
-        </form>
+            <div th:if="${param.errorMsg != null}" class="error-msg">
+                <span class="material-symbols-outlined">error</span>
+                <span th:text="${param.errorMsg}">Username atau password salah.</span>
+            </div>
+            <div th:if="${param.error != null and param.errorMsg == null}" class="error-msg">
+                <span class="material-symbols-outlined">error</span>
+                <span>Username atau password salah.</span>
+            </div>
 
-        <div class="footer-links">
+            <form th:action="@{/admin/login}" method="post">
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <div class="input-wrapper">
+                        <input type="text" name="username" class="form-control" placeholder="Masukkan username" required autofocus/>
+                        <span class="material-symbols-outlined">person</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" name="password" id="adminPwd" class="form-control" placeholder="••••••••" required/>
+                        <span class="material-symbols-outlined" id="toggleIcon" onclick="togglePwd('adminPwd', this)" style="cursor:pointer;">visibility</span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <label class="remember-me">
+                        <input type="checkbox" name="remember-me"/>
+                        <span>Ingat Saya</span>
+                    </label>
+                    <a href="#" class="forgot-pwd">Lupa Password?</a>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    Masuk Dashboard
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+            </form>
+
             <a th:href="@{/}" class="back-link">
-                <span class="material-symbols-outlined" style="font-size:16px;">arrow_back</span>
-                Kembali ke Beranda
+                <span class="material-symbols-outlined">home</span>
+                Beranda
             </a>
         </div>
     </div>

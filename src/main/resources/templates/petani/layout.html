@@ -121,7 +121,7 @@
             const currentTheme = root.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             root.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
+            localStorage.setItem('petani-theme', newTheme);
             document.getElementById('themeIcon').innerText = newTheme === 'dark' ? 'light_mode' : 'dark_mode';
         }
 
@@ -181,7 +181,7 @@
 
         setInterval(pollNotifications, 30000);
 
-        const savedTheme = localStorage.getItem('theme');
+        const savedTheme = localStorage.getItem('petani-theme');
         if (savedTheme) {
             document.documentElement.setAttribute('data-theme', savedTheme);
             document.addEventListener('DOMContentLoaded', () => {
@@ -246,7 +246,7 @@
     <div th:if="${successMessage != null or param.successMsg != null}" class="flash-overlay" id="flashSuccess" onclick="closeFlash(this)">
         <div class="flash-popup success">
             <div class="flash-icon">
-                <span class="material-symbols-outlined">check_circle</span>
+                <span class="material-symbols-outlined">check</span>
             </div>
             <div class="flash-content">
                 <h3>Berhasil!</h3>
@@ -315,8 +315,8 @@
         okBtn.innerText = options.okText || 'Ya, Lanjutkan';
         okBtn.style.background = isDelete ? 'var(--error)' : 'var(--primary)';
         okBtn.style.borderColor = isDelete ? 'var(--error)' : 'var(--primary)';
-        iconBox.style.background = isDelete ? 'var(--error-container)' : 'var(--primary-light)';
-        iconBox.style.color = isDelete ? 'var(--error)' : 'var(--primary)';
+        iconBox.style.background = isDelete ? 'var(--error)' : 'var(--primary)';
+        iconBox.style.color = '#ffffff';
         
         overlay.classList.add('show');
         
@@ -347,49 +347,48 @@
 </div>
 
 <style th:fragment="flashStyle">
-.flash-overlay {
-    position: fixed; top: 24px; left: 50%; transform: translateX(-50%); z-index: 10000;
-    width: 100%; max-width: 420px; padding: 0 20px;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    pointer-events: none;
-}
-.flash-popup {
-    background: var(--surface); border-radius: 20px; padding: 16px 20px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.12), 0 0 0 1px var(--outline-variant);
-    display: flex; align-items: center; gap: 16px; position: relative;
-    overflow: hidden; pointer-events: auto;
-    animation: toastIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    backdrop-filter: blur(10px);
-}
-.flash-icon {
-    width: 48px; height: 48px; border-radius: 14px;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.flash-icon span { font-size: 28px; font-variation-settings: 'FILL' 1; }
+        .flash-overlay {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10000;
+            width: fit-content; max-width: 90vw; pointer-events: none;
+        }
+        .flash-popup {
+            background: rgba(255, 255, 255, 0.98); 
+            backdrop-filter: blur(12px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            border-radius: 16px; padding: 10px 24px 10px 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.05);
+            display: flex; align-items: center; gap: 14px; position: relative;
+            overflow: hidden; pointer-events: auto;
+            animation: toastIn 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        [data-theme='dark'] .flash-popup {
+            background: rgba(21, 28, 21, 0.95);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08);
+        }
+        .flash-icon {
+            width: 36px; height: 36px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .flash-icon span { font-size: 22px; font-weight: 700; }
 
-.flash-popup.success .flash-icon { background: rgba(16, 185, 129, 0.12); color: #10b981; }
-.flash-popup.success { border-left: 5px solid #10b981; }
+        .flash-popup.success .flash-icon { background: var(--primary); color: #fff; }
+        .flash-popup.error .flash-icon { background: var(--error); color: #fff; }
 
-.flash-popup.error .flash-icon { background: rgba(239, 68, 68, 0.12); color: #ef4444; }
-.flash-popup.error { border-left: 5px solid #ef4444; }
+        .flash-content { display: flex; align-items: center; gap: 6px; }
+        .flash-content h3 { font-size: 0.8125rem; font-weight: 800; color: var(--on-surface); margin: 0; display: none; }
+        .flash-content p { color: var(--on-surface); font-size: 0.8125rem; margin: 0; font-weight: 600; white-space: nowrap; }
 
-.flash-content { flex: 1; }
-.flash-content h3 { font-size: 1rem; font-weight: 800; color: var(--on-surface); margin: 0; }
-.flash-content p { color: var(--on-surface-variant); font-size: 0.875rem; margin: 2px 0 0; font-weight: 500; }
+        .flash-progress { position: absolute; bottom: 0; left: 0; height: 2px; width: 100%; background: rgba(0,0,0,0.02); }
+        .flash-progress .bar { height: 100%; width: 100%; animation: shrink 4s linear forwards; }
+        .flash-popup.success .bar { background: var(--primary); }
+        .flash-popup.error .bar { background: var(--error); }
 
-.flash-close { cursor: pointer; color: var(--outline); transition: color 0.2s; }
-.flash-close:hover { color: var(--on-surface); }
-
-.flash-progress { position: absolute; bottom: 0; left: 0; height: 3px; width: 100%; background: var(--surface-container-low); }
-.flash-progress .bar { height: 100%; }
-.flash-popup.success .bar { background: #10b981; animation: shrink 4s linear forwards; }
-.flash-popup.error .bar { background: #ef4444; animation: shrink 4s linear forwards; }
-
-@keyframes toastIn {
-    from { transform: translateY(-40px) scale(0.9); opacity: 0; }
-    to { transform: translateY(0) scale(1); opacity: 1; }
-}
-@keyframes shrink { from { width: 100%; } to { width: 0%; } }
+        @keyframes toastIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes shrink { from { width: 100%; } to { width: 0%; } }
 
 /* Additional Responsive Fixes */
 @media (max-width: 768px) {

@@ -11,12 +11,15 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Inter', sans-serif;
-            background: #1a5c2a;
+            background-color: #1a5c2a;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1.5px, transparent 1.5px);
+            background-size: 40px 40px;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 24px;
+            position: relative;
         }
         .hub-container {
             width: 100%;
@@ -171,8 +174,8 @@
 
         <div class="back-home">
             <a th:href="@{/}" class="btn-back">
-                <span class="material-symbols-outlined" style="font-size:18px;">west</span>
-                Kembali ke Beranda
+                <span class="material-symbols-outlined" style="font-size:18px;">home</span>
+                Beranda
             </a>
         </div>
     </div>

@@ -6,37 +6,231 @@
     <nav th:replace="~{admin/layout :: sidebar('komoditas')}"></nav>
     <div class="main-content">
         <header th:replace="~{admin/layout :: topbar('<a href=\'/admin/dashboard\'>Dashboard</a> &rsaquo; <a href=\'/admin/komoditas\'>Komoditas</a> &rsaquo; <span>Form</span>')}"></header>
+        
         <div class="page-content">
-            <div class="page-header" style="margin-bottom: 20px;">
-                <h1 th:text="${komoditas.idKomoditas != null} ? 'Edit Komoditas' : 'Tambah Komoditas'">Tambah Komoditas</h1>
+            <div class="page-header" style="margin-bottom: 32px; display: flex; align-items: center; justify-content: space-between; padding-bottom: 16px; border-bottom: 2px solid #f1f5f9;">
+                <div>
+                    <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--primary-green); margin-bottom: 4px;" th:text="${komoditas.idKomoditas != null} ? 'Edit Data Komoditas' : 'Tambah Komoditas Baru'">Tambah Komoditas Baru</h1>
+                    <p style="font-size: 0.9375rem; color: #64748b;">Lengkapi informasi detail komoditas pangan untuk sistem inventaris.</p>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <span class="badge badge-green" style="padding: 10px 20px; border-radius: 12px; font-weight: 700; background: rgba(26, 92, 42, 0.1); color: var(--primary-green); border: 1px solid rgba(26, 92, 42, 0.2);">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">verified_user</span>
+                        Administrator Mode
+                    </span>
+                </div>
             </div>
-            <div class="card">
-                <form th:action="@{/admin/komoditas/simpan}" method="post" th:object="${komoditas}">
+
+            <div class="card" style="border: 1px solid var(--outline-variant); border-radius: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.02); overflow: hidden; background: #fff; padding: 0 !important;">
+                <form th:action="@{/admin/komoditas/simpan}" method="post" th:object="${komoditas}" style="margin: 0; padding: 0;">
                     <input type="hidden" th:field="*{idKomoditas}"/>
-                    <div class="form-group">
-                        <label for="namaKomoditas">Nama Komoditas <span class="required">*</span></label>
-                        <input type="text" id="namaKomoditas" th:field="*{namaKomoditas}" class="form-control"
-                               th:classappend="${#fields.hasErrors('namaKomoditas')} ? 'is-invalid'"
-                               placeholder="Contoh: Beras, Jagung, Kedelai" required/>
-                        <div th:if="${#fields.hasErrors('namaKomoditas')}" class="invalid-feedback" th:errors="*{namaKomoditas}">Error</div>
-                    </div>
-                    <div class="form-group">
-                        <label for="satuan">Satuan <span class="required">*</span></label>
-                        <input type="text" id="satuan" th:field="*{satuan}" class="form-control"
-                               th:classappend="${#fields.hasErrors('satuan')} ? 'is-invalid'"
-                               placeholder="Contoh: Kg, Ton, Karung" required/>
-                        <div th:if="${#fields.hasErrors('satuan')}" class="invalid-feedback" th:errors="*{satuan}">Error</div>
-                    </div>
-                    <div style="display:flex;gap:12px;justify-content:flex-end;padding-top:20px;border-top:1px solid var(--outline-variant);">
-                        <a th:href="@{/admin/komoditas}" class="btn btn-secondary">Batal</a>
-                        <button type="submit" class="btn btn-primary">
-                            <span class="material-symbols-outlined" style="font-size:18px;">save</span> Simpan Data
-                        </button>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; min-height: 480px;">
+                        <!-- Kolom Kiri: Identitas -->
+                        <div style="padding: 40px; border-right: 1px solid var(--outline-variant); background: #fff;">
+                            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 36px;">
+                                <div style="width: 36px; height: 36px; background: #1a5c2a; color: #fff; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; box-shadow: 0 4px 10px rgba(26, 92, 42, 0.2);">1</div>
+                                <h3 style="font-size: 1.125rem; font-weight: 800; color: #1e293b; margin: 0;">Identitas Komoditas</h3>
+                            </div>
+
+                            <div class="form-group">
+                                <label style="display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 0.9375rem; color: #334155; margin-bottom: 14px;">
+                                    <span class="material-symbols-outlined" style="font-size: 20px; color: #1a5c2a;">eco</span> Pilih atau Ketik Nama <span style="color: #ef4444; margin-left: 2px;">*</span>
+                                </label>
+                                <input type="hidden" id="namaKomoditas" th:field="*{namaKomoditas}" required/>
+                                <div class="custom-dropdown" id="komoditasDropdown">
+                                    <div class="custom-dropdown-trigger" style="height: 56px; border-radius: 14px; background: var(--surface-container-low); border: 1.5px solid var(--outline-variant);">
+                                        <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
+                                            <input type="text" id="komoditasInput" placeholder="Pilih komoditas..." 
+                                                   onfocus="openKomoditasDropdown()" oninput="filterKomoditasMain()" 
+                                                   autocomplete="off"
+                                                   style="border: none; background: transparent; outline: none; font-size: 0.9375rem; color: #1e293b; font-weight: 600; width: 100%;"/>
+                                        </div>
+                                        <span class="material-symbols-outlined" id="komoditasArrow" style="color: var(--primary-green); cursor: pointer;" onclick="toggleKomoditasDropdown()">expand_more</span>
+                                    </div>
+                                    <div class="custom-dropdown-menu" id="komoditasMenu" style="border-radius: 14px;">
+                                        <div class="custom-dropdown-items" id="komoditasList">
+                                            <div class="custom-dropdown-item" onclick="selectKomoditas('Beras')"><span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle; margin-right: 8px;">grain</span> Beras</div>
+                                            <div class="custom-dropdown-item" onclick="selectKomoditas('Jagung')"><span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle; margin-right: 8px;">agriculture</span> Jagung</div>
+                                            <div class="custom-dropdown-item" onclick="selectKomoditas('Kedelai')"><span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle; margin-right: 8px;">spa</span> Kedelai</div>
+                                            <div class="custom-dropdown-item" onclick="selectKomoditas('Cabai Merah')"><span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle; margin-right: 8px;">nutrition</span> Cabai Merah</div>
+                                            <div class="custom-dropdown-item" onclick="selectKomoditas('Bawang Merah')"><span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle; margin-right: 8px;">circles</span> Bawang Merah</div>
+                                            <div class="custom-dropdown-item" onclick="selectKomoditas('Gula Pasir')"><span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle; margin-right: 8px;">texture</span> Gula Pasir</div>
+                                            <div class="custom-dropdown-item" onclick="selectKomoditas('Minyak Goreng')"><span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle; margin-right: 8px;">opacity</span> Minyak Goreng</div>
+                                            <div class="custom-dropdown-item" id="customKomoditasOption" style="display:none; color: var(--primary-green); font-weight: 600;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kolom Kanan: Satuan -->
+                        <div style="padding: 40px; background: #fafafa; display: flex; flex-direction: column;">
+                            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 36px;">
+                                <div style="width: 36px; height: 36px; background: #ffb300; color: #fff; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; box-shadow: 0 4px 10px rgba(255, 179, 0, 0.2);">2</div>
+                                <h3 style="font-size: 1.125rem; font-weight: 800; color: #1e293b; margin: 0;">Aturan Pengukuran</h3>
+                            </div>
+
+                            <div class="form-group">
+                                <label style="display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 0.9375rem; color: #334155; margin-bottom: 14px;">
+                                    <span class="material-symbols-outlined" style="font-size: 20px; color: #ffb300;">straighten</span> Pilih Satuan Dasar <span style="color: #ef4444; margin-left: 2px;">*</span>
+                                </label>
+                                <input type="hidden" id="satuan" th:field="*{satuan}" required/>
+                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                                    <div class="satuan-card" onclick="selectSatuan('Kg')" data-val="Kg" style="border-radius: 12px;">
+                                        <span class="material-symbols-outlined" style="font-size: 1.25rem;">scale</span>
+                                        <span class="satuan-label">Kilogram</span>
+                                    </div>
+                                    <div class="satuan-card" onclick="selectSatuan('Ton')" data-val="Ton" style="border-radius: 12px;">
+                                        <span class="material-symbols-outlined" style="font-size: 1.25rem;">local_shipping</span>
+                                        <span class="satuan-label">Ton</span>
+                                    </div>
+                                    <div class="satuan-card" onclick="selectSatuan('Karung')" data-val="Karung" style="border-radius: 12px;">
+                                        <span class="material-symbols-outlined" style="font-size: 1.25rem;">shopping_bag</span>
+                                        <span class="satuan-label">Karung</span>
+                                    </div>
+                                    <div class="satuan-card" onclick="selectSatuan('Liter')" data-val="Liter" style="border-radius: 12px;">
+                                        <span class="material-symbols-outlined" style="font-size: 1.25rem;">water_drop</span>
+                                        <span class="satuan-label">Liter</span>
+                                    </div>
+                                    <div class="satuan-card" onclick="selectSatuan('Dus')" data-val="Dus" style="border-radius: 12px;">
+                                        <span class="material-symbols-outlined" style="font-size: 1.25rem;">inventory_2</span>
+                                        <span class="satuan-label">Dus</span>
+                                    </div>
+                                    <div class="satuan-card" onclick="selectSatuan('Ikat')" data-val="Ikat" style="border-radius: 12px;">
+                                        <span class="material-symbols-outlined" style="font-size: 1.25rem;">grass</span>
+                                        <span class="satuan-label">Ikat</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: auto; padding-top: 32px; border-top: 1px solid var(--outline-variant); display: flex; gap: 12px; justify-content: flex-end; align-items: center;">
+                                <a th:href="@{/admin/komoditas}" class="btn" style="padding: 12px 24px; border-radius: 12px; font-weight: 700; color: var(--on-surface-variant); text-decoration: none;">Batal</a>
+                                <button type="submit" class="btn btn-primary" style="padding: 12px 32px; border-radius: 12px; font-weight: 700; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 16px rgba(26, 92, 42, 0.2);">
+                                    <span class="material-symbols-outlined" style="font-size: 20px;">save</span>
+                                    <span>Simpan Komoditas</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .btn-submit-premium {
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        padding: 0 32px; height: 52px; border-radius: 14px; border: none;
+        background: var(--primary-green, #1a5c2a); color: #fff; font-weight: 700; font-size: 0.9375rem;
+        cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 10px 20px rgba(26, 92, 42, 0.25);
+    }
+    .btn-submit-premium:hover { background: #0a4d27; transform: translateY(-2px); box-shadow: 0 15px 30px rgba(26, 92, 42, 0.35); }
+
+    /* Custom Dropdown */
+    .custom-dropdown { position: relative; }
+    .custom-dropdown-trigger {
+        display: flex; align-items: center; justify-content: space-between;
+        height: 60px; padding: 0 20px;
+        border: 2px solid #e2e8f0; border-radius: 16px;
+        background: #f8fafc; cursor: pointer; transition: all 0.2s;
+    }
+    .custom-dropdown.open .custom-dropdown-trigger { border-color: var(--primary-green, #1a5c2a); background: #fff; box-shadow: 0 0 0 4px rgba(26,92,42,0.08); }
+    .custom-dropdown.open #komoditasArrow { transform: rotate(180deg); }
+    .custom-dropdown-menu {
+        position: absolute; top: calc(100% + 8px); left: 0; right: 0;
+        background: #fff; border: 1.5px solid #e2e8f0; border-radius: 16px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.12); z-index: 999;
+        display: none; overflow: hidden;
+    }
+    .custom-dropdown.open .custom-dropdown-menu { display: block; }
+    .custom-dropdown-items { max-height: 240px; overflow-y: auto; }
+    .custom-dropdown-item {
+        padding: 12px 16px; font-size: 0.9375rem; cursor: pointer;
+        transition: background 0.15s; color: #1e293b;
+    }
+    .custom-dropdown-item:hover { background: rgba(26,92,42,0.06); color: var(--primary-green, #1a5c2a); }
+    .custom-dropdown-item.selected { background: rgba(26,92,42,0.1); color: var(--primary-green, #1a5c2a); font-weight: 700; }
+
+    /* Satuan Card Grid */
+    .satuan-card {
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        padding: 14px 8px; border-radius: 14px; border: 2px solid #e2e8f0;
+        background: #f8fafc; cursor: pointer; transition: all 0.2s; gap: 4px;
+    }
+    .satuan-card:hover { border-color: var(--primary-green, #1a5c2a); background: rgba(26,92,42,0.05); transform: translateY(-2px); }
+    .satuan-card.selected { border-color: var(--primary-green, #1a5c2a); background: rgba(26,92,42,0.1); box-shadow: 0 4px 12px rgba(26,92,42,0.15); }
+    .satuan-label { font-size: 0.75rem; font-weight: 600; color: #64748b; }
+    .satuan-card.selected .satuan-label { color: var(--primary-green, #1a5c2a); }
+    .satuan-code { font-size: 0.7rem; font-weight: 800; color: #cbd5e1; }
+    .satuan-card.selected .satuan-code { color: var(--primary-green, #1a5c2a); opacity: 0.7; }
+</style>
+
+<script>
+    // === Komoditas Dropdown ===
+    function toggleKomoditasDropdown() {
+        document.getElementById('komoditasDropdown').classList.toggle('open');
+    }
+    function openKomoditasDropdown() {
+        document.getElementById('komoditasDropdown').classList.add('open');
+    }
+    function selectKomoditas(val) {
+        document.getElementById('namaKomoditas').value = val;
+        document.getElementById('komoditasInput').value = val;
+        document.querySelectorAll('.custom-dropdown-item').forEach(i => i.classList.remove('selected'));
+        // Find and highlight matching item
+        document.querySelectorAll('.custom-dropdown-item').forEach(i => {
+            if (i.textContent.includes(val)) i.classList.add('selected');
+        });
+        document.getElementById('komoditasDropdown').classList.remove('open');
+    }
+    function filterKomoditasMain() {
+        const val = document.getElementById('komoditasInput').value;
+        document.getElementById('namaKomoditas').value = val;
+        const q = val.toLowerCase();
+        const items = document.querySelectorAll('#komoditasList .custom-dropdown-item:not(#customKomoditasOption)');
+        let hasMatch = false;
+        items.forEach(item => {
+            const match = item.textContent.toLowerCase().includes(q);
+            item.style.display = match ? '' : 'none';
+            if (match) hasMatch = true;
+        });
+        const customOpt = document.getElementById('customKomoditasOption');
+        if (q && !hasMatch) {
+            customOpt.style.display = '';
+            customOpt.textContent = '+ Gunakan "' + val + '"';
+            customOpt.onclick = () => selectKomoditas(val);
+        } else { customOpt.style.display = 'none'; }
+    }
+
+    // === Satuan Card Grid ===
+    function selectSatuan(val) {
+        document.getElementById('satuan').value = val;
+        document.querySelectorAll('.satuan-card').forEach(c => c.classList.remove('selected'));
+        document.querySelector('.satuan-card[data-val="' + val + '"]').classList.add('selected');
+    }
+
+    // Pre-fill on edit
+    window.addEventListener('DOMContentLoaded', () => {
+        const existingNama = document.getElementById('namaKomoditas').value;
+        if (existingNama) {
+            document.getElementById('komoditasInput').value = existingNama;
+        }
+        const existingSatuan = document.getElementById('satuan').value;
+        if (existingSatuan) {
+            const card = document.querySelector('.satuan-card[data-val="' + existingSatuan + '"]');
+            if (card) card.classList.add('selected');
+        }
+    });
+
+    // Close on outside click
+    document.addEventListener('click', e => {
+        if (!e.target.closest('#komoditasDropdown')) {
+            document.getElementById('komoditasDropdown').classList.remove('open');
+        }
+    });
+</script>
 </body>
 </html>
