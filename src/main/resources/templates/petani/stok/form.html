@@ -18,24 +18,54 @@
                     <!-- 1. Pilih Komoditas -->
                     <div class="form-group">
                         <label style="font-size:1.125rem;font-weight:600;margin-bottom:16px;display:block;">1. Pilih Komoditas</label>
-                        <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));gap:16px;margin-top:8px;">
+                        <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));gap:16px;margin-top:12px;">
                             <div th:each="k : ${listKomoditas}">
                                 <input type="radio" th:field="*{komoditas.idKomoditas}" th:value="${k.idKomoditas}"
                                        th:id="'kom_' + ${k.idKomoditas}" style="display:none;" class="komoditas-radio"
                                        th:data-satuan="${k.satuan}"/>
                                 <label th:for="'kom_' + ${k.idKomoditas}"
-                                       style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px;border:2px solid var(--outline-variant);border-radius:var(--radius-lg);cursor:pointer;transition:all 0.2s;text-align:center;"
+                                       style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px 16px;border:2px solid var(--outline-variant);border-radius:24px;cursor:pointer;transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);text-align:center;background:var(--surface);height:160px;"
                                        class="komoditas-label">
-                                    <span th:if="${k.namaKomoditas.contains('Beras') or k.namaKomoditas.contains('Jagung') or k.namaKomoditas.contains('Kedelai') or k.namaKomoditas.contains('Cabai') or k.namaKomoditas.contains('Bawang')}"
-                                          class="material-symbols-outlined" style="font-size:32px;color:var(--primary);"
-                                          th:text="${k.namaKomoditas.contains('Beras') ? 'grain' : 
-                                                    k.namaKomoditas.contains('Jagung') ? 'agriculture' : 
-                                                    k.namaKomoditas.contains('Kedelai') ? 'spa' : 
-                                                    k.namaKomoditas.contains('Cabai') ? 'nutrition' : 
-                                                    k.namaKomoditas.contains('Bawang') ? 'circles' : 'category'}"></span>
-                                    <img th:unless="${k.namaKomoditas.contains('Beras') or k.namaKomoditas.contains('Jagung') or k.namaKomoditas.contains('Kedelai') or k.namaKomoditas.contains('Cabai') or k.namaKomoditas.contains('Bawang')}"
-                                         th:src="@{/img/logo.png}" alt="FoodTrack" style="width:32px; height:32px; object-fit:contain;" />
-                                    <span th:text="${k.namaKomoditas}" style="font-size:0.875rem;font-weight:600;color:var(--on-surface);">Beras</span>
+                                    
+                                    <div class="commodity-icon-wrapper" style="width:44px; height:44px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                        <!-- Beras -->
+                                        <img th:if="${k.namaKomoditas.toLowerCase().contains('beras') or k.namaKomoditas.toLowerCase().contains('padi')}" 
+                                             src="https://img.icons8.com/color/96/grains-of-rice.png" alt="Beras" style="width:100%; height:100%; object-fit:contain;" />
+                                        
+                                        <!-- Jagung -->
+                                        <img th:if="${k.namaKomoditas.toLowerCase().contains('jagung')}" 
+                                             src="https://img.icons8.com/color/96/corn.png" alt="Jagung" style="width:100%; height:100%; object-fit:contain;" />
+                                        
+                                        <!-- Kedelai -->
+                                        <img th:if="${k.namaKomoditas.toLowerCase().contains('kedelai')}" 
+                                             src="https://img.icons8.com/color/96/soy.png" alt="Kedelai" style="width:100%; height:100%; object-fit:contain;" />
+                                        
+                                        <!-- Cabai (Polos) -->
+                                        <img th:if="${k.namaKomoditas.toLowerCase().contains('cabai')}" 
+                                             src="https://img.icons8.com/color/96/chili-pepper--v1.png" alt="Cabai" style="width:100%; height:100%; object-fit:contain;" />
+                                        
+                                        <!-- Bawang -->
+                                        <img th:if="${k.namaKomoditas.toLowerCase().contains('bawang')}" 
+                                             src="https://img.icons8.com/color/96/onion.png" alt="Bawang" style="width:100%; height:100%; object-fit:contain;" />
+                                        
+                                        <!-- Tomat -->
+                                        <img th:if="${k.namaKomoditas.toLowerCase().contains('tomat')}" 
+                                             src="https://img.icons8.com/color/96/tomato.png" alt="Tomat" style="width:100%; height:100%; object-fit:contain;" />
+                                        
+                                        <!-- Telur -->
+                                        <img th:if="${k.namaKomoditas.toLowerCase().contains('telur')}" 
+                                             src="https://img.icons8.com/color/96/eggs.png" alt="Telur" style="width:100%; height:100%; object-fit:contain;" />
+                                        
+                                        <!-- Daging -->
+                                        <img th:if="${k.namaKomoditas.toLowerCase().contains('daging')}" 
+                                             src="https://img.icons8.com/color/96/steak.png" alt="Daging" style="width:100%; height:100%; object-fit:contain;" />
+                                        
+                                        <!-- Default -->
+                                        <img th:if="${!k.namaKomoditas.toLowerCase().contains('beras') && !k.namaKomoditas.toLowerCase().contains('padi') && !k.namaKomoditas.toLowerCase().contains('jagung') && !k.namaKomoditas.toLowerCase().contains('kedelai') && !k.namaKomoditas.toLowerCase().contains('cabai') && !k.namaKomoditas.toLowerCase().contains('bawang') && !k.namaKomoditas.toLowerCase().contains('tomat') && !k.namaKomoditas.toLowerCase().contains('telur') && !k.namaKomoditas.toLowerCase().contains('daging')}" 
+                                             th:src="@{/img/logo.png}" alt="FoodTrack" style="width:100%; height:100%; object-fit:contain;" />
+                                    </div>
+
+                                    <span th:text="${k.namaKomoditas}" style="font-size:0.9375rem;font-weight:700;color:var(--on-surface);margin-top:4px;">Beras</span>
                                 </label>
                             </div>
                         </div>
@@ -74,8 +104,14 @@
 </div>
 <style>
     .komoditas-radio:checked + .komoditas-label {
-        border-color: var(--primary) !important;
-        background: #e8f5e9;
+        border-color: var(--primary);
+        background: var(--primary-container);
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(26, 92, 42, 0.12);
+    }
+    .komoditas-radio:checked + .komoditas-label .commodity-icon-wrapper svg path {
+        fill-opacity: 0.4;
+        stroke-width: 2;
     }
 </style>
 <script>

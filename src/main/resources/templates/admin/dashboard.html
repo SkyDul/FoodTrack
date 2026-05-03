@@ -16,7 +16,7 @@
                 <div style="position: absolute; inset: 0; opacity: 0.12; background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 20px 20px;"></div>
                 
                 <div style="position: relative; z-index: 2;">
-                    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; color: #ffffff; letter-spacing: -0.5px;">Panel Kontrol SiPangan</h2>
+                    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; color: #ffffff; letter-spacing: -0.5px;">Panel Kontrol FoodTrack</h2>
                     <p style="opacity: 0.9; font-size: 0.9375rem; margin-bottom: 20px; max-width: 480px; line-height: 1.5; color: rgba(255,255,255,0.9);">Pantau ekosistem pangan secara menyeluruh. Kelola data petani, pantau ketersediaan stok, dan amati interaksi cerdas AI dalam satu layar.</p>
                     <div style="display: flex; gap: 12px;">
                         <a th:href="@{/admin/petani}" style="background: #fff; color: #096430; padding: 8px 20px; border-radius: 12px; font-weight: 700; font-size: 0.875rem; text-decoration: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: all 0.2s;">
@@ -114,8 +114,15 @@
                         <div th:each="stok : ${recentStok}" style="display:flex;align-items:center;justify-content:space-between;padding:16px;background: var(--surface-container-low); border:1px solid var(--outline-variant);border-radius:16px; transition: all 0.3s; cursor:pointer;" onmouseover="this.style.borderColor='var(--primary)'; this.style.background='var(--surface)'" onmouseout="this.style.borderColor='var(--outline-variant)'; this.style.background='var(--surface-container-low)'">
                             <div style="display:flex;align-items:center;gap:16px;">
                                 <div style="position: relative;">
-                                    <div style="width:52px;height:52px;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center; border:1px solid var(--outline-variant); box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                                        <span class="material-symbols-outlined" style="color:var(--primary);font-size:26px;">assignment</span>
+                                    <div style="width:52px;height:52px;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center; border:1px solid var(--outline-variant); box-shadow: 0 2px 8px rgba(0,0,0,0.05); font-size: 28px;">
+                                        <span th:text="${stok.komoditas.namaKomoditas.contains('Beras') ? '🌾' : 
+                                                        stok.komoditas.namaKomoditas.contains('Jagung') ? '🌽' : 
+                                                        stok.komoditas.namaKomoditas.contains('Kedelai') ? '🫘' : 
+                                                        stok.komoditas.namaKomoditas.contains('Cabai') ? '🌶️' : 
+                                                        stok.komoditas.namaKomoditas.contains('Bawang') ? '🧅' : 
+                                                        stok.komoditas.namaKomoditas.contains('Tomat') ? '🍅' :
+                                                        stok.komoditas.namaKomoditas.contains('Telur') ? '🥚' :
+                                                        stok.komoditas.namaKomoditas.contains('Daging') ? '🥩' : '🍃'}"></span>
                                     </div>
                                     <div style="position: absolute; -right: 4px; -bottom: 4px; width: 22px; height: 22px; border-radius: 50%; background: #10b981; color: #fff; display: flex; align-items: center; justify-content: center; border: 2px solid #fff;">
                                         <span class="material-symbols-outlined" style="font-size: 14px;">add</span>
