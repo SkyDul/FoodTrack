@@ -1,4 +1,4 @@
-/* ===== SiPangan Design System ===== */
+/* ===== FoodTrack Design System ===== */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
@@ -27,7 +27,7 @@
     --shadow: rgba(26, 92, 42, 0.12);
     --sidebar-bg: #1a5c2a;
     --sidebar-on-bg: #ffffff;
-    --sidebar-width: 220px;
+    --sidebar-width: 260px;
     --topbar-height: 56px;
     --radius-sm: 4px;
     --radius-md: 8px;
@@ -118,12 +118,8 @@ input, select, textarea { font-family: inherit; font-size: 1rem; }
     gap: 12px;
 }
 .sidebar-brand .brand-icon {
-    width: 36px; height: 36px;
-    background: rgba(255,255,255,0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 12px;
+    width: 48px; height: 48px;
     display: flex; align-items: center; justify-content: center;
-    border: 1px solid rgba(255,255,255,0.2);
 }
 .sidebar-brand h2 { font-size: 1.25rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
 .sidebar-brand .brand-sub { font-size: 0.65rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }

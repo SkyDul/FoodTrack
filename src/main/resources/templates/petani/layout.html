@@ -14,7 +14,7 @@
 <nav th:fragment="sidebar(activePage)" class="sidebar">
     <div class="sidebar-brand" style="padding: 32px 24px;">
         <div class="logo-wrapper" style="display: flex; align-items: center; justify-content: flex-start; gap: 8px;">
-            <span class="material-symbols-outlined" style="color:#ffb300; font-size:36px; font-variation-settings:'FILL' 1;">eco</span>
+            <img th:src="@{/img/logo.png}" alt="FoodTrack" style="width:48px; height:48px; object-fit:contain;" />
             <h2 style="color:#ffffff; font-size: 1.75rem; font-weight: 800; letter-spacing: -0.5px; margin: 0;">FoodTrack</h2>
         </div>
     </div>
@@ -97,7 +97,7 @@
                 </div>
                 <div class="pill-info">
                     <div class="pill-name" th:text="${#authentication.name}">Petani</div>
-                    <div class="pill-role">Petani SiPangan</div>
+                    <div class="pill-role">Petani FoodTrack</div>
                 </div>
                 <span class="material-symbols-outlined" style="font-size: 18px; color: var(--outline);">expand_more</span>
             </div>

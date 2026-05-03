@@ -23,7 +23,21 @@
                         <tbody>
                         <tr th:each="k, stat : ${listKomoditas}">
                             <td th:text="${stat.count}">1</td>
-                            <td><strong th:text="${k.namaKomoditas}">Beras</strong></td>
+                            <td style="display:flex; align-items:center; gap:12px;">
+                                <div style="font-size: 1.25rem; width:28px; height:28px; display:flex; align-items:center; justify-content:center;">
+                                    <span th:if="${k.namaKomoditas.toLowerCase().contains('beras') or k.namaKomoditas.toLowerCase().contains('padi')}">🌾</span>
+                                    <span th:if="${k.namaKomoditas.toLowerCase().contains('jagung')}">🌽</span>
+                                    <span th:if="${k.namaKomoditas.toLowerCase().contains('kedelai')}">🥜</span>
+                                    <span th:if="${k.namaKomoditas.toLowerCase().contains('cabai')}">🌶️</span>
+                                    <span th:if="${k.namaKomoditas.toLowerCase().contains('bawang')}">🧅</span>
+                                    <span th:if="${k.namaKomoditas.toLowerCase().contains('tomat')}">🍅</span>
+                                    <span th:if="${k.namaKomoditas.toLowerCase().contains('telur')}">🥚</span>
+                                    <span th:if="${k.namaKomoditas.toLowerCase().contains('daging')}">🥩</span>
+                                    <!-- Default -->
+                                    <span th:if="${!k.namaKomoditas.toLowerCase().contains('beras') && !k.namaKomoditas.toLowerCase().contains('padi') && !k.namaKomoditas.toLowerCase().contains('jagung') && !k.namaKomoditas.toLowerCase().contains('kedelai') && !k.namaKomoditas.toLowerCase().contains('cabai') && !k.namaKomoditas.toLowerCase().contains('bawang') && !k.namaKomoditas.toLowerCase().contains('tomat') && !k.namaKomoditas.toLowerCase().contains('telur') && !k.namaKomoditas.toLowerCase().contains('daging')}">📦</span>
+                                </div>
+                                <strong th:text="${k.namaKomoditas}">Beras</strong>
+                            </td>
                             <td th:text="${k.satuan}">Kg</td>
                             <td style="display:flex;gap:4px;">
                                 <a th:href="@{/admin/komoditas/edit/{id}(id=${k.idKomoditas})}" class="btn-icon edit" title="Edit">
