@@ -24,15 +24,43 @@
                         <tr th:each="k, stat : ${listKomoditas}">
                             <td th:text="${stat.count}">1</td>
                             <td style="display:flex; align-items:center; gap:12px;">
-                                <span style="font-size:20px;"
-                                      th:text="${k.namaKomoditas.contains('Beras') ? '🌾' : 
-                                                k.namaKomoditas.contains('Jagung') ? '🌽' : 
-                                                k.namaKomoditas.contains('Kedelai') ? '🫘' : 
-                                                k.namaKomoditas.contains('Cabai') ? '🌶️' : 
-                                                k.namaKomoditas.contains('Bawang') ? '🧅' : 
-                                                k.namaKomoditas.contains('Tomat') ? '🍅' :
-                                                k.namaKomoditas.contains('Telur') ? '🥚' :
-                                                k.namaKomoditas.contains('Daging') ? '🥩' : '🍃'}"></span>
+                                <div style="width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                    <!-- Beras -->
+                                    <img th:if="${k.namaKomoditas.toLowerCase().contains('beras') or k.namaKomoditas.toLowerCase().contains('padi')}" 
+                                         src="https://img.icons8.com/color/96/grains-of-rice.png" alt="Beras" style="width:100%; height:100%; object-fit:contain;" />
+                                    
+                                    <!-- Jagung -->
+                                    <img th:if="${k.namaKomoditas.toLowerCase().contains('jagung')}" 
+                                         src="https://img.icons8.com/color/96/corn.png" alt="Jagung" style="width:100%; height:100%; object-fit:contain;" />
+                                    
+                                    <!-- Kedelai -->
+                                    <img th:if="${k.namaKomoditas.toLowerCase().contains('kedelai')}" 
+                                         src="https://img.icons8.com/color/96/soy.png" alt="Kedelai" style="width:100%; height:100%; object-fit:contain;" />
+                                    
+                                    <!-- Cabai -->
+                                    <img th:if="${k.namaKomoditas.toLowerCase().contains('cabai')}" 
+                                         src="https://img.icons8.com/color/96/chili-pepper--v1.png" alt="Cabai" style="width:100%; height:100%; object-fit:contain;" />
+                                    
+                                    <!-- Bawang -->
+                                    <img th:if="${k.namaKomoditas.toLowerCase().contains('bawang')}" 
+                                         src="https://img.icons8.com/color/96/onion.png" alt="Bawang" style="width:100%; height:100%; object-fit:contain;" />
+                                    
+                                    <!-- Tomat -->
+                                    <img th:if="${k.namaKomoditas.toLowerCase().contains('tomat')}" 
+                                         src="https://img.icons8.com/color/96/tomato.png" alt="Tomat" style="width:100%; height:100%; object-fit:contain;" />
+                                    
+                                    <!-- Telur -->
+                                    <img th:if="${k.namaKomoditas.toLowerCase().contains('telur')}" 
+                                         src="https://img.icons8.com/color/96/eggs.png" alt="Telur" style="width:100%; height:100%; object-fit:contain;" />
+                                    
+                                    <!-- Daging -->
+                                    <img th:if="${k.namaKomoditas.toLowerCase().contains('daging')}" 
+                                         src="https://img.icons8.com/color/96/steak.png" alt="Daging" style="width:100%; height:100%; object-fit:contain;" />
+                                    
+                                    <!-- Default -->
+                                    <img th:if="${!k.namaKomoditas.toLowerCase().contains('beras') && !k.namaKomoditas.toLowerCase().contains('padi') && !k.namaKomoditas.toLowerCase().contains('jagung') && !k.namaKomoditas.toLowerCase().contains('kedelai') && !k.namaKomoditas.toLowerCase().contains('cabai') && !k.namaKomoditas.toLowerCase().contains('bawang') && !k.namaKomoditas.toLowerCase().contains('tomat') && !k.namaKomoditas.toLowerCase().contains('telur') && !k.namaKomoditas.toLowerCase().contains('daging')}" 
+                                         th:src="@{/img/logo.png}" alt="FoodTrack" style="width:100%; height:100%; object-fit:contain;" />
+                                </div>
                                 <strong th:text="${k.namaKomoditas}">Beras</strong>
                             </td>
                             <td th:text="${k.satuan}">Kg</td>
