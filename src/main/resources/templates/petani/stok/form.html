@@ -26,12 +26,15 @@
                                 <label th:for="'kom_' + ${k.idKomoditas}"
                                        style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px;border:2px solid var(--outline-variant);border-radius:var(--radius-lg);cursor:pointer;transition:all 0.2s;text-align:center;"
                                        class="komoditas-label">
-                                    <span class="material-symbols-outlined" style="font-size:32px;color:var(--primary);"
+                                    <span th:if="${k.namaKomoditas.contains('Beras') or k.namaKomoditas.contains('Jagung') or k.namaKomoditas.contains('Kedelai') or k.namaKomoditas.contains('Cabai') or k.namaKomoditas.contains('Bawang')}"
+                                          class="material-symbols-outlined" style="font-size:32px;color:var(--primary);"
                                           th:text="${k.namaKomoditas.contains('Beras') ? 'grain' : 
                                                     k.namaKomoditas.contains('Jagung') ? 'agriculture' : 
                                                     k.namaKomoditas.contains('Kedelai') ? 'spa' : 
                                                     k.namaKomoditas.contains('Cabai') ? 'nutrition' : 
-                                                    k.namaKomoditas.contains('Bawang') ? 'circles' : 'eco'}">eco</span>
+                                                    k.namaKomoditas.contains('Bawang') ? 'circles' : 'category'}"></span>
+                                    <img th:unless="${k.namaKomoditas.contains('Beras') or k.namaKomoditas.contains('Jagung') or k.namaKomoditas.contains('Kedelai') or k.namaKomoditas.contains('Cabai') or k.namaKomoditas.contains('Bawang')}"
+                                         th:src="@{/img/logo.png}" alt="FoodTrack" style="width:32px; height:32px; object-fit:contain;" />
                                     <span th:text="${k.namaKomoditas}" style="font-size:0.875rem;font-weight:600;color:var(--on-surface);">Beras</span>
                                 </label>
                             </div>

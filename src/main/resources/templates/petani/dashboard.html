@@ -131,7 +131,7 @@
                         <div th:each="stok : ${recentStok}" style="display:flex;align-items:center;justify-content:space-between;padding:16px;background: var(--surface-container-low); border:1px solid var(--outline-variant);border-radius:16px; transition: all 0.3s; cursor:pointer;" onmouseover="this.style.borderColor='var(--primary)'; this.style.background='var(--surface)'" onmouseout="this.style.borderColor='var(--outline-variant)'; this.style.background='var(--surface-container-low)'">
                             <div style="display:flex;align-items:center;gap:16px;">
                                 <div style="width:48px;height:48px;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center; border:1px solid var(--outline-variant); box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                                    <span class="material-symbols-outlined" style="color:var(--primary);font-size:24px;">eco</span>
+                                    <img th:src="@{/img/logo.png}" alt="FoodTrack" style="width:24px; height:24px; object-fit:contain;" />
                                 </div>
                                 <div>
                                     <div th:text="${stok.komoditas.namaKomoditas}" style="font-weight:750; color:var(--on-surface); font-size:1rem; margin-bottom: 2px;">Padi Ciherang</div>
