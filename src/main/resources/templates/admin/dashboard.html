@@ -114,17 +114,16 @@
                         <div th:each="stok : ${recentStok}" style="display:flex;align-items:center;justify-content:space-between;padding:16px;background: var(--surface-container-low); border:1px solid var(--outline-variant);border-radius:16px; transition: all 0.3s; cursor:pointer;" onmouseover="this.style.borderColor='var(--primary)'; this.style.background='var(--surface)'" onmouseout="this.style.borderColor='var(--outline-variant)'; this.style.background='var(--surface-container-low)'">
                             <div style="display:flex;align-items:center;gap:16px;">
                                 <div style="position: relative;">
-                                    <div style="width:52px;height:52px;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center; border:1px solid var(--outline-variant); box-shadow: 0 2px 8px rgba(0,0,0,0.05); font-size: 24px;">
-                                        <span th:if="${stok.komoditas.namaKomoditas.toLowerCase().contains('beras') or stok.komoditas.namaKomoditas.toLowerCase().contains('padi')}">🌾</span>
-                                        <span th:if="${stok.komoditas.namaKomoditas.toLowerCase().contains('jagung')}">🌽</span>
-                                        <span th:if="${stok.komoditas.namaKomoditas.toLowerCase().contains('kedelai')}">🥜</span>
-                                        <span th:if="${stok.komoditas.namaKomoditas.toLowerCase().contains('cabai')}">🌶️</span>
-                                        <span th:if="${stok.komoditas.namaKomoditas.toLowerCase().contains('bawang')}">🧅</span>
-                                        <span th:if="${stok.komoditas.namaKomoditas.toLowerCase().contains('tomat')}">🍅</span>
-                                        <span th:if="${stok.komoditas.namaKomoditas.toLowerCase().contains('telur')}">🥚</span>
-                                        <span th:if="${stok.komoditas.namaKomoditas.toLowerCase().contains('daging')}">🥩</span>
-                                        <!-- Default -->
-                                        <span th:if="${!stok.komoditas.namaKomoditas.toLowerCase().contains('beras') && !stok.komoditas.namaKomoditas.toLowerCase().contains('padi') && !stok.komoditas.namaKomoditas.toLowerCase().contains('jagung') && !stok.komoditas.namaKomoditas.toLowerCase().contains('kedelai') && !stok.komoditas.namaKomoditas.toLowerCase().contains('cabai') && !stok.komoditas.namaKomoditas.toLowerCase().contains('bawang') && !stok.komoditas.namaKomoditas.toLowerCase().contains('tomat') && !stok.komoditas.toLowerCase().contains('telur') && !stok.komoditas.toLowerCase().contains('daging')}">📦</span>
+                                    <div style="width:52px;height:52px;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center; border:1px solid var(--outline-variant); box-shadow: 0 2px 8px rgba(0,0,0,0.05); color: var(--primary);">
+                                        <span class="material-symbols-outlined" style="font-size: 28px;"
+                                              th:text="${stok.komoditas.namaKomoditas.toLowerCase().contains('jagung') ? 'grid_view' : 
+                                                        (stok.komoditas.namaKomoditas.toLowerCase().contains('beras') or stok.komoditas.namaKomoditas.toLowerCase().contains('padi')) ? 'grain' : 
+                                                        stok.komoditas.namaKomoditas.toLowerCase().contains('minyak') ? 'opacity' : 
+                                                        stok.komoditas.namaKomoditas.toLowerCase().contains('cabai') ? 'local_fire_department' : 
+                                                        (stok.komoditas.namaKomoditas.toLowerCase().contains('kedelai') or stok.komoditas.namaKomoditas.toLowerCase().contains('kacang')) ? 'eco' : 
+                                                        stok.komoditas.namaKomoditas.toLowerCase().contains('bawang') ? 'nutrition' : 
+                                                        stok.komoditas.namaKomoditas.toLowerCase().contains('gula') ? 'bakery_dining' : 
+                                                        'inventory_2'}"></span>
                                     </div>
                                     <div style="position: absolute; -right: 4px; -bottom: 4px; width: 22px; height: 22px; border-radius: 50%; background: #10b981; color: #fff; display: flex; align-items: center; justify-content: center; border: 2px solid #fff;">
                                         <span class="material-symbols-outlined" style="font-size: 14px;">add</span>
@@ -142,7 +141,7 @@
                                 </div>
                             </div>
                             <div style="text-align:right;">
-                                <div style="font-size:1.25rem; font-weight:900; color:var(--on-surface);" th:text="${stok.jumlahMasuk + ' ' + stok.komoditas.satuan}">2.5 Ton</div>
+                                <div style="font-size:1.125rem; font-weight:850; color:var(--on-surface);" th:text="${stok.jumlahMasuk + ' ' + (stok.satuan != null ? stok.satuan.namaSatuan : stok.komoditas.satuan)}">2.5 Ton</div>
                                 <div style="font-size:0.75rem; color: var(--outline); font-weight: 600;">Stok Masuk</div>
                             </div>
                         </div>

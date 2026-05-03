@@ -9,6 +9,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Controller
 @RequestMapping("/petani")
 @RequiredArgsConstructor
@@ -20,6 +25,7 @@ public class PetaniWebController {
     private final DistribusiService distribusiService;
     private final ChatbotService chatbotService;
     private final NotificationService notificationService;
+    private final SatuanService satuanService;
 
     /** Helper: get logged-in Petani entity */
     private Petani getLoggedInPetani(Authentication auth) {
@@ -53,7 +59,12 @@ public class PetaniWebController {
     @GetMapping("/stok/tambah")
     public String catatStok(Model model) {
         model.addAttribute("stokPangan", new StokPangan());
-        model.addAttribute("listKomoditas", komoditasService.findAll());
+        List<Komoditas> all = komoditasService.findAll();
+        model.addAttribute("listKomoditas", all);
+        // Group by name for clean card display
+        Map<String, List<Komoditas>> grouped = all.stream()
+            .collect(Collectors.groupingBy(Komoditas::getNamaKomoditas, LinkedHashMap::new, Collectors.toList()));
+        model.addAttribute("groupedKomoditas", grouped);
         return "petani/stok/form";
     }
 
@@ -62,11 +73,21 @@ public class PetaniWebController {
                              Authentication auth, RedirectAttributes ra) {
         Petani petani = getLoggedInPetani(auth);
         if (petani == null) return "redirect:/login-petani";
+        
         stokPangan.setPetani(petani);
         komoditasService.findById(stokPangan.getKomoditas().getIdKomoditas()).ifPresent(stokPangan::setKomoditas);
+        
+        // Link to Satuan
+        if (stokPangan.getSatuan() != null && stokPangan.getSatuan().getIdSatuan() != null) {
+            satuanService.findById(stokPangan.getSatuan().getIdSatuan()).ifPresent(stokPangan::setSatuan);
+        }
+        
         stokPanganService.save(stokPangan);
+        
+        String unitName = (stokPangan.getSatuan() != null) ? stokPangan.getSatuan().getNamaSatuan() : "unit";
+        
         notificationService.createNotification(
-            "Petani " + petani.getNama() + " mencatat panen " + stokPangan.getJumlahMasuk() + " " + stokPangan.getKomoditas().getSatuan() + " " + stokPangan.getKomoditas().getNamaKomoditas(),
+            "Petani " + petani.getNama() + " mencatat panen " + stokPangan.getJumlahMasuk() + " " + unitName + " " + stokPangan.getKomoditas().getNamaKomoditas(),
             "success", "eco", "STOK",
             petani.getIdPetani(), "ROLE_PETANI"
         );

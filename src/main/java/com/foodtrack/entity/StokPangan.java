@@ -34,6 +34,10 @@ public class StokPangan extends BaseEntity {
     @JoinColumn(name = "id_komoditas", nullable = false)
     private Komoditas komoditas;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_satuan")
+    private Satuan satuan;
+
     @OneToMany(mappedBy = "stokPangan", cascade = CascadeType.ALL)
     private List<Distribusi> distribusiList;
 

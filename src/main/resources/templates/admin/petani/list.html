@@ -50,16 +50,18 @@
                                 <span th:if="${petani.username}" class="badge badge-green" th:text="${petani.username}">budi</span>
                                 <span th:unless="${petani.username}" class="badge badge-gray">Belum diset</span>
                             </td>
-                            <td style="display:flex;gap:4px;">
-                                <a th:href="@{/admin/petani/edit/{id}(id=${petani.idPetani})}" class="btn-icon edit" title="Edit">
-                                    <span class="material-symbols-outlined">edit</span>
-                                </a>
-                                <form th:action="@{/admin/petani/hapus/{id}(id=${petani.idPetani})}" method="post" style="display:inline;"
-                                      th:onsubmit="handleConfirm(event, 'Yakin ingin menghapus data petani ini?', 'delete')">
-                                    <button type="submit" class="btn-icon delete" title="Hapus">
-                                        <span class="material-symbols-outlined">delete</span>
-                                    </button>
-                                </form>
+                            <td>
+                                <div style="display:flex;gap:4px;">
+                                    <a th:href="@{/admin/petani/edit/{id}(id=${petani.idPetani})}" class="btn-icon edit" title="Edit">
+                                        <span class="material-symbols-outlined">edit</span>
+                                    </a>
+                                    <form th:action="@{/admin/petani/hapus/{id}(id=${petani.idPetani})}" method="post" style="display:inline;"
+                                          th:onsubmit="handleConfirm(event, 'Yakin ingin menghapus data petani ini?', 'delete')">
+                                        <button type="submit" class="btn-icon delete" title="Hapus">
+                                            <span class="material-symbols-outlined">delete</span>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(listPetani)}">
