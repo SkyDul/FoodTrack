@@ -548,25 +548,48 @@ select.form-control { appearance: none; background-image: url("data:image/svg+xm
     padding: 32px 24px;
     border-radius: var(--radius-xl);
     border: 1px solid transparent;
+    background: var(--primary)
 }
+
+/* semua teks di dalam card jadi putih */
+.step-card,
+.step-card h1,
+.step-card h2,
+.step-card h3,
+.step-card h4,
+.step-card p,
+.step-card span,
+.step-card li {
+    color: #ffffff !important;
+}
+
 .step-card:hover {
     transform: translateY(-8px);
-    background: var(--surface-container);
-    border-color: var(--outline-variant);
-    box-shadow: 0 16px 32px rgba(45, 125, 70, 0.08);
+    background: var(--primary); 
+    border-color: #81c784;
+    box-shadow: 0 16px 32px rgba(45, 125, 70, 0.2);
 }
+
 .step-icon {
-    width: 56px; height: 56px; border-radius: 50%;
-    background: var(--primary); color: #fff;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.5rem; font-weight: 700; margin: 0 auto 16px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #3c744a;
+    color: #ffffff !important; /* angka putih */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 auto 16px;
     transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
+
 .step-card:hover .step-icon {
     transform: scale(1.15) rotate(-5deg);
+    background: #3c744a
+    color: #ffffff !important;
     box-shadow: 0 8px 16px rgba(45, 125, 70, 0.3);
-    background: var(--secondary-container);
-    color: var(--secondary);
 }
 
 .landing-section {
