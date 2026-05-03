@@ -27,42 +27,17 @@
                                        style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px 16px;border:2px solid var(--outline-variant);border-radius:24px;cursor:pointer;transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);text-align:center;background:var(--surface);height:160px;"
                                        class="komoditas-label">
                                     
-                                    <div class="commodity-icon-wrapper" style="width:44px; height:44px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                                        <!-- Beras -->
-                                        <img th:if="${k.namaKomoditas.toLowerCase().contains('beras') or k.namaKomoditas.toLowerCase().contains('padi')}" 
-                                             src="https://img.icons8.com/color/96/grains-of-rice.png" alt="Beras" style="width:100%; height:100%; object-fit:contain;" />
-                                        
-                                        <!-- Jagung -->
-                                        <img th:if="${k.namaKomoditas.toLowerCase().contains('jagung')}" 
-                                             src="https://img.icons8.com/color/96/corn.png" alt="Jagung" style="width:100%; height:100%; object-fit:contain;" />
-                                        
-                                        <!-- Kedelai -->
-                                        <img th:if="${k.namaKomoditas.toLowerCase().contains('kedelai')}" 
-                                             src="https://img.icons8.com/color/96/soy.png" alt="Kedelai" style="width:100%; height:100%; object-fit:contain;" />
-                                        
-                                        <!-- Cabai (Polos) -->
-                                        <img th:if="${k.namaKomoditas.toLowerCase().contains('cabai')}" 
-                                             src="https://img.icons8.com/color/96/chili-pepper--v1.png" alt="Cabai" style="width:100%; height:100%; object-fit:contain;" />
-                                        
-                                        <!-- Bawang -->
-                                        <img th:if="${k.namaKomoditas.toLowerCase().contains('bawang')}" 
-                                             src="https://img.icons8.com/color/96/onion.png" alt="Bawang" style="width:100%; height:100%; object-fit:contain;" />
-                                        
-                                        <!-- Tomat -->
-                                        <img th:if="${k.namaKomoditas.toLowerCase().contains('tomat')}" 
-                                             src="https://img.icons8.com/color/96/tomato.png" alt="Tomat" style="width:100%; height:100%; object-fit:contain;" />
-                                        
-                                        <!-- Telur -->
-                                        <img th:if="${k.namaKomoditas.toLowerCase().contains('telur')}" 
-                                             src="https://img.icons8.com/color/96/eggs.png" alt="Telur" style="width:100%; height:100%; object-fit:contain;" />
-                                        
-                                        <!-- Daging -->
-                                        <img th:if="${k.namaKomoditas.toLowerCase().contains('daging')}" 
-                                             src="https://img.icons8.com/color/96/steak.png" alt="Daging" style="width:100%; height:100%; object-fit:contain;" />
-                                        
+                                    <div class="commodity-icon-wrapper" style="font-size: 32px; height:44px; display:flex; align-items:center; justify-content:center;">
+                                        <span th:if="${k.namaKomoditas.toLowerCase().contains('beras') or k.namaKomoditas.toLowerCase().contains('padi')}">🌾</span>
+                                        <span th:if="${k.namaKomoditas.toLowerCase().contains('jagung')}">🌽</span>
+                                        <span th:if="${k.namaKomoditas.toLowerCase().contains('kedelai')}">🥜</span>
+                                        <span th:if="${k.namaKomoditas.toLowerCase().contains('cabai')}">🌶️</span>
+                                        <span th:if="${k.namaKomoditas.toLowerCase().contains('bawang')}">🧅</span>
+                                        <span th:if="${k.namaKomoditas.toLowerCase().contains('tomat')}">🍅</span>
+                                        <span th:if="${k.namaKomoditas.toLowerCase().contains('telur')}">🥚</span>
+                                        <span th:if="${k.namaKomoditas.toLowerCase().contains('daging')}">🥩</span>
                                         <!-- Default -->
-                                        <img th:if="${!k.namaKomoditas.toLowerCase().contains('beras') && !k.namaKomoditas.toLowerCase().contains('padi') && !k.namaKomoditas.toLowerCase().contains('jagung') && !k.namaKomoditas.toLowerCase().contains('kedelai') && !k.namaKomoditas.toLowerCase().contains('cabai') && !k.namaKomoditas.toLowerCase().contains('bawang') && !k.namaKomoditas.toLowerCase().contains('tomat') && !k.namaKomoditas.toLowerCase().contains('telur') && !k.namaKomoditas.toLowerCase().contains('daging')}" 
-                                             th:src="@{/img/logo.png}" alt="FoodTrack" style="width:100%; height:100%; object-fit:contain;" />
+                                        <span th:if="${!k.namaKomoditas.toLowerCase().contains('beras') && !k.namaKomoditas.toLowerCase().contains('padi') && !k.namaKomoditas.toLowerCase().contains('jagung') && !k.namaKomoditas.toLowerCase().contains('kedelai') && !k.namaKomoditas.toLowerCase().contains('cabai') && !k.namaKomoditas.toLowerCase().contains('bawang') && !k.namaKomoditas.toLowerCase().contains('tomat') && !k.namaKomoditas.toLowerCase().contains('telur') && !k.namaKomoditas.toLowerCase().contains('daging')}">📦</span>
                                     </div>
 
                                     <span th:text="${k.namaKomoditas}" style="font-size:0.9375rem;font-weight:700;color:var(--on-surface);margin-top:4px;">Beras</span>
