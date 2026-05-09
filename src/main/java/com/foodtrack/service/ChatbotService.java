@@ -28,6 +28,9 @@ public class ChatbotService {
     @Value("${gemini.api.key}")
     private String geminiApiKey;
 
+    @Value("${mistral.api.key:}")
+    private String mistralApiKey;
+
     public List<ChatbotLog> findAll() { return chatbotLogRepository.findAll(); }
     public List<ChatbotLog> findByPetaniId(Integer id) { return chatbotLogRepository.findByPetaniIdPetaniOrderByTimestampAsc(id); }
     public List<ChatbotLog> findRecent() { return chatbotLogRepository.findTop5ByOrderByTimestampDesc(); }
@@ -40,7 +43,13 @@ public class ChatbotService {
      * Integrates with Google Gemini API
      */
     public ChatbotLog askChatbot(Petani petani, String prompt) {
-        String response = callGeminiApi(prompt);
+        // Fetch history and limit to last 3 conversations to save tokens
+        List<ChatbotLog> allHistory = findByPetaniId(petani.getIdPetani());
+        List<ChatbotLog> limitedHistory = allHistory.size() > 3 
+            ? allHistory.subList(allHistory.size() - 3, allHistory.size()) 
+            : allHistory;
+
+        String response = callGeminiApi(prompt, limitedHistory);
         
         ChatbotLog log = ChatbotLog.builder()
             .petani(petani)
@@ -51,20 +60,32 @@ public class ChatbotService {
         return chatbotLogRepository.save(log);
     }
 
-    private String callGeminiApi(String prompt) {
+    private String callGeminiApi(String prompt, List<ChatbotLog> history) {
         if (geminiApiKey == null || geminiApiKey.isEmpty() || geminiApiKey.equals("YOUR_API_KEY_HERE")) {
             log.warn("Gemini API Key is not set or using placeholder.");
             return getSimulatedResponse(prompt);
         }
         
-        String url = "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=" + geminiApiKey;
+        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + geminiApiKey;
         
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         
+        StringBuilder promptWithContext = new StringBuilder();
+        promptWithContext.append("Anda adalah Asisten Pakar Pertanian FoodTrack. Anda ahli dalam ketahanan pangan Indonesia, teknik budidaya tanaman lokal, dan solusi ramah lingkungan. ");
+        promptWithContext.append("Jawablah dalam Bahasa Indonesia yang profesional, empatik, dan praktis. Fokuslah pada solusi yang bisa diterapkan petani di lahan mereka.\n\n");
+        
+        if (history != null && !history.isEmpty()) {
+            promptWithContext.append("Riwayat Percakapan Terakhir (Gunakan sebagai konteks):\n");
+            for (ChatbotLog h : history) {
+                promptWithContext.append("Petani: ").append(h.getUserPrompt()).append("\n");
+                promptWithContext.append("Asisten: ").append(h.getGeminiResponse()).append("\n\n");
+            }
+        }
+        promptWithContext.append("Pertanyaan Petani Saat Ini: ").append(prompt);
+
         Map<String, Object> parts = new HashMap<>();
-        parts.put("text", "Anda adalah Asisten Pakar Pertanian FoodTrack. Anda ahli dalam ketahanan pangan Indonesia, teknik budidaya tanaman lokal (padi, jagung, kedelai, cabai, dll), dan solusi ramah lingkungan. " +
-                         "Jawablah dalam Bahasa Indonesia yang profesional, empatik, dan praktis. Fokuslah pada solusi yang bisa diterapkan petani di lahan mereka: " + prompt);
+        parts.put("text", promptWithContext.toString());
         
         Map<String, Object> content = new HashMap<>();
         content.put("parts", List.of(parts));
@@ -88,14 +109,60 @@ public class ChatbotService {
                 }
             }
             log.error("Gemini API returned unexpected response structure: {}", body);
+            return getSimulatedResponse(prompt);
         } catch (org.springframework.web.client.HttpStatusCodeException e) {
             log.error("Gemini API HTTP Error: {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
+            if (e.getStatusCode().value() == 429) {
+                log.warn("Gemini API rate limit exceeded (429). Attempting fallback to Mistral API...");
+                return callMistralApi(prompt, promptWithContext.toString());
+            }
             return "Maaf, asisten AI sedang mengoptimalkan jawaban. Sebagai saran ahli FoodTrack: " + getSimulatedResponse(prompt);
         } catch (Exception e) {
             log.error("Gemini API General Error ({}): {}", e.getClass().getSimpleName(), e.getMessage());
             return "Maaf, asisten AI sedang beristirahat sejenak. Sebagai saran ahli FoodTrack: " + getSimulatedResponse(prompt);
         }
-        return getSimulatedResponse(prompt);
+    }
+
+    private String callMistralApi(String originalPrompt, String promptWithContext) {
+        if (mistralApiKey == null || mistralApiKey.isEmpty() || mistralApiKey.equals("<ISI DENGAN API MISTRAL>")) {
+            log.warn("Mistral API Key is not set. Falling back to simulated response.");
+            return "Maaf, kuota AI harian telah habis. Sebagai saran ahli FoodTrack: " + getSimulatedResponse(originalPrompt);
+        }
+
+        String url = "https://api.mistral.ai/v1/chat/completions";
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(mistralApiKey);
+        
+        Map<String, Object> message = new HashMap<>();
+        message.put("role", "user");
+        message.put("content", promptWithContext);
+        
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("model", "open-mistral-nemo");
+        requestBody.put("messages", List.of(message));
+        
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
+        
+        try {
+            ResponseEntity<Map> responseEntity = restTemplate.postForEntity(url, request, Map.class);
+            Map<String, Object> body = responseEntity.getBody();
+            if (body != null && body.containsKey("choices")) {
+                List<Map<String, Object>> choices = (List<Map<String, Object>>) body.get("choices");
+                if (choices != null && !choices.isEmpty()) {
+                    Map<String, Object> messageObj = (Map<String, Object>) choices.get(0).get("message");
+                    if (messageObj != null && messageObj.containsKey("content")) {
+                        return (String) messageObj.get("content");
+                    }
+                }
+            }
+            log.error("Mistral API returned unexpected response structure: {}", body);
+            return "Maaf, kuota AI harian telah habis. Sebagai saran ahli FoodTrack: " + getSimulatedResponse(originalPrompt);
+        } catch (Exception e) {
+            log.error("Mistral API Error ({}): {}", e.getClass().getSimpleName(), e.getMessage());
+            return "Maaf, kuota AI harian telah habis. Sebagai saran ahli FoodTrack: " + getSimulatedResponse(originalPrompt);
+        }
     }
 
     private String getSimulatedResponse(String prompt) {

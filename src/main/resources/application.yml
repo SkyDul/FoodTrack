@@ -35,4 +35,8 @@ logging:
 
 gemini:
   api:
-    key: "<ISI DENGAN API GEMINI>"
+    key: "AIzaSyD0ssm7T7NxIrGqjbYWqhcU7ivfKyE_GYc"
+
+mistral:
+  api:
+    key: "ikLujTI2zwOzYz1crilz8sHQLOZPkaRg"
