@@ -31,14 +31,30 @@
             </div>
 
             <!-- Filter Tabs -->
-            <div style="margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between;">
-                <div style="display: flex; gap: 10px; background: var(--surface-container-low); padding: 6px; border-radius: 12px; border: 1px solid var(--outline-variant);">
-                    <button class="btn btn-primary btn-sm filter-tab active-tab" onclick="filterStatus(this,'')" style="border-radius: 8px; padding: 6px 16px;">Semua</button>
-                    <button class="btn btn-secondary btn-sm filter-tab" onclick="filterStatus(this,'Menunggu')" style="border-radius: 8px; padding: 6px 16px; border:none; background:transparent;">Menunggu</button>
-                    <button class="btn btn-secondary btn-sm filter-tab" onclick="filterStatus(this,'Dikirim')" style="border-radius: 8px; padding: 6px 16px; border:none; background:transparent;">Dikirim</button>
-                    <button class="btn btn-secondary btn-sm filter-tab" onclick="filterStatus(this,'Selesai')" style="border-radius: 8px; padding: 6px 16px; border:none; background:transparent;">Selesai</button>
+            <div style="margin-bottom: 24px;">
+                <div class="filter-tabs-container">
+                    <button class="filter-tab active-tab" onclick="filterStatus(this,'')">Semua</button>
+                    <button class="filter-tab" onclick="filterStatus(this,'Menunggu')">Menunggu</button>
+                    <button class="filter-tab" onclick="filterStatus(this,'Dikirim')">Dikirim</button>
+                    <button class="filter-tab" onclick="filterStatus(this,'Selesai')">Selesai</button>
                 </div>
             </div>
+
+            <style>
+                .filter-tabs-container {
+                    display: inline-flex; gap: 4px; background: #f1f5f9; padding: 6px; border-radius: 14px; border: 1px solid #e2e8f0;
+                }
+                .filter-tab {
+                    border-radius: 10px; padding: 8px 24px; border: none; background: transparent; 
+                    font-size: 0.875rem; font-weight: 600; color: #64748b; cursor: pointer; transition: all 0.3s ease;
+                    outline: none;
+                }
+                .filter-tab:hover { color: #1a5c2a; background: rgba(255,255,255,0.6); }
+                .filter-tab.active-tab {
+                    background: #fff !important; color: #1a5c2a !important; 
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                }
+            </style>
 
             <!-- Table -->
             <div class="card">
@@ -77,10 +93,12 @@
                                 </span>
                             </td>
                         </tr>
-                        <tr th:if="${#lists.isEmpty(listDistribusi)}">
+
+                        <!-- Unified Empty State -->
+                        <tr id="emptyRow" th:style="${#lists.isEmpty(listDistribusi)} ? '' : 'display:none;'">
                             <td colspan="5" style="text-align:center;color:var(--outline);padding:48px;">
                                 <span class="material-symbols-outlined" style="font-size:48px;margin-bottom:8px;display:block;">local_shipping</span>
-                                Belum ada riwayat distribusi
+                                <span id="emptyText">Belum ada riwayat distribusi</span>
                             </td>
                         </tr>
                         </tbody>
@@ -92,11 +110,26 @@
 </div>
 <script>
 function filterStatus(btn, status){
-    document.querySelectorAll('.filter-tab').forEach(b=>{b.classList.remove('active-tab','btn-primary');b.classList.add('btn-secondary');});
-    btn.classList.add('active-tab','btn-primary');btn.classList.remove('btn-secondary');
-    document.querySelectorAll('#distTable tbody tr').forEach(r=>{
-        r.style.display=!status||r.dataset.status===status?'':'none';
+    document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active-tab'));
+    btn.classList.add('active-tab');
+    
+    const rows = document.querySelectorAll('#distTable tbody tr:not(#emptyRow)');
+    let visibleCount = 0;
+    
+    rows.forEach(r => {
+        const isMatch = !status || r.dataset.status === status;
+        r.style.display = isMatch ? '' : 'none';
+        if (isMatch) visibleCount++;
     });
+
+    const emptyRow = document.getElementById('emptyRow');
+    const emptyText = document.getElementById('emptyText');
+    if (emptyRow) {
+        emptyRow.style.display = (visibleCount === 0) ? '' : 'none';
+        if (emptyText) {
+            emptyText.innerText = 'Belum ada riwayat distribusi';
+        }
+    }
 }
 </script>
 </body>

@@ -31,11 +31,13 @@
                         <option th:each="p : ${listPetani}" th:value="${p.nama}" th:text="${p.nama}">Budi</option>
                     </select>
                 </div>
-                <div class="btn-group">
-                    <button class="btn btn-primary btn-sm" onclick="filterStok()">
-                        <span class="material-symbols-outlined" style="font-size:16px;">filter_list</span> Filter
+                <div class="btn-group" style="display:flex; gap:10px; align-items:flex-end; padding-bottom:2px;">
+                    <button class="btn btn-primary" onclick="filterStok()" title="Filter" style="width:56px; height:48px; padding:0; border-radius:14px; display:flex; align-items:center; justify-content:center; box-shadow: 0 4px 15px rgba(26, 92, 42, 0.15);">
+                        <span class="material-symbols-outlined" style="font-size:24px;">filter_alt</span>
                     </button>
-                    <button class="btn btn-secondary btn-sm" onclick="resetFilter()">Reset</button>
+                    <button class="btn btn-secondary" onclick="resetFilter()" title="Reset" style="width:56px; height:48px; padding:0; border-radius:14px; display:flex; align-items:center; justify-content:center; background:#fff; border:1.5px solid var(--outline-variant); color:var(--on-surface);">
+                        <span class="material-symbols-outlined" style="font-size:24px;">refresh</span>
+                    </button>
                 </div>
             </div>
 
@@ -51,23 +53,36 @@
                         <tbody>
                         <tr th:each="s, stat : ${listStok}">
                             <td th:text="${stat.count}">1</td>
-                            <td>
-                                <strong th:text="${s.komoditas.namaKomoditas}">Beras</strong>
+                             <td>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <span class="material-symbols-outlined" style="color:var(--primary); font-size:18px;"
+                                          th:text="${s.komoditas.namaKomoditas.toLowerCase().contains('jagung') ? 'grid_view' : 
+                                                    (s.komoditas.namaKomoditas.toLowerCase().contains('beras') or s.komoditas.namaKomoditas.toLowerCase().contains('padi')) ? 'grain' : 
+                                                    s.komoditas.namaKomoditas.toLowerCase().contains('minyak') ? 'opacity' : 
+                                                    s.komoditas.namaKomoditas.toLowerCase().contains('cabai') ? 'local_fire_department' : 
+                                                    (s.komoditas.namaKomoditas.toLowerCase().contains('kedelai') or s.komoditas.namaKomoditas.toLowerCase().contains('kacang')) ? 'eco' : 
+                                                    s.komoditas.namaKomoditas.toLowerCase().contains('bawang') ? 'nutrition' : 
+                                                    s.komoditas.namaKomoditas.toLowerCase().contains('gula') ? 'bakery_dining' : 
+                                                    'inventory_2'}"></span>
+                                    <strong th:text="${s.komoditas.namaKomoditas}">Beras</strong>
+                                </div>
                             </td>
                             <td th:text="${s.petani.nama}">Budi</td>
                             <td><strong th:text="${s.jumlahMasuk}">500</strong></td>
-                            <td th:text="${s.komoditas.satuan}">Kg</td>
+                            <td th:text="${s.satuan != null ? s.satuan.namaSatuan : s.komoditas.satuan}">Kg</td>
                             <td th:text="${#temporals.format(s.tanggalPanen, 'dd MMM yyyy')}">12 Jan 2024</td>
-                            <td style="display:flex;gap:4px;">
-                                <a th:href="@{/admin/stok/edit/{id}(id=${s.idStok})}" class="btn-icon edit" title="Edit">
-                                    <span class="material-symbols-outlined">edit</span>
-                                </a>
-                                <form th:action="@{/admin/stok/hapus/{id}(id=${s.idStok})}" method="post" style="display:inline;"
-                                      th:onsubmit="handleConfirm(event, 'Yakin ingin menghapus data stok ini?', 'delete')">
-                                    <button type="submit" class="btn-icon delete" title="Hapus">
-                                        <span class="material-symbols-outlined">delete</span>
-                                    </button>
-                                </form>
+                            <td>
+                                <div style="display:flex;gap:4px;">
+                                    <a th:href="@{/admin/stok/edit/{id}(id=${s.idStok})}" class="btn-icon edit" title="Edit">
+                                        <span class="material-symbols-outlined">edit</span>
+                                    </a>
+                                    <form th:action="@{/admin/stok/hapus/{id}(id=${s.idStok})}" method="post" style="display:inline;"
+                                          th:onsubmit="handleConfirm(event, 'Yakin ingin menghapus data stok ini?', 'delete')">
+                                        <button type="submit" class="btn-icon delete" title="Hapus">
+                                            <span class="material-symbols-outlined">delete</span>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(listStok)}">

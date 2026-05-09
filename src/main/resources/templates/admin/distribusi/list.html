@@ -33,9 +33,13 @@
                         <input type="text" class="form-control" placeholder="Cari tujuan distribusi..." id="searchDist"/>
                     </div>
                 </div>
-                <div class="btn-group">
-                    <button class="btn btn-secondary btn-sm" onclick="resetDistFilter()">Reset</button>
-                    <button class="btn btn-primary btn-sm" onclick="filterDist()">Filter</button>
+                <div class="btn-group" style="display:flex; gap:10px; align-items:flex-end; padding-bottom:2px;">
+                    <button class="btn btn-primary" onclick="filterDist()" title="Filter" style="width:56px; height:48px; padding:0; border-radius:14px; display:flex; align-items:center; justify-content:center; box-shadow: 0 4px 15px rgba(26, 92, 42, 0.15);">
+                        <span class="material-symbols-outlined" style="font-size:24px;">filter_alt</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="resetDistFilter()" title="Reset" style="width:56px; height:48px; padding:0; border-radius:14px; display:flex; align-items:center; justify-content:center; background:#fff; border:1.5px solid var(--outline-variant); color:var(--on-surface);">
+                        <span class="material-symbols-outlined" style="font-size:24px;">refresh</span>
+                    </button>
                 </div>
             </div>
 

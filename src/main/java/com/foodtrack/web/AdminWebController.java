@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import java.util.*;
+import java.util.stream.Collectors;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -23,6 +25,9 @@ public class AdminWebController {
     private final ChatbotService chatbotService;
     private final NotificationService notificationService;
     private final PasswordEncoder passwordEncoder;
+    private final SatuanService satuanService;
+    private final KonversiSatuanService konversiSatuanService;
+    private final HargaKomoditasService hargaKomoditasService;
 
     // ====== LOGIN ======
     @GetMapping("/login")
@@ -72,14 +77,31 @@ public class AdminWebController {
 
     @PostMapping("/petani/simpan")
     public String simpanPetani(@Valid @ModelAttribute("petani") Petani petani,
-                               BindingResult result, RedirectAttributes ra) {
+                               BindingResult result, 
+                               @RequestParam(value = "passwordRaw", required = false) String passwordRaw,
+                               RedirectAttributes ra) {
         if (result.hasErrors()) return "admin/petani/form";
 
         boolean isNew = petani.getIdPetani() == null;
-        // Password hashing is handled in PetaniService.save()
-        if (isNew && (petani.getPassword() == null || petani.getPassword().isBlank())) {
-            petani.setPassword("password123");
+        
+        if (isNew) {
+            // New user: use provided password or default 'password123'
+            if (passwordRaw == null || passwordRaw.isBlank()) {
+                petani.setPassword("password123");
+            } else {
+                petani.setPassword(passwordRaw);
+            }
+        } else {
+            // Edit user: if password field is empty, keep the old one from database
+            if (passwordRaw == null || passwordRaw.isBlank()) {
+                petaniService.findById(petani.getIdPetani()).ifPresent(old -> {
+                    petani.setPassword(old.getPassword());
+                });
+            } else {
+                petani.setPassword(passwordRaw);
+            }
         }
+        
         petaniService.save(petani);
         notificationService.createNotification(
             isNew ? "Petani baru '" + petani.getNama() + "' telah ditambahkan." : "Data petani '" + petani.getNama() + "' diperbarui.",
@@ -105,13 +127,46 @@ public class AdminWebController {
     // ====== KOMODITAS CRUD ======
     @GetMapping("/komoditas")
     public String listKomoditas(Model model) {
-        model.addAttribute("listKomoditas", komoditasService.findAll());
+        List<Komoditas> all = komoditasService.findAll();
+        
+        // Populate transient fields (Price & Conversion) for display
+        all.forEach(k -> {
+            if (k.getSatuanList() != null) {
+                k.getSatuanList().forEach(s -> {
+                    // Populate Price
+                    hargaKomoditasService.findAll().stream()
+                        .filter(h -> h.getSatuan().getIdSatuan().equals(s.getIdSatuan()))
+                        .findFirst()
+                        .ifPresent(h -> s.setHarga(h.getHarga()));
+                        
+                    // Populate Conversion
+                    konversiSatuanService.findAll().stream()
+                        .filter(c -> c.getSatuanDari().getIdSatuan().equals(s.getIdSatuan()))
+                        .findFirst()
+                        .ifPresent(c -> s.setKonversiNilai(c.getNilaiKonversi()));
+                });
+            }
+        });
+
+        // Group by name while maintaining order
+        Map<String, List<Komoditas>> grouped = all.stream()
+            .collect(Collectors.groupingBy(Komoditas::getNamaKomoditas, LinkedHashMap::new, Collectors.toList()));
+        model.addAttribute("groupedKomoditas", grouped);
         return "admin/komoditas/list";
     }
 
     @GetMapping("/komoditas/tambah")
-    public String tambahKomoditas(Model model) {
-        model.addAttribute("komoditas", new Komoditas());
+    public String tambahKomoditas(@RequestParam(required = false) String nama, Model model) {
+        Komoditas k = new Komoditas();
+        if (nama != null) k.setNamaKomoditas(nama);
+        model.addAttribute("komoditas", k);
+        
+        // Pass existing names for dropdown suggestions from DB
+        model.addAttribute("allCommodityNames", komoditasService.findAll().stream()
+            .map(Komoditas::getNamaKomoditas).distinct().sorted().collect(Collectors.toList()));
+        model.addAttribute("allUnits", satuanService.findAll().stream()
+            .map(Satuan::getNamaSatuan).distinct().sorted().collect(Collectors.toList()));
+            
         return "admin/komoditas/form";
     }
 
@@ -119,19 +174,89 @@ public class AdminWebController {
     public String editKomoditas(@PathVariable Integer id, Model model, RedirectAttributes ra) {
         return komoditasService.findById(id).map(k -> {
             model.addAttribute("komoditas", k);
+            
+            // Populate transient price for the form
+            k.getSatuanList().forEach(s -> {
+                hargaKomoditasService.findAll().stream()
+                    .filter(h -> h.getSatuan().getIdSatuan().equals(s.getIdSatuan()))
+                    .findFirst()
+                    .ifPresent(h -> s.setHarga(h.getHarga()));
+            });
+            
+            // Pass existing names for dropdown suggestions from DB
+            model.addAttribute("allCommodityNames", komoditasService.findAll().stream()
+                .map(Komoditas::getNamaKomoditas).distinct().sorted().collect(Collectors.toList()));
+            model.addAttribute("allUnits", satuanService.findAll().stream()
+                .map(Satuan::getNamaSatuan).distinct().sorted().collect(Collectors.toList()));
+
             return "admin/komoditas/form";
         }).orElseGet(() -> {
-            ra.addFlashAttribute("errorMessage", "Komoditas tidak ditemukan.");
+            ra.addFlashAttribute("errorMessage", "Data komoditas tidak ditemukan.");
             return "redirect:/admin/komoditas";
         });
     }
 
     @PostMapping("/komoditas/simpan")
     public String simpanKomoditas(@Valid @ModelAttribute("komoditas") Komoditas komoditas,
-                                   BindingResult result, RedirectAttributes ra) {
+                                   BindingResult result, 
+                                   RedirectAttributes ra) {
+        
         if (result.hasErrors()) return "admin/komoditas/form";
+        
         boolean isNew = komoditas.getIdKomoditas() == null;
-        komoditasService.save(komoditas);
+
+        // Check if commodity with same name already exists (for update or avoid dupe)
+        if (isNew) {
+            komoditasService.findAll().stream()
+                .filter(existing -> existing.getNamaKomoditas().equalsIgnoreCase(komoditas.getNamaKomoditas()))
+                .findFirst()
+                .ifPresent(existing -> {
+                    komoditas.setIdKomoditas(existing.getIdKomoditas());
+                });
+            // Recalculate isNew based on name match
+            isNew = komoditas.getIdKomoditas() == null;
+        }
+
+        // 1. Validation: Ensure we have at least one unit
+        if (komoditas.getSatuanList() == null || komoditas.getSatuanList().isEmpty() || komoditas.getSatuanList().get(0) == null) {
+            ra.addFlashAttribute("errorMessage", "Harap isi minimal satu satuan!");
+            return "redirect:/admin/komoditas/tambah";
+        }
+
+        Satuan baseUnit = komoditas.getSatuanList().get(0);
+
+        // Set back-references and default values for cascade save
+        for (int i = 0; i < komoditas.getSatuanList().size(); i++) {
+            Satuan s = komoditas.getSatuanList().get(i);
+            if (s == null) continue;
+            s.setKomoditas(komoditas);
+            // Only the first unit is the base unit in our simplified UI
+            s.setIsBaseUnit(i == 0); 
+            s.setKonversiKeBase(java.math.BigDecimal.ONE);
+        }
+
+        // Set legacy field for backward compatibility
+        komoditas.setSatuan(baseUnit.getNamaSatuan());
+
+        // 2. Save Commodity (Cascades to SatuanList)
+        Komoditas savedK = komoditasService.save(komoditas);
+        
+        // 3. Handle extra relations (Price)
+        if (savedK.getSatuanList() != null) {
+            for (Satuan savedS : savedK.getSatuanList()) {
+                komoditas.getSatuanList().stream()
+                    .filter(orig -> orig.getNamaSatuan().equals(savedS.getNamaSatuan()))
+                    .findFirst()
+                    .ifPresent(orig -> {
+                        if (orig.getHarga() != null) {
+                            // Update or save price
+                            hargaKomoditasService.save(HargaKomoditas.builder()
+                                .komoditas(savedK).satuan(savedS).harga(orig.getHarga()).build());
+                        }
+                    });
+            }
+        }
+        
         notificationService.createNotification(
             isNew ? "Komoditas baru '" + komoditas.getNamaKomoditas() + "' telah ditambahkan." : "Komoditas '" + komoditas.getNamaKomoditas() + "' diperbarui.",
             "success", "agriculture", "KOMODITAS", null, "ROLE_ADMIN"

@@ -8,13 +8,14 @@
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style th:replace="~{petani/layout :: flashStyle}"></style>
 </head>
 
 <!-- ===== PETANI SIDEBAR ===== -->
 <nav th:fragment="sidebar(activePage)" class="sidebar">
     <div class="sidebar-brand" style="padding: 32px 24px;">
         <div class="logo-wrapper" style="display: flex; align-items: center; justify-content: flex-start; gap: 8px;">
-            <span class="material-symbols-outlined" style="color:#ffb300; font-size:36px; font-variation-settings:'FILL' 1;">eco</span>
+            <img th:src="@{/img/logo.png}" alt="FoodTrack" style="width:48px; height:48px; object-fit:contain;" />
             <h2 style="color:#ffffff; font-size: 1.75rem; font-weight: 800; letter-spacing: -0.5px; margin: 0;">FoodTrack</h2>
         </div>
     </div>
@@ -97,7 +98,7 @@
                 </div>
                 <div class="pill-info">
                     <div class="pill-name" th:text="${#authentication.name}">Petani</div>
-                    <div class="pill-role">Petani SiPangan</div>
+                    <div class="pill-role">Petani FoodTrack</div>
                 </div>
                 <span class="material-symbols-outlined" style="font-size: 18px; color: var(--outline);">expand_more</span>
             </div>
@@ -121,7 +122,7 @@
             const currentTheme = root.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             root.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
+            localStorage.setItem('petani-theme', newTheme);
             document.getElementById('themeIcon').innerText = newTheme === 'dark' ? 'light_mode' : 'dark_mode';
         }
 
@@ -181,7 +182,7 @@
 
         setInterval(pollNotifications, 30000);
 
-        const savedTheme = localStorage.getItem('theme');
+        const savedTheme = localStorage.getItem('petani-theme');
         if (savedTheme) {
             document.documentElement.setAttribute('data-theme', savedTheme);
             document.addEventListener('DOMContentLoaded', () => {
@@ -246,7 +247,7 @@
     <div th:if="${successMessage != null or param.successMsg != null}" class="flash-overlay" id="flashSuccess" onclick="closeFlash(this)">
         <div class="flash-popup success">
             <div class="flash-icon">
-                <span class="material-symbols-outlined">check_circle</span>
+                <span class="material-symbols-outlined">check</span>
             </div>
             <div class="flash-content">
                 <h3>Berhasil!</h3>
@@ -315,8 +316,8 @@
         okBtn.innerText = options.okText || 'Ya, Lanjutkan';
         okBtn.style.background = isDelete ? 'var(--error)' : 'var(--primary)';
         okBtn.style.borderColor = isDelete ? 'var(--error)' : 'var(--primary)';
-        iconBox.style.background = isDelete ? 'var(--error-container)' : 'var(--primary-light)';
-        iconBox.style.color = isDelete ? 'var(--error)' : 'var(--primary)';
+        iconBox.style.background = isDelete ? 'var(--error)' : 'var(--primary)';
+        iconBox.style.color = '#ffffff';
         
         overlay.classList.add('show');
         
@@ -347,49 +348,55 @@
 </div>
 
 <style th:fragment="flashStyle">
-.flash-overlay {
-    position: fixed; top: 24px; left: 50%; transform: translateX(-50%); z-index: 10000;
-    width: 100%; max-width: 420px; padding: 0 20px;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    pointer-events: none;
-}
-.flash-popup {
-    background: var(--surface); border-radius: 20px; padding: 16px 20px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.12), 0 0 0 1px var(--outline-variant);
-    display: flex; align-items: center; gap: 16px; position: relative;
-    overflow: hidden; pointer-events: auto;
-    animation: toastIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    backdrop-filter: blur(10px);
-}
-.flash-icon {
-    width: 48px; height: 48px; border-radius: 14px;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.flash-icon span { font-size: 28px; font-variation-settings: 'FILL' 1; }
+        .flash-overlay {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10000;
+            width: fit-content; max-width: 90vw; pointer-events: none;
+        }
+        .flash-popup {
+            background: #ffffff;
+            border-radius: 14px; 
+            padding: 12px 24px 12px 14px;
+            box-shadow: 0 12px 36px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.04);
+            display: flex; align-items: center; gap: 16px; position: relative;
+            overflow: hidden; pointer-events: auto;
+            animation: toastIn 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            min-width: 290px;
+        }
+        [data-theme='dark'] .flash-popup {
+            background: #1e251e;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08);
+        }
+        
+        .flash-popup.success { border-left: 5px solid var(--primary); background: #ffffff; }
+        .flash-popup.error { border-left: 5px solid var(--error); background: #ffffff; }
+        
+        [data-theme='dark'] .flash-popup.success { background: linear-gradient(to right, rgba(26, 92, 42, 0.2), #1e251e); }
+        [data-theme='dark'] .flash-popup.error { background: linear-gradient(to right, rgba(186, 26, 26, 0.15), #1e251e); }
 
-.flash-popup.success .flash-icon { background: rgba(16, 185, 129, 0.12); color: #10b981; }
-.flash-popup.success { border-left: 5px solid #10b981; }
+        .flash-icon {
+            width: 38px; height: 38px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        .flash-icon span { font-size: 20px; font-weight: 700; }
 
-.flash-popup.error .flash-icon { background: rgba(239, 68, 68, 0.12); color: #ef4444; }
-.flash-popup.error { border-left: 5px solid #ef4444; }
+        .flash-popup.success .flash-icon { background: var(--primary); color: #fff; }
+        .flash-popup.error .flash-icon { background: var(--error); color: #fff; }
 
-.flash-content { flex: 1; }
-.flash-content h3 { font-size: 1rem; font-weight: 800; color: var(--on-surface); margin: 0; }
-.flash-content p { color: var(--on-surface-variant); font-size: 0.875rem; margin: 2px 0 0; font-weight: 500; }
+        .flash-content { display: flex; flex-direction: column; gap: 1px; }
+        .flash-content h3 { font-size: 0.95rem; font-weight: 850; color: #1a1c1a; margin: 0; display: block; letter-spacing: -0.3px; }
+        .flash-content p { color: #404940; font-size: 0.85rem; margin: 0; font-weight: 600; line-height: 1.4; }
 
-.flash-close { cursor: pointer; color: var(--outline); transition: color 0.2s; }
-.flash-close:hover { color: var(--on-surface); }
+        .flash-progress { position: absolute; bottom: 0; left: 0; height: 3px; width: 100%; background: rgba(0,0,0,0.03); }
+        .flash-progress .bar { height: 100%; width: 100%; animation: shrink 4s linear forwards; }
+        .flash-popup.success .bar { background: var(--primary); }
+        .flash-popup.error .bar { background: var(--error); }
 
-.flash-progress { position: absolute; bottom: 0; left: 0; height: 3px; width: 100%; background: var(--surface-container-low); }
-.flash-progress .bar { height: 100%; }
-.flash-popup.success .bar { background: #10b981; animation: shrink 4s linear forwards; }
-.flash-popup.error .bar { background: #ef4444; animation: shrink 4s linear forwards; }
-
-@keyframes toastIn {
-    from { transform: translateY(-40px) scale(0.9); opacity: 0; }
-    to { transform: translateY(0) scale(1); opacity: 1; }
-}
-@keyframes shrink { from { width: 100%; } to { width: 0%; } }
+        @keyframes toastIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes shrink { from { width: 100%; } to { width: 0%; } }
 
 /* Additional Responsive Fixes */
 @media (max-width: 768px) {

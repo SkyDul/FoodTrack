@@ -8,199 +8,513 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <style>
+        :root {
+            --primary-green: #1a5c2a;
+            --accent-yellow: #ffb300;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
             font-family: 'Inter', sans-serif;
-            margin: 0;
-            background: #096430; /* Solid Green */
+            background-color: var(--primary-green);
+            background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1.5px, transparent 1.5px);
+            background-size: 40px 40px;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
-        .register-card {
-            background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+        .login-wrapper {
             width: 100%;
-            max-width: 500px;
-            padding: 32px;
-            animation: fadeIn 0.5s ease;
+            max-width: 880px;
+            background: #fff;
+            border-radius: 24px;
+            overflow: hidden;
+            display: flex;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.35);
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
         }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-        
-        .brand {
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Illustration Side */
+        .login-illustration {
+            width: 42%;
+            position: relative;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 40px;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .illustration-bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+            transition: transform 10s linear;
+        }
+
+        .login-wrapper:hover .illustration-bg {
+            transform: scale(1.1);
+        }
+
+        .illustration-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(26, 92, 42, 0.9), rgba(26, 92, 42, 0.2));
+            z-index: 1;
+        }
+
+        .illustration-content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .brand-hub {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-            justify-content: center;
+            gap: 10px;
         }
+
         .brand-icon {
-            width: 36px; height: 36px;
-            background: #096430;
-            border-radius: 8px;
+            width: 48px;
+            height: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
+
         .brand-name {
             font-size: 1.25rem;
             font-weight: 800;
-            color: #1e293b;
-            margin: 0;
+            letter-spacing: -0.5px;
         }
-        
-        .form-header { text-align: center; margin-bottom: 24px; }
-        .form-header h1 { font-size: 1.125rem; font-weight: 700; color: #1e293b; margin: 0; }
-        
+
+        .illustration-footer h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .illustration-footer p {
+            font-size: 0.875rem;
+            line-height: 1.6;
+            opacity: 0.9;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Form Side */
+        .login-form-side {
+            flex: 1;
+            padding: 32px 56px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: #fff;
+        }
+
+        .form-header {
+            margin-bottom: 32px;
+        }
+
+        .form-header h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .form-header p {
+            color: var(--text-muted);
+            font-size: 0.9375rem;
+        }
+
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
+            gap: 20px;
         }
-        @media (max-width: 480px) { .form-grid { grid-template-columns: 1fr; } }
-        
-        .form-group { margin-bottom: 12px; }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
         .form-label {
             display: block;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #64748b;
-            margin-bottom: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper .material-symbols-outlined {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+
         .form-control {
             width: 100%;
-            height: 40px;
-            padding: 0 12px;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
+            height: 46px;
+            padding: 0 16px;
+            padding-right: 44px;
+            border-radius: 10px;
+            border: 2px solid #f1f5f9;
             background: #f8fafc;
-            font-size: 0.875rem;
+            font-size: 0.9375rem;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
         }
+
         .form-control:focus {
-            border-color: #096430;
-            background: #fff;
             outline: none;
+            border-color: var(--primary-green);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(26, 92, 42, 0.1);
         }
 
         .terms-group {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin: 16px 0;
+            gap: 10px;
+            margin: 8px 0 24px;
             font-size: 0.8125rem;
-            color: #64748b;
+            color: var(--text-muted);
+            cursor: pointer;
         }
+
+        .terms-group input {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            accent-color: var(--primary-green);
+        }
+
         .terms-link {
-            color: #096430;
-            font-weight: 600;
+            color: var(--primary-green);
+            font-weight: 700;
             text-decoration: none;
         }
-        .terms-link:hover { text-decoration: underline; }
-        
-        .btn-register {
+
+        .btn-submit {
             width: 100%;
-            height: 48px;
-            background: #096430;
+            height: 50px;
+            background: #062f18;
             color: #fff;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 0.9375rem;
             font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
             cursor: pointer;
-            margin-top: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(6, 47, 24, 0.2);
         }
-        .btn-register:hover { background: #074d24; transform: translateY(-1px); }
-        
+
+        .btn-submit:hover {
+            background: #0a4d27;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(6, 47, 24, 0.3);
+        }
+
         .login-link {
             text-align: center;
-            margin-top: 16px;
-            font-size: 0.8125rem;
-            color: #64748b;
+            margin-top: 24px;
+            font-size: 0.875rem;
+            color: var(--text-muted);
         }
-        .login-link a { color: #096430; font-weight: 700; text-decoration: none; }
+
+        .login-link a {
+            color: var(--primary-green);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .back-link {
+            margin-top: 32px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary-green);
+        }
+
+        /* Terms Modal */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 10000;
+            display: none; align-items: center; justify-content: center;
+            backdrop-filter: blur(8px); animation: fadeInOverlay 0.3s ease;
+            padding: 20px;
+        }
+        .modal-box {
+            background: #fff; border-radius: 24px; padding: 40px;
+            width: 100%; max-width: 480px; box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .modal-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; color: var(--primary-green); }
+        .modal-header span { font-size: 32px; }
+        .modal-header h2 { font-size: 1.5rem; font-weight: 800; margin: 0; }
+        .modal-body { color: var(--text-muted); line-height: 1.6; font-size: 0.9375rem; margin-bottom: 32px; }
+        .modal-body p { margin-bottom: 12px; font-weight: 700; color: var(--text-dark); }
+        .modal-body li { margin-bottom: 8px; }
+        
+        @keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { from { transform: scale(0.85) translateY(20px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+
+        /* Help Modal */
+        .help-modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 10000;
+            display: none; align-items: center; justify-content: center;
+            backdrop-filter: blur(8px); animation: fadeInOverlay 0.3s ease;
+            padding: 20px;
+        }
+        .help-modal-box {
+            background: #fff; border-radius: 24px; padding: 32px;
+            width: 100%; max-width: 400px; box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .help-modal-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; color: var(--primary-green); }
+        .help-modal-header h2 { font-size: 1.25rem; font-weight: 800; margin: 0; }
+        .help-item {
+            display: flex; gap: 16px; margin-bottom: 20px; padding: 16px;
+            background: #f8fafc; border-radius: 16px; border: 1px solid #f1f5f9;
+            transition: all 0.2s;
+        }
+        .help-item:hover { transform: translateY(-2px); border-color: var(--primary-green); background: #fff; }
+        .help-icon-circle {
+            width: 40px; height: 40px; border-radius: 50%; background: var(--primary-green);
+            color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .help-text h3 { font-size: 0.9375rem; font-weight: 700; color: var(--text-dark); margin-bottom: 4px; }
+        .help-text p { font-size: 0.8125rem; color: var(--text-muted); line-height: 1.4; }
+
+        .help-fab {
+            position: absolute;
+            right: 24px;
+            bottom: 24px;
+            width: 48px;
+            height: 48px;
+            background: var(--accent-yellow);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-green);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .help-fab:hover {
+            transform: scale(1.1) rotate(15deg);
+        }
+
+        @media (max-width: 900px) {
+            .login-illustration { display: none; }
+            .login-wrapper { max-width: 500px; }
+            .login-form-side { padding: 40px; }
+            .form-grid { grid-template-columns: 1fr; gap: 0; }
+        }
     </style>
 </head>
 <body>
-    <div class="register-card">
-        <div class="brand">
-            <span class="material-symbols-outlined" style="color:#F59E0B; font-size:28px; font-variation-settings:'FILL' 1;">eco</span>
-            <h1 class="brand-name" style="color:#096430; font-weight:800; font-size:1.5rem; letter-spacing:-0.5px; margin:0;">FoodTrack</h1>
-        </div>
-
-        <div class="form-header">
-            <h1>Daftar Akun Petani</h1>
-        </div>
-
-        <form th:action="@{/register-petani}" method="post" th:object="${petani}" onsubmit="return validateForm()">
-            <div class="form-group">
-                <label class="form-label">Nama Lengkap</label>
-                <input type="text" th:field="*{nama}" class="form-control" placeholder="Nama Anda" required/>
-            </div>
-            
-            <div class="form-grid">
-                <div class="form-group">
-                    <label class="form-label">Kelompok Tani</label>
-                    <input type="text" th:field="*{kelompokTani}" class="form-control" placeholder="Nama kelompok" required/>
+    <div class="login-wrapper">
+        <!-- Illustration Side -->
+        <div class="login-illustration">
+            <img th:src="@{/img/login-bg.png}" class="illustration-bg" alt="Vegetables"/>
+            <div class="illustration-overlay"></div>
+            <div class="illustration-content">
+                <div class="brand-hub">
+                    <div class="brand-icon">
+                        <img th:src="@{/img/logo.png}" alt="FoodTrack" style="width:48px; height:48px; object-fit:contain;" />
+                    </div>
+                    <span class="brand-name">FoodTrack</span>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Kontak</label>
-                    <input type="text" th:field="*{kontak}" class="form-control" placeholder="08xxxxxxxx" required/>
+                
+                <div class="illustration-footer">
+                    <h2>Verdant Logistics Solution</h2>
+                    <p>Mulai perjalanan Anda sebagai mitra pilar ketahanan pangan nasional bersama teknologi mutakhir FoodTrack.</p>
                 </div>
             </div>
+        </div>
 
-            <div class="form-grid">
+        <!-- Form Side -->
+        <div class="login-form-side">
+            <div class="form-header">
+                <h1>Daftar Akun Petani</h1>
+                <p>Silakan lengkapi data diri Anda untuk bergabung</p>
+            </div>
+
+            <form th:action="@{/register-petani}" method="post" th:object="${petani}">
                 <div class="form-group">
-                    <label class="form-label">Username</label>
-                    <input type="text" th:field="*{username}" class="form-control" placeholder="username" required/>
+                    <label class="form-label">Nama Lengkap</label>
+                    <div class="input-wrapper">
+                        <input type="text" th:field="*{nama}" class="form-control" placeholder="Nama lengkap Anda" required autofocus/>
+                        <span class="material-symbols-outlined">badge</span>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Password</label>
-                    <div style="position:relative;">
-                        <input type="password" th:field="*{password}" id="regPwd" class="form-control" placeholder="••••••••" required/>
-                        <span class="material-symbols-outlined" onclick="togglePwd('regPwd', this)" style="position:absolute; right:12px; top:10px; cursor:pointer; color:#64748b; font-size:20px;">visibility</span>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Kelompok Tani</label>
+                        <div class="input-wrapper">
+                            <input type="text" th:field="*{kelompokTani}" class="form-control" placeholder="Nama kelompok" required/>
+                            <span class="material-symbols-outlined">groups</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Kontak</label>
+                        <div class="input-wrapper">
+                            <input type="text" th:field="*{kontak}" class="form-control" placeholder="08xxxxxxxx" required/>
+                            <span class="material-symbols-outlined">call</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <div class="input-wrapper">
+                            <input type="text" th:field="*{username}" class="form-control" placeholder="Pilih username" required/>
+                            <span class="material-symbols-outlined">alternate_email</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <div class="input-wrapper">
+                            <input type="password" th:field="*{password}" id="regPwd" class="form-control" placeholder="••••••••" required/>
+                            <span class="material-symbols-outlined" onclick="togglePwd('regPwd', this)" style="cursor:pointer;">visibility</span>
+                        </div>
+                    </div>
+                </div>
+
+                <label class="terms-group">
+                    <input type="checkbox" id="termsCheck" required/>
+                    <span>Saya menyetujui <a href="javascript:void(0)" onclick="openTerms()" class="terms-link">Syarat & Ketentuan</a> yang berlaku.</span>
+                </label>
+
+                <button type="submit" class="btn-submit">
+                    Daftar Sekarang
+                    <span class="material-symbols-outlined">how_to_reg</span>
+                </button>
+
+                <div class="login-link">
+                    Sudah punya akun? <a th:href="@{/login-petani}">Masuk di sini</a>
+                </div>
+            </form>
+
+            <a th:href="@{/}" class="back-link">
+                <span class="material-symbols-outlined">home</span>
+                Beranda
+            </a>
+        </div>
+
+        <!-- Help FAB -->
+        <div class="help-fab" onclick="toggleHelp()">
+            <span class="material-symbols-outlined">help</span>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="help-modal-overlay" onclick="toggleHelp()">
+        <div class="help-modal-box" onclick="event.stopPropagation()">
+            <div class="help-modal-header">
+                <span class="material-symbols-outlined">support_agent</span>
+                <h2>Pusat Bantuan</h2>
+            </div>
+            <div class="help-content">
+                <div class="help-item">
+                    <div class="help-icon-circle">
+                        <span class="material-symbols-outlined">how_to_reg</span>
+                    </div>
+                    <div class="help-text">
+                        <h3>Panduan Daftar</h3>
+                        <p>Lengkapi Nama Lengkap, Kelompok Tani, dan Username. Simpan password Anda dengan aman.</p>
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <div class="help-icon-circle">
+                        <span class="material-symbols-outlined">description</span>
+                    </div>
+                    <div class="help-text">
+                        <h3>Verifikasi Data</h3>
+                        <p>Setelah mendaftar, admin akan memverifikasi akun Anda dalam waktu maksimal 1x24 jam.</p>
                     </div>
                 </div>
             </div>
-
-            <label class="terms-group">
-                <input type="checkbox" id="termsCheck" required/>
-                <span>Saya menyetujui <a href="javascript:void(0)" onclick="openTerms()" class="terms-link">Syarat dan Ketentuan</a> yang berlaku.</span>
-            </label>
-
-            <button type="submit" class="btn-register">Buat Akun</button>
-            <div class="login-link">
-                Sudah punya akun? <a th:href="@{/login-petani}">Masuk di sini</a>
-            </div>
-        </form>
-    </div>
-
-    <!-- Terms Modal -->
-    <div id="termsModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; backdrop-filter:blur(4px); padding:20px;">
-        <div style="background:#fff; border-radius:20px; width:100%; max-width:450px; padding:32px; box-shadow:0 20px 60px rgba(0,0,0,0.15); animation:popIn 0.3s ease;">
-            <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px; color:#096430;">
-                <span class="material-symbols-outlined" style="font-size:32px;">description</span>
-                <h2 style="font-size:1.25rem; font-weight:800; margin:0;">Syarat dan Ketentuan</h2>
-            </div>
-            <div style="color:#475569; line-height:1.6; font-size:0.9375rem; margin-bottom:24px;">
-                <p style="margin-bottom:12px; font-weight:600;">Dengan mendaftar di FoodTrack, Anda menyetujui:</p>
-                <ul style="padding-left:20px; margin-bottom:0;">
-                    <li style="margin-bottom:8px;"><strong>Akurasi Data:</strong> Semua data hasil panen dan stok yang diberikan harus akurat dan benar.</li>
-                    <li style="margin-bottom:8px;"><strong>Penggunaan Akun:</strong> Akun hanya digunakan untuk kepentingan pengelolaan ketahanan pangan.</li>
-                    <li style="margin-bottom:8px;"><strong>Privasi:</strong> FoodTrack menjamin kerahasiaan data pribadi dan informasi stok Anda.</li>
-                </ul>
-            </div>
-            <button onclick="closeTerms()" style="width:100%; height:48px; background:#096430; color:#fff; border:none; border-radius:12px; font-weight:700; cursor:pointer; transition:all 0.2s;">Saya Mengerti</button>
+            <button class="btn-submit" style="margin-top: 12px;" onclick="toggleHelp()">Tutup</button>
         </div>
     </div>
 
-    <style>
-        @keyframes popIn { from { transform:scale(0.9); opacity:0; } to { transform:scale(1); opacity:1; } }
-    </style>
+    <!-- Terms Modal -->
+    <div id="termsModal" class="modal-overlay" onclick="closeTerms()">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <span class="material-symbols-outlined">description</span>
+                <h2>Syarat & Ketentuan</h2>
+            </div>
+            <div class="modal-body">
+                <p>Dengan mendaftar di FoodTrack, Anda menyetujui:</p>
+                <ul>
+                    <li><strong>Akurasi Data:</strong> Semua data hasil panen dan stok yang diberikan harus akurat dan benar.</li>
+                    <li><strong>Penggunaan Akun:</strong> Akun hanya digunakan untuk kepentingan pengelolaan ketahanan pangan.</li>
+                    <li><strong>Privasi:</strong> FoodTrack menjamin kerahasiaan data pribadi dan informasi stok Anda.</li>
+                </ul>
+            </div>
+            <button class="btn-submit" onclick="closeTerms()">Saya Mengerti</button>
+        </div>
+    </div>
 
     <script>
+        function toggleHelp() {
+            const modal = document.getElementById('helpModal');
+            if (modal.style.display === 'flex') {
+                modal.style.display = 'none';
+            } else {
+                modal.style.display = 'flex';
+            }
+        }
+
         function togglePwd(id, icon) {
             const input = document.getElementById(id);
             if (input.type === 'password') {
@@ -216,14 +530,6 @@
         }
         function closeTerms() {
             document.getElementById('termsModal').style.display = 'none';
-        }
-        function validateForm() {
-            if (!document.getElementById('termsCheck').checked) {
-                // We use the system-wide custom modal if available, 
-                // but since this is a standalone page, we'll just focus the check
-                return true;
-            }
-            return true;
         }
     </script>
 </body>

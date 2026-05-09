@@ -47,26 +47,48 @@
 
             <!-- Filter Tabs -->
             <div style="display:flex;gap:10px;margin-bottom:32px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none;">
-                <button class="filter-tab active-tab" onclick="filterByKomoditas(this, '')">Semua</button>
+                <button class="filter-tab active-tab" onclick="filterByKomoditas(this, '')" style="display:flex; align-items:center; gap:8px;">
+                    <span class="material-symbols-outlined" style="font-size:18px;">grid_view</span> Semua
+                </button>
                 <div th:each="k : ${listKomoditas}" style="display:contents;">
                     <button class="filter-tab" 
-                            th:text="${k.namaKomoditas}"
                             th:data-komoditas="${k.namaKomoditas}"
-                            onclick="filterByKomoditas(this, this.getAttribute('data-komoditas'))">Beras</button>
+                            onclick="filterByKomoditas(this, this.getAttribute('data-komoditas'))"
+                            style="display:flex; align-items:center; gap:8px;">
+                        <span class="material-symbols-outlined" style="font-size:18px;"
+                              th:text="${k.namaKomoditas.toLowerCase().contains('jagung') ? 'grid_view' : 
+                                        (k.namaKomoditas.toLowerCase().contains('beras') or k.namaKomoditas.toLowerCase().contains('padi')) ? 'grain' : 
+                                        k.namaKomoditas.toLowerCase().contains('minyak') ? 'opacity' : 
+                                        k.namaKomoditas.toLowerCase().contains('cabai') ? 'local_fire_department' : 
+                                        (k.namaKomoditas.toLowerCase().contains('kedelai') or k.namaKomoditas.toLowerCase().contains('kacang')) ? 'eco' : 
+                                        k.namaKomoditas.toLowerCase().contains('bawang') ? 'nutrition' : 
+                                        k.namaKomoditas.toLowerCase().contains('gula') ? 'bakery_dining' : 
+                                        'inventory_2'}"></span>
+                        <span th:text="${k.namaKomoditas}">Beras</span>
+                    </button>
                 </div>
             </div>
 
             <!-- Stok Cards Grid -->
             <div class="stok-cards" id="stokGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:24px;">
                 <div th:each="stok : ${listStok}" class="stok-card" th:data-komoditas="${stok.komoditas.namaKomoditas}"
-                     style="background:#fff; border-radius:16px; padding:24px; box-shadow:0 4px 12px rgba(0,0,0,0.05); border: 1px solid var(--outline-variant); transition: transform 0.2s; cursor:pointer;"
+                     style="background:#fff; border-radius:16px; padding:24px; box-shadow:0 4px 12px rgba(0,0,0,0.05); border: 1px solid var(--outline-variant); transition: transform 0.2s; cursor:pointer; display: flex; flex-direction: column;"
                      onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
                     
                     <div class="stok-header" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px;">
-                        <div>
-                            <span th:if="${stok.komoditas.namaKomoditas == 'Beras'}" class="badge badge-green" style="background:#e8f5e9; color:#2e7d32; border:1px solid #c8e6c9;">BERAS</span>
-                            <span th:if="${stok.komoditas.namaKomoditas == 'Jagung'}" class="badge badge-yellow" style="background:#fff8e1; color:#f57f17; border:1px solid #ffecb3;">JAGUNG</span>
-                            <span th:if="${stok.komoditas.namaKomoditas != 'Beras' && stok.komoditas.namaKomoditas != 'Jagung'}" class="badge badge-blue" style="background:#e3f2fd; color:#1565c0; border:1px solid #bbdefb;" th:text="${stok.komoditas.namaKomoditas.toUpperCase()}">KOMODITAS</span>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--surface-container-low); display: flex; align-items: center; justify-content: center; color: var(--primary); border: 1px solid var(--outline-variant);">
+                                <span class="material-symbols-outlined" style="font-size:20px;"
+                                      th:text="${stok.komoditas.namaKomoditas.toLowerCase().contains('jagung') ? 'grid_view' : 
+                                                (stok.komoditas.namaKomoditas.toLowerCase().contains('beras') or stok.komoditas.namaKomoditas.toLowerCase().contains('padi')) ? 'grain' : 
+                                                stok.komoditas.namaKomoditas.toLowerCase().contains('minyak') ? 'opacity' : 
+                                                stok.komoditas.namaKomoditas.toLowerCase().contains('cabai') ? 'local_fire_department' : 
+                                                (stok.komoditas.namaKomoditas.toLowerCase().contains('kedelai') or stok.komoditas.namaKomoditas.toLowerCase().contains('kacang')) ? 'eco' : 
+                                                stok.komoditas.namaKomoditas.toLowerCase().contains('bawang') ? 'nutrition' : 
+                                                stok.komoditas.namaKomoditas.toLowerCase().contains('gula') ? 'bakery_dining' : 
+                                                'inventory_2'}"></span>
+                            </div>
+                            <span class="badge badge-green" th:text="${stok.komoditas.namaKomoditas.toUpperCase()}">BERAS</span>
                         </div>
                         <span style="display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--outline);font-weight:500; background:var(--surface-container-low); padding:4px 10px; border-radius:20px;">
                             <span class="material-symbols-outlined" style="font-size:14px;">calendar_today</span>
@@ -78,7 +100,7 @@
                         <div style="font-size:0.75rem; color:var(--on-surface-variant); margin-bottom:2px; font-weight:500;">Total Stok Tersedia</div>
                         <div style="display:flex; align-items:baseline; gap:6px;">
                             <span th:text="${stok.jumlahMasuk}" style="font-size:1.75rem; font-weight:800; color:var(--on-surface); letter-spacing:-0.5px;">500</span>
-                            <span th:text="${stok.komoditas.satuan}" style="font-size:1rem; font-weight:600; color:var(--on-surface-variant);">Kg</span>
+                            <span th:text="${stok.satuan != null ? stok.satuan.namaSatuan : stok.komoditas.satuan}" style="font-size:1rem; font-weight:600; color:var(--on-surface-variant);">Kg</span>
                         </div>
                     </div>
 
