@@ -35,8 +35,8 @@ logging:
 
 gemini:
   api:
-    key: "AIzaSyD0ssm7T7NxIrGqjbYWqhcU7ivfKyE_GYc"
+    key: "API GEMINI"
 
 mistral:
   api:
-    key: "ikLujTI2zwOzYz1crilz8sHQLOZPkaRg"
+    key: "API MISTERAL"
