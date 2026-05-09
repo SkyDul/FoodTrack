@@ -3,16 +3,21 @@ package com.foodtrack;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.Environment;
 
 @SpringBootApplication
 public class FoodTrackApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(FoodTrackApplication.class, args);
+        ConfigurableApplicationContext context = SpringApplication.run(FoodTrackApplication.class, args);
+        Environment env = context.getEnvironment();
+        String port = env.getProperty("server.port", "8080");
+
         System.out.println("==========================================================");
-        System.out.println("🌱 FoodTrack is running at http://localhost:8080");
-        System.out.println("🔑 Admin Login   : http://localhost:8080/admin/login");
-        System.out.println("🌾 Petani Login   : http://localhost:8080/login-petani");
+        System.out.println("🌱 FoodTrack is running at http://localhost:" + port);
+        System.out.println("🔑 Admin Login   : http://localhost:" + port + "/admin/login");
+        System.out.println("🌾 Petani Login   : http://localhost:" + port + "/login-petani");
         System.out.println("==========================================================");
     }
 }
