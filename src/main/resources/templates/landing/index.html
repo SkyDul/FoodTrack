@@ -41,9 +41,17 @@
             </div>
         </div>
         <div class="hero-image">
-            <img src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&q=80"
-                 alt="Petani menggunakan tablet di sawah"
-            style="border-radius:24px; box-shadow: 0 32px 64px -16px rgba(26, 92, 42, 0.2);"/>
+            <div class="hero-image-wrapper">
+                <img th:src="@{/img/login-bg.png}"
+                    alt="Petani menggunakan tablet di sawah"
+                    class="hero-img"/>
+                <div class="hero-overlay"></div>
+
+                <div class="hero-image-content">
+                    <h3>FoodTrack</h3>
+                    <p>Distribusi pangan modern dengan monitoring real-time.</p>
+                </div>
+            </div>
         </div>
     </div>
 </section>
