@@ -52,13 +52,13 @@
     --surface-container-high: #22302a;
     --surface-container-highest: #2c3d33;
     --surface-bright: #243028;
-    --on-surface: #e8f0e9;
-    --on-surface-variant: #a8bfaa;
-    --on-primary: #ffffff;
+    --on-surface: #8b8b8b;
+    --on-surface-variant: #3c413d;
+    --on-primary: #242424;
     --outline: #6e8870;
     --outline-variant: #344d38;
-    --inverse-surface: #e8f0e9;
-    --inverse-on-surface: #192018;
+    --inverse-surface: #242524;
+    --inverse-on-surface: #316929;
     --shadow: rgba(0, 0, 0, 0.5);
     --sidebar-bg: #0f3d1f;
     --sidebar-on-bg: #ffffff;
