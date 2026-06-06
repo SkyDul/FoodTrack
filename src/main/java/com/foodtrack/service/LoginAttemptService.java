@@ -1,4 +1,4 @@
-package com.foodtrack.service;
+﻿package com.foodtrack.service;
 
 import org.springframework.stereotype.Service;
 
@@ -7,6 +7,12 @@ import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
+
+
+/**
+ * Kelas Service untuk LoginAttemptService.
+ * Berisi logika bisnis dan bertindak sebagai penghubung antara Controller dan Repository.
+ */
 public class LoginAttemptService {
     private final int MAX_ATTEMPT = 3;
     private final int LOCK_TIME_DURATION_SECONDS = 30;
@@ -49,3 +55,4 @@ public class LoginAttemptService {
         return Math.max(0, LOCK_TIME_DURATION_SECONDS - secondsPassed);
     }
 }
+

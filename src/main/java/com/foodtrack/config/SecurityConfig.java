@@ -38,7 +38,7 @@ public class SecurityConfig {
                 throw new org.springframework.security.authentication.LockedException("Akun terkunci karena 3x salah password. Tunggu " + loginAttemptService.getWaitTimeSeconds(username) + " detik.");
             }
 
-            // 1. Try finding in Admin
+            // 1. Coba cari di data Admin
             Optional<Admin> admin = adminRepository.findByUsername(username);
             if (admin.isPresent()) {
                 return User.withUsername(admin.get().getUsername())
@@ -47,7 +47,7 @@ public class SecurityConfig {
                     .build();
             }
 
-            // 2. Try finding in Petani
+            // 2. Coba cari di data Petani
             Optional<Petani> petani = petaniRepository.findByUsername(username);
             if (petani.isPresent()) {
                 return User.withUsername(petani.get().getUsername())
@@ -60,7 +60,7 @@ public class SecurityConfig {
         };
     }
 
-    // ====== Admin Security Chain ======
+    // ====== Rantai Keamanan (Security Chain) Admin ======
     @Bean
     @Order(1)
     public SecurityFilterChain adminFilterChain(HttpSecurity http) throws Exception {
@@ -93,14 +93,14 @@ public class SecurityConfig {
                 .rememberMeParameter("remember-me")
                 .rememberMeCookieName("foodtrack-admin-rm")
                 .userDetailsService(userDetailsService())
-                .tokenValiditySeconds(86400 * 30) // 30 days
+                .tokenValiditySeconds(86400 * 30) // 30 hari
             )
             .csrf(csrf -> csrf.disable());
 
         return http.build();
     }
 
-    // ====== Petani Security Chain ======
+    // ====== Rantai Keamanan (Security Chain) Petani ======
     @Bean
     @Order(2)
     public SecurityFilterChain petaniFilterChain(HttpSecurity http) throws Exception {
@@ -133,14 +133,14 @@ public class SecurityConfig {
                 .rememberMeParameter("remember-me")
                 .rememberMeCookieName("foodtrack-petani-rm")
                 .userDetailsService(userDetailsService())
-                .tokenValiditySeconds(86400 * 30) // 30 days
+                .tokenValiditySeconds(86400 * 30) // 30 hari
             )
             .csrf(csrf -> csrf.disable());
 
         return http.build();
     }
 
-    // ====== Public Chain ======
+    // ====== Rantai Keamanan Akses Publik ======
     @Bean
     @Order(3)
     public SecurityFilterChain publicFilterChain(HttpSecurity http) throws Exception {

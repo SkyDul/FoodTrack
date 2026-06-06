@@ -1,4 +1,4 @@
-package com.foodtrack.config;
+﻿package com.foodtrack.config;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,6 +11,11 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+
+
+/**
+ * Kelas konfigurasi untuk CustomAuthenticationFailureHandler di dalam spring boot.
+ */
 public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
     private final String defaultFailureUrl;
 
@@ -29,3 +34,4 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
         getRedirectStrategy().sendRedirect(request, response, defaultFailureUrl + "?errorMsg=" + URLEncoder.encode(errorMessage, StandardCharsets.UTF_8));
     }
 }
+

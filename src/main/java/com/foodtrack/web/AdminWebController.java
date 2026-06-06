@@ -39,7 +39,7 @@ public class AdminWebController {
         model.addAttribute("totalPetani", petaniService.count());
         model.addAttribute("totalKomoditas", komoditasService.count());
         
-        // Count today's stock only
+        // Menghitung jumlah stok khusus hari ini
         long todayStok = stokPanganService.findAll().stream()
             .filter(s -> s.getCreatedAt() != null && s.getCreatedAt().toLocalDate().equals(java.time.LocalDate.now()))
             .count();
@@ -85,14 +85,14 @@ public class AdminWebController {
         boolean isNew = petani.getIdPetani() == null;
         
         if (isNew) {
-            // New user: use provided password or default 'password123'
+            // Pengguna baru: gunakan password bawaan 'password123' jika tidak diisi
             if (passwordRaw == null || passwordRaw.isBlank()) {
                 petani.setPassword("password123");
             } else {
                 petani.setPassword(passwordRaw);
             }
         } else {
-            // Edit user: if password field is empty, keep the old one from database
+            // Edit pengguna: jika kolom password kosong, biarkan password lama tetap dipakai
             if (passwordRaw == null || passwordRaw.isBlank()) {
                 petaniService.findById(petani.getIdPetani()).ifPresent(old -> {
                     petani.setPassword(old.getPassword());
@@ -129,7 +129,7 @@ public class AdminWebController {
     public String listKomoditas(Model model) {
         List<Komoditas> all = komoditasService.findAll();
         
-        // Populate transient fields (Price & Conversion) for display
+        // Mengisi kolom sementara (Harga & Konversi) untuk keperluan tampilan (display)
         all.forEach(k -> {
             if (k.getSatuanList() != null) {
                 k.getSatuanList().forEach(s -> {
@@ -148,7 +148,7 @@ public class AdminWebController {
             }
         });
 
-        // Group by name while maintaining order
+        // Mengelompokkan berdasarkan nama dan tetap mempertahankan urutannya
         Map<String, List<Komoditas>> grouped = all.stream()
             .collect(Collectors.groupingBy(Komoditas::getNamaKomoditas, LinkedHashMap::new, Collectors.toList()));
         model.addAttribute("groupedKomoditas", grouped);
@@ -161,7 +161,7 @@ public class AdminWebController {
         if (nama != null) k.setNamaKomoditas(nama);
         model.addAttribute("komoditas", k);
         
-        // Pass existing names for dropdown suggestions from DB
+        // Meneruskan data nama ke form untuk pilihan otomatis (dropdown) dari database
         model.addAttribute("allCommodityNames", komoditasService.findAll().stream()
             .map(Komoditas::getNamaKomoditas).distinct().sorted().collect(Collectors.toList()));
         model.addAttribute("allUnits", satuanService.findAll().stream()
@@ -205,7 +205,7 @@ public class AdminWebController {
         
         boolean isNew = komoditas.getIdKomoditas() == null;
 
-        // Check if commodity with same name already exists (for update or avoid dupe)
+        // Cek jika rincian komoditas dengan nama yang sama sudah ada kapasitas update/cegah ganda
         if (isNew) {
             komoditasService.findAll().stream()
                 .filter(existing -> existing.getNamaKomoditas().equalsIgnoreCase(komoditas.getNamaKomoditas()))
@@ -217,7 +217,7 @@ public class AdminWebController {
             isNew = komoditas.getIdKomoditas() == null;
         }
 
-        // 1. Validation: Ensure we have at least one unit
+        // 1. Validasi: Pastikan terdapat setidaknya satu satuan yang diisi
         if (komoditas.getSatuanList() == null || komoditas.getSatuanList().isEmpty() || komoditas.getSatuanList().get(0) == null) {
             ra.addFlashAttribute("errorMessage", "Harap isi minimal satu satuan!");
             return "redirect:/admin/komoditas/tambah";
@@ -225,7 +225,7 @@ public class AdminWebController {
 
         Satuan baseUnit = komoditas.getSatuanList().get(0);
 
-        // Set back-references and default values for cascade save
+        // Mengatur referensi balik dan nilai default untuk mode simpan bertingkat (cascade)
         for (int i = 0; i < komoditas.getSatuanList().size(); i++) {
             Satuan s = komoditas.getSatuanList().get(i);
             if (s == null) continue;
@@ -239,22 +239,32 @@ public class AdminWebController {
         komoditas.setSatuan(baseUnit.getNamaSatuan());
 
         // 2. Save Commodity (Cascades to SatuanList)
-        Komoditas savedK = komoditasService.save(komoditas);
-        
-        // 3. Handle extra relations (Price)
-        if (savedK.getSatuanList() != null) {
-            for (Satuan savedS : savedK.getSatuanList()) {
-                komoditas.getSatuanList().stream()
-                    .filter(orig -> orig.getNamaSatuan().equals(savedS.getNamaSatuan()))
-                    .findFirst()
-                    .ifPresent(orig -> {
-                        if (orig.getHarga() != null) {
-                            // Update or save price
-                            hargaKomoditasService.save(HargaKomoditas.builder()
-                                .komoditas(savedK).satuan(savedS).harga(orig.getHarga()).build());
-                        }
-                    });
+        try {
+            Komoditas savedK = komoditasService.save(komoditas);
+            
+            // 3. Handle extra relations (Price)
+            if (savedK.getSatuanList() != null) {
+                for (Satuan savedS : savedK.getSatuanList()) {
+                    komoditas.getSatuanList().stream()
+                        .filter(orig -> orig.getNamaSatuan().equals(savedS.getNamaSatuan()))
+                        .findFirst()
+                        .ifPresent(orig -> {
+                            if (orig.getHarga() != null) {
+                                // Find existing price to update or create new one
+                                HargaKomoditas price = hargaKomoditasService.findByKomoditasId(savedK.getIdKomoditas()).stream()
+                                    .filter(h -> h.getSatuan().getIdSatuan().equals(savedS.getIdSatuan()))
+                                    .findFirst()
+                                    .orElse(HargaKomoditas.builder().komoditas(savedK).satuan(savedS).build());
+                                
+                                price.setHarga(orig.getHarga());
+                                hargaKomoditasService.save(price);
+                            }
+                        });
+                }
             }
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            ra.addFlashAttribute("errorMessage", "Gagal menyimpan perubahan! Salah satu satuan yang Anda hapus atau ubah masih digunakan dalam data stok pangan. Harap hapus atau ubah data stok pangan terkait terlebih dahulu.");
+            return "redirect:/admin/komoditas";
         }
         
         notificationService.createNotification(
@@ -267,8 +277,14 @@ public class AdminWebController {
 
     @PostMapping("/komoditas/hapus/{id}")
     public String hapusKomoditas(@PathVariable Integer id, RedirectAttributes ra) {
-        komoditasService.deleteById(id);
-        ra.addFlashAttribute("successMessage", "Komoditas berhasil dihapus.");
+        try {
+            komoditasService.deleteById(id);
+            ra.addFlashAttribute("successMessage", "Komoditas berhasil dihapus.");
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            ra.addFlashAttribute("errorMessage", "Gagal menghapus komoditas! Komoditas ini masih memiliki data stok pangan atau riwayat harga yang terhubung.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("errorMessage", "Terjadi kesalahan saat menghapus komoditas.");
+        }
         return "redirect:/admin/komoditas";
     }
 
@@ -320,8 +336,14 @@ public class AdminWebController {
 
     @PostMapping("/stok/hapus/{id}")
     public String hapusStok(@PathVariable Integer id, RedirectAttributes ra) {
-        stokPanganService.deleteById(id);
-        ra.addFlashAttribute("successMessage", "Data stok pangan berhasil dihapus.");
+        try {
+            stokPanganService.deleteById(id);
+            ra.addFlashAttribute("successMessage", "Data stok pangan berhasil dihapus.");
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            ra.addFlashAttribute("errorMessage", "Gagal menghapus stok! Data ini mungkin masih digunakan dalam riwayat distribusi.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("errorMessage", "Terjadi kesalahan saat menghapus data stok.");
+        }
         return "redirect:/admin/stok";
     }
 
@@ -364,8 +386,12 @@ public class AdminWebController {
 
     @PostMapping("/distribusi/hapus/{id}")
     public String hapusDistribusi(@PathVariable Integer id, RedirectAttributes ra) {
-        distribusiService.deleteById(id);
-        ra.addFlashAttribute("successMessage", "Distribusi berhasil dihapus.");
+        try {
+            distribusiService.deleteById(id);
+            ra.addFlashAttribute("successMessage", "Distribusi berhasil dihapus.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("errorMessage", "Terjadi kesalahan saat menghapus data distribusi.");
+        }
         return "redirect:/admin/distribusi";
     }
 

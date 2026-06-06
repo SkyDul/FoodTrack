@@ -1,4 +1,4 @@
-package com.foodtrack.entity;
+﻿package com.foodtrack.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,6 +8,12 @@ import java.time.LocalDateTime;
 @Table(name = "chatbot_log")
 @Data @NoArgsConstructor @AllArgsConstructor @Builder
 @EqualsAndHashCode(callSuper = false)
+
+
+/**
+ * Entitas atau model data untuk ChatbotLog.
+ * Digunakan untuk merepresentasikan struktur tabel di database.
+ */
 public class ChatbotLog extends BaseEntity {
 
     @Id
@@ -33,3 +39,4 @@ public class ChatbotLog extends BaseEntity {
         return "ChatbotLog{id=" + idLog + "}";
     }
 }
+

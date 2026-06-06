@@ -116,6 +116,7 @@
                                                 </div>
                                             </div>
                                             <!-- Hidden defaults for simplified UI -->
+                                            <input type="hidden" th:name="'satuanList[' + ${iter.index} + '].idSatuan'" th:value="${s.idSatuan}"/>
                                             <input type="hidden" th:name="'satuanList[' + ${iter.index} + '].isBaseUnit'" th:value="${iter.index == 0}"/>
                                             <input type="hidden" th:name="'satuanList[' + ${iter.index} + '].konversiKeBase'" value="1.0"/>
                                         </div>

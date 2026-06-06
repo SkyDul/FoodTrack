@@ -1,4 +1,4 @@
-package com.foodtrack.config;
+﻿package com.foodtrack.config;
 
 import com.foodtrack.entity.*;
 import com.foodtrack.repository.*;
@@ -12,6 +12,11 @@ import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
+
+
+/**
+ * Kelas konfigurasi untuk DataSeeder di dalam spring boot.
+ */
 public class DataSeeder implements CommandLineRunner {
 
     private final AdminRepository adminRepository;
@@ -27,7 +32,7 @@ public class DataSeeder implements CommandLineRunner {
         // Hanya seed jika database kosong
         if (adminRepository.count() > 0) return;
 
-        System.out.println("🌱 Seeding database...");
+        System.out.println("ðŸŒ± Seeding database...");
 
         // === Admin ===
         Admin admin = Admin.builder()
@@ -91,10 +96,11 @@ public class DataSeeder implements CommandLineRunner {
             .geminiResponse("Dosis pupuk KCL yang direkomendasikan untuk padi adalah 100-150 kg/ha. Aplikasikan pada umur 21 HST.")
             .timestamp(LocalDateTime.now().minusHours(1)).build());
 
-        System.out.println("✅ Database seeded successfully!");
-        System.out.println("   Admin  → username: admin   | password: admin123");
-        System.out.println("   Petani → username: budi    | password: budi123");
-        System.out.println("   Petani → username: siti    | password: siti123");
-        System.out.println("   Petani → username: agus    | password: agus123");
+        System.out.println("âœ… Database seeded successfully!");
+        System.out.println("   Admin  â†’ username: admin   | password: admin123");
+        System.out.println("   Petani â†’ username: budi    | password: budi123");
+        System.out.println("   Petani â†’ username: siti    | password: siti123");
+        System.out.println("   Petani â†’ username: agus    | password: agus123");
     }
 }
+

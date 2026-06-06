@@ -1,4 +1,4 @@
-package com.foodtrack.entity;
+﻿package com.foodtrack.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -9,6 +9,12 @@ import java.math.BigDecimal;
 @Table(name = "harga_komoditas")
 @Data @NoArgsConstructor @AllArgsConstructor @Builder
 @EqualsAndHashCode(callSuper = false)
+
+
+/**
+ * Entitas atau model data untuk HargaKomoditas.
+ * Digunakan untuk merepresentasikan struktur tabel di database.
+ */
 public class HargaKomoditas extends BaseEntity {
 
     @Id
@@ -33,3 +39,4 @@ public class HargaKomoditas extends BaseEntity {
         return "HargaKomoditas{id=" + idHarga + ", harga=" + harga + "}";
     }
 }
+

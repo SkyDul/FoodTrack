@@ -1,4 +1,4 @@
-package com.foodtrack.config;
+﻿package com.foodtrack.config;
 
 import com.foodtrack.service.LoginAttemptService;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +8,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+
+
+/**
+ * Kelas konfigurasi untuk AuthenticationFailureListener di dalam spring boot.
+ */
 public class AuthenticationFailureListener implements ApplicationListener<AuthenticationFailureBadCredentialsEvent> {
 
     private final LoginAttemptService loginAttemptService;
@@ -20,3 +25,4 @@ public class AuthenticationFailureListener implements ApplicationListener<Authen
         }
     }
 }
+

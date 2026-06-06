@@ -1,4 +1,4 @@
-package com.foodtrack.service;
+﻿package com.foodtrack.service;
 
 import com.foodtrack.entity.Notification;
 import com.foodtrack.repository.NotificationRepository;
@@ -9,6 +9,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+
+
+/**
+ * Kelas Service untuk NotificationService.
+ * Berisi logika bisnis dan bertindak sebagai penghubung antara Controller dan Repository.
+ */
 public class NotificationService {
     private final NotificationRepository notificationRepository;
 
@@ -59,3 +65,4 @@ public class NotificationService {
         notificationRepository.saveAll(unread);
     }
 }
+

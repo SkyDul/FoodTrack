@@ -1,18 +1,21 @@
 server:
-  port: 8085
+  port: 8081
 
 spring:
   application:
     name: foodtrack
 
   session:
-    store-type: none # Disable Spring Session — prevents conflict with Remember Me cookies
+    # Menonaktifkan Spring Session untuk mencegah konflik dengan fitur Remember Me (cookie)
+    store-type: none 
 
   datasource:
-    url: jdbc:mysql://localhost:3306/sipangan_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=Asia/Jakarta&allowPublicKeyRetrieval=true
+    # URL database, username dan password
+    url: jdbc:mysql://localhost:3306/foodtrack_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=Asia/Jakarta&allowPublicKeyRetrieval=true
     username: root
-    password: tarikolot
+    password:  
     driver-class-name: com.mysql.cj.jdbc.Driver
+
 
   jpa:
     hibernate:
@@ -35,8 +38,8 @@ logging:
 
 gemini:
   api:
-    key: "API GEMINI"
+    key: "AIzaSyDa8kOmjaWgIObsLSa0WwAi--ix-l0yFjs"
 
 mistral:
   api:
-    key: "API MISTERAL"
+    key: "OssDxhizHu6PAYU16fcIcEjJX22f7Bzr"

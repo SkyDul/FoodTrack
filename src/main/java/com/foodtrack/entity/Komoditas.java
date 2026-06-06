@@ -1,4 +1,4 @@
-package com.foodtrack.entity;
+﻿package com.foodtrack.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -10,6 +10,12 @@ import java.util.List;
 @Table(name = "komoditas")
 @Data @NoArgsConstructor @AllArgsConstructor @Builder
 @EqualsAndHashCode(callSuper = false)
+
+
+/**
+ * Entitas atau model data untuk Komoditas.
+ * Digunakan untuk merepresentasikan struktur tabel di database.
+ */
 public class Komoditas extends BaseEntity {
 
     @Id
@@ -21,7 +27,7 @@ public class Komoditas extends BaseEntity {
     @Column(name = "nama_komoditas", nullable = false, length = 100)
     private String namaKomoditas;
 
-    /** Legacy field — kept for backward compatibility with StokPangan */
+    /** Legacy field â€” kept for backward compatibility with StokPangan */
     @Column(nullable = true, length = 20)
     private String satuan;
 
@@ -45,3 +51,4 @@ public class Komoditas extends BaseEntity {
         return "Komoditas{id=" + idKomoditas + ", nama='" + namaKomoditas + "'}";
     }
 }
+

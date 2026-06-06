@@ -1,4 +1,4 @@
-package com.foodtrack.entity;
+﻿package com.foodtrack.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -9,6 +9,12 @@ import java.util.List;
 @Table(name = "satuan")
 @Data @NoArgsConstructor @AllArgsConstructor @Builder
 @EqualsAndHashCode(callSuper = false)
+
+
+/**
+ * Entitas atau model data untuk Satuan.
+ * Digunakan untuk merepresentasikan struktur tabel di database.
+ */
 public class Satuan extends BaseEntity {
 
     @Id
@@ -45,3 +51,4 @@ public class Satuan extends BaseEntity {
         return "Satuan{id=" + idSatuan + ", nama='" + namaSatuan + "'}";
     }
 }
+

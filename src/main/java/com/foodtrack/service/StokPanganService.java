@@ -1,4 +1,4 @@
-package com.foodtrack.service;
+﻿package com.foodtrack.service;
 
 import com.foodtrack.entity.StokPangan;
 import com.foodtrack.repository.StokPanganRepository;
@@ -9,6 +9,12 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+
+
+/**
+ * Kelas Service untuk StokPanganService.
+ * Berisi logika bisnis dan bertindak sebagai penghubung antara Controller dan Repository.
+ */
 public class StokPanganService {
     private final StokPanganRepository stokPanganRepository;
 
@@ -21,3 +27,4 @@ public class StokPanganService {
     public long count() { return stokPanganRepository.count(); }
     public List<StokPangan> findAvailable() { return stokPanganRepository.findAvailableStock(); }
 }
+

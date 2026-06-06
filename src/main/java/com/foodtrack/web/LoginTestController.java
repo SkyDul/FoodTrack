@@ -1,4 +1,4 @@
-package com.foodtrack.web;
+﻿package com.foodtrack.web;
 
 import com.foodtrack.entity.Petani;
 import com.foodtrack.service.PetaniService;
@@ -13,6 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+
+
+/**
+ * Web Controller untuk LoginTestController.
+ * Menangani request HTTP (GET/POST) dan mengatur respons antarmuka pengguna (View).
+ */
 public class LoginTestController {
 
     private final PetaniService petaniService;
@@ -30,3 +36,4 @@ public class LoginTestController {
         }
     }
 }
+

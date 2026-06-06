@@ -1,4 +1,4 @@
-package com.foodtrack.service;
+﻿package com.foodtrack.service;
 
 import com.foodtrack.entity.Distribusi;
 import com.foodtrack.repository.DistribusiRepository;
@@ -10,6 +10,12 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+
+
+/**
+ * Kelas Service untuk DistribusiService.
+ * Berisi logika bisnis dan bertindak sebagai penghubung antara Controller dan Repository.
+ */
 public class DistribusiService {
     private final DistribusiRepository distribusiRepository;
 
@@ -21,7 +27,7 @@ public class DistribusiService {
     public long count() { return distribusiRepository.count(); }
     public long countByStatus(String status) { return distribusiRepository.countByStatusPengiriman(status); }
 
-    /** Advance status: Menunggu → Dikirim → Selesai */
+    /** Advance status: Menunggu â†’ Dikirim â†’ Selesai */
     public void advanceStatus(Integer id) {
         distribusiRepository.findById(id).ifPresent(d -> {
             switch (d.getStatusPengiriman()) {
@@ -35,3 +41,4 @@ public class DistribusiService {
         });
     }
 }
+

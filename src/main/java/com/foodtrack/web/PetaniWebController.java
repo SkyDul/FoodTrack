@@ -1,4 +1,4 @@
-package com.foodtrack.web;
+﻿package com.foodtrack.web;
 
 import com.foodtrack.entity.*;
 import com.foodtrack.service.*;
@@ -17,6 +17,12 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/petani")
 @RequiredArgsConstructor
+
+
+/**
+ * Web Controller untuk PetaniWebController.
+ * Menangani request HTTP (GET/POST) dan mengatur respons antarmuka pengguna (View).
+ */
 public class PetaniWebController {
 
     private final PetaniService petaniService;
@@ -214,3 +220,4 @@ public class PetaniWebController {
         return "redirect:/petani/profile";
     }
 }
+

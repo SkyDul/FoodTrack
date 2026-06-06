@@ -1,4 +1,4 @@
-package com.foodtrack.web;
+﻿package com.foodtrack.web;
 
 import com.foodtrack.service.NotificationService;
 import com.foodtrack.service.PetaniService;
@@ -13,6 +13,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor
+
+
+/**
+ * Web Controller untuk ApiController.
+ * Menangani request HTTP (GET/POST) dan mengatur respons antarmuka pengguna (View).
+ */
 public class ApiController {
 
     private final NotificationService notificationService;
@@ -77,3 +83,4 @@ public class ApiController {
         return response;
     }
 }
+

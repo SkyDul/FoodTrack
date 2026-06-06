@@ -1,4 +1,4 @@
-package com.foodtrack.config;
+﻿package com.foodtrack.config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.session.web.http.CookieSerializer;
@@ -10,6 +10,11 @@ import java.util.List;
 /**
  * Custom CookieSerializer to allow simultaneous login for different roles
  * by using different cookie names based on the request URI.
+ */
+
+
+/**
+ * Kelas konfigurasi untuk MultiRoleCookieSerializer di dalam spring boot.
  */
 public class MultiRoleCookieSerializer implements CookieSerializer {
     private final DefaultCookieSerializer adminSerializer = new DefaultCookieSerializer();
@@ -54,3 +59,4 @@ public class MultiRoleCookieSerializer implements CookieSerializer {
         return getSerializer(request).readCookieValues(request);
     }
 }
+

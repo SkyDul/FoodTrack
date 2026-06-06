@@ -1,4 +1,4 @@
-package com.foodtrack.entity;
+﻿package com.foodtrack.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -9,6 +9,12 @@ import java.math.BigDecimal;
 @Table(name = "konversi_satuan")
 @Data @NoArgsConstructor @AllArgsConstructor @Builder
 @EqualsAndHashCode(callSuper = false)
+
+
+/**
+ * Entitas atau model data untuk KonversiSatuan.
+ * Digunakan untuk merepresentasikan struktur tabel di database.
+ */
 public class KonversiSatuan extends BaseEntity {
 
     @Id
@@ -40,3 +46,4 @@ public class KonversiSatuan extends BaseEntity {
         return "KonversiSatuan{id=" + idKonversi + ", nilai=" + nilaiKonversi + "}";
     }
 }
+

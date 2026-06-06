@@ -6,6 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 
+/**
+ * Kelas utama untuk menjalankan aplikasi Spring Boot FoodTrack.
+ * Aplikasi ini mengelola ketahanan pangan, stok komoditas, dan distribusi.
+ */
 @SpringBootApplication
 public class FoodTrackApplication {
 

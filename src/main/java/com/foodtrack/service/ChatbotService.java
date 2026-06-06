@@ -1,4 +1,4 @@
-package com.foodtrack.service;
+﻿package com.foodtrack.service;
 
 import com.foodtrack.entity.ChatbotLog;
 import com.foodtrack.entity.Petani;
@@ -21,6 +21,12 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 @lombok.extern.slf4j.Slf4j
+
+
+/**
+ * Kelas Service untuk ChatbotService.
+ * Berisi logika bisnis dan bertindak sebagai penghubung antara Controller dan Repository.
+ */
 public class ChatbotService {
     private final ChatbotLogRepository chatbotLogRepository;
     private final RestTemplate restTemplate = new RestTemplate();
@@ -204,3 +210,4 @@ public class ChatbotService {
         return "Sebagai mitra digital Anda, FoodTrack menyarankan untuk selalu menjaga kualitas hasil panen dan kebersihan lahan. Pertanian yang cerdas dimulai dari pencatatan data yang baik di aplikasi ini. Ada hal spesifik lain yang ingin Anda konsultasikan?";
     }
 }
+

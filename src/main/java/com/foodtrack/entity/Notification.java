@@ -1,4 +1,4 @@
-package com.foodtrack.entity;
+﻿package com.foodtrack.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -8,6 +8,12 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
+
+
+/**
+ * Entitas atau model data untuk Notification.
+ * Digunakan untuk merepresentasikan struktur tabel di database.
+ */
 public class Notification extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,3 +51,4 @@ public class Notification extends BaseEntity {
         return days + " hari yang lalu";
     }
 }
+

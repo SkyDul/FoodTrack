@@ -1,4 +1,4 @@
-package com.foodtrack.web;
+﻿package com.foodtrack.web;
 
 import com.foodtrack.entity.Petani;
 import com.foodtrack.entity.StokPangan;
@@ -16,6 +16,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
+
+
+/**
+ * Web Controller untuk LandingController.
+ * Menangani request HTTP (GET/POST) dan mengatur respons antarmuka pengguna (View).
+ */
 public class LandingController {
     private final PetaniService petaniService;
     private final StokPanganService stokPanganService;
@@ -100,3 +106,4 @@ public class LandingController {
         }
     }
 }
+

@@ -1,4 +1,4 @@
-package com.foodtrack.config;
+﻿package com.foodtrack.config;
 
 import com.foodtrack.service.LoginAttemptService;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +9,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+
+
+/**
+ * Kelas konfigurasi untuk AuthenticationEvents di dalam spring boot.
+ */
 public class AuthenticationEvents {
 
     private final LoginAttemptService loginAttemptService;
@@ -23,3 +28,4 @@ public class AuthenticationEvents {
         loginAttemptService.loginFailed(failure.getAuthentication().getName());
     }
 }
+
