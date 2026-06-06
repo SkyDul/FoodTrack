@@ -38,8 +38,8 @@ logging:
 
 gemini:
   api:
-    key: "AIzaSyDa8kOmjaWgIObsLSa0WwAi--ix-l0yFjs"
+    key: ""
 
 mistral:
   api:
-    key: "OssDxhizHu6PAYU16fcIcEjJX22f7Bzr"
+    key: ""
