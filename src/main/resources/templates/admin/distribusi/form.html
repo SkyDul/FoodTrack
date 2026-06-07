@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('Form Distribusi')}"></head>
+<body>
+<div class="layout">
+    <nav th:replace="~{admin/layout :: sidebar('distribusi')}"></nav>
+    <div class="main-content">
+        <header th:replace="~{admin/layout :: topbar('<a href=\'/admin/dashboard\'>Dashboard</a> &rsaquo; <a href=\'/admin/distribusi\'>Distribusi</a> &rsaquo; <span>Form</span>')}"></header>
+        <div class="page-content">
+            <div class="page-header" style="margin-bottom: 32px; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <h1 style="font-size: 1.75rem; font-weight: 900; color: var(--on-surface); letter-spacing: -0.5px;">Manajemen Alur Distribusi</h1>
+                    <p style="color: var(--outline); font-size: 0.9375rem;">Konfigurasi pengiriman stok pangan dari petani ke titik distribusi strategis.</p>
+                </div>
+                <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(26, 92, 42, 0.1); color: var(--primary); display: flex; align-items: center; justify-content: center;">
+                    <span class="material-symbols-outlined" style="font-size: 28px;">local_shipping</span>
+                </div>
+            </div>
+
+            <div class="card" style="padding: 0; overflow: hidden; border: 1px solid var(--outline-variant); box-shadow: 0 10px 40px rgba(0,0,0,0.03);">
+                <form th:action="@{/admin/distribusi/simpan}" method="post" th:object="${distribusi}">
+                    <input type="hidden" th:field="*{idDistribusi}"/>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
+                        <!-- Left Section: Source & Cargo -->
+                        <div style="padding: 40px; border-right: 1px solid var(--outline-variant); background: #fafafa;">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 32px;">
+                                <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800;">1</div>
+                                <h3 style="font-size: 1.15rem; font-weight: 850; color: var(--on-surface);">Sumber & Komoditas</h3>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 24px;">
+                                <label for="selectPetani" style="display: flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 10px; color: var(--on-surface-variant);">
+                                    <span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">person</span>
+                                    Pilih Mitra Petani <span class="required">*</span>
+                                </label>
+                                <select id="selectPetani" class="form-control" onchange="filterStokByPetani()" style="height: 52px; border-radius: 12px; border-color: var(--outline-variant); font-weight: 500;">
+                                    <option value="">-- Pilih Petani Terlebih Dahulu --</option>
+                                    <option th:each="p : ${listPetani}" th:value="${p.idPetani}" th:text="${p.nama}">Budi</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 24px;">
+                                <label for="stokPangan" style="display: flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 10px; color: var(--on-surface-variant);">
+                                    <span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">inventory_2</span>
+                                    Pilih Stok Tersedia <span class="required">*</span>
+                                </label>
+                                <select id="stokPangan" th:field="*{stokPangan.idStok}" class="form-control" required disabled style="height: 52px; border-radius: 12px; border-color: var(--outline-variant); font-weight: 500;">
+                                    <option value="" data-petani="">-- Pilih Stok Pangan --</option>
+                                    <option th:each="s : ${listStok}" 
+                                            th:value="${s.idStok}"
+                                            th:data-petani="${s.petani.idPetani}"
+                                            th:text="${s.komoditas.namaKomoditas + ' - ' + s.jumlahMasuk + ' ' + s.komoditas.satuan}">
+                                        Beras - 500 Kg
+                                    </option>
+                                </select>
+                                <div id="stokHintBox" style="margin-top: 12px; padding: 12px; border-radius: 10px; background: #fff; border: 1px dashed var(--outline-variant); display: flex; align-items: center; gap: 8px;">
+                                    <span class="material-symbols-outlined" style="font-size: 16px; color: var(--outline);">info</span>
+                                    <p id="stokHint" style="font-size: 0.75rem; color: var(--outline); margin: 0;">Silakan pilih petani untuk memuat ketersediaan stok.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Section: Logistics & Destination -->
+                        <div style="padding: 40px; background: #fff;">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 32px;">
+                                <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--secondary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800;">2</div>
+                                <h3 style="font-size: 1.15rem; font-weight: 850; color: var(--on-surface);">Detail Pengiriman</h3>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 24px;">
+                                <label for="tujuan" style="display: flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 10px; color: var(--on-surface-variant);">
+                                    <span class="material-symbols-outlined" style="font-size: 18px; color: var(--secondary);">location_on</span>
+                                    Titik Tujuan Distribusi <span class="required">*</span>
+                                </label>
+                                <input type="text" id="tujuan" th:field="*{tujuan}" class="form-control"
+                                       placeholder="Contoh: Gudang Kelurahan Rancasari" required style="height: 52px; border-radius: 12px; border-color: var(--outline-variant);"/>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                <div class="form-group">
+                                    <label for="statusPengiriman" style="display: flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 10px; color: var(--on-surface-variant);">
+                                        <span class="material-symbols-outlined" style="font-size: 18px; color: var(--secondary);">schedule</span>
+                                        Status
+                                    </label>
+                                    <select id="statusPengiriman" th:field="*{statusPengiriman}" class="form-control" style="height: 52px; border-radius: 12px; border-color: var(--outline-variant);">
+                                        <option value="Menunggu">Menunggu</option>
+                                        <option value="Dikirim">Dikirim</option>
+                                        <option value="Selesai">Selesai</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tanggalKirim" style="display: flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 10px; color: var(--on-surface-variant);">
+                                        <span class="material-symbols-outlined" style="font-size: 18px; color: var(--secondary);">calendar_today</span>
+                                        Tgl Pengiriman
+                                    </label>
+                                    <input type="date" id="tanggalKirim" th:field="*{tanggalKirim}" class="form-control" style="height: 52px; border-radius: 12px; border-color: var(--outline-variant);"/>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--outline-variant); display: flex; gap: 12px; justify-content: flex-end;">
+                                <a th:href="@{/admin/distribusi}" class="btn btn-secondary" style="padding: 12px 24px; border-radius: 12px; font-weight: 600;">Batal</a>
+                                <button type="submit" class="btn btn-primary" style="padding: 12px 32px; border-radius: 12px; font-weight: 800; display: flex; align-items: center; gap: 10px; box-shadow: 0 8px 20px rgba(26, 92, 42, 0.2);">
+                                    <span class="material-symbols-outlined" style="font-size: 20px;">task_alt</span> Simpan Distribusi
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function filterStokByPetani() {
+        const petaniId = document.getElementById('selectPetani').value;
+        const stokSelect = document.getElementById('stokPangan');
+        const stokHint = document.getElementById('stokHint');
+        const stokHintBox = document.getElementById('stokHintBox');
+        const options = stokSelect.querySelectorAll('option');
+        
+        stokSelect.value = ""; // Reset selection
+        
+        if (!petaniId) {
+            stokSelect.disabled = true;
+            stokHint.innerText = "Silakan pilih petani untuk memuat ketersediaan stok.";
+            stokHint.style.color = "var(--outline)";
+            stokHintBox.style.borderColor = "var(--outline-variant)";
+            options.forEach(opt => opt.style.display = 'none');
+            options[0].style.display = 'block';
+            return;
+        }
+        
+        stokSelect.disabled = false;
+        stokHint.innerText = "Hanya menampilkan stok milik petani yang dipilih.";
+        stokHint.style.color = "var(--primary)";
+        stokHintBox.style.borderColor = "var(--primary)";
+        
+        let hasStock = false;
+        options.forEach(opt => {
+            const optPetaniId = opt.getAttribute('data-petani');
+            if (optPetaniId === petaniId || opt.value === "") {
+                opt.style.display = 'block';
+                if (optPetaniId === petaniId) hasStock = true;
+            } else {
+                opt.style.display = 'none';
+            }
+        });
+        
+        if (!hasStock) {
+            stokHint.innerText = "Peringatan: Petani ini tidak memiliki stok tersedia untuk didistribusikan.";
+            stokHint.style.color = "var(--error)";
+            stokHintBox.style.borderColor = "var(--error)";
+        }
+    }
+</script>
+</body>
+</html>

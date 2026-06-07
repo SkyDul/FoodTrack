@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{petani/layout :: head('Asisten Tani AI')}"></head>
+<body>
+<div class="layout">
+    <nav th:replace="~{petani/layout :: sidebar('chatbot')}"></nav>
+    <div class="main-content">
+        <header th:replace="~{petani/layout :: topbar('<a href=\'/petani/dashboard\' style=\'color:var(--primary);text-decoration:none;font-weight:500;\'>Dashboard</a> <span style=\'color:var(--outline);margin:0 4px;\'>&rsaquo;</span> <span style=\'font-weight:600;color:var(--on-surface);\'>Tani AI</span>')}"></header>
+
+        <div class="page-content" style="padding-bottom:0; display:flex; flex-direction:column;">
+            <div class="chat-container">
+
+                <!-- ===== CHAT HEADER ===== -->
+                <div class="chat-header">
+                    <div class="chat-header-avatar">
+                        <span class="material-symbols-outlined">smart_toy</span>
+                    </div>
+                    <div class="chat-header-info">
+                        <strong>Asisten Tani AI</strong>
+                        <div class="chat-header-status">
+                            <span class="pulse-dot"></span>
+                            Selalu aktif &bull; Powered by FoodTrack AI
+                        </div>
+                    </div>
+                    <div class="chat-header-actions">
+                        <form th:if="${not #lists.isEmpty(chatHistory)}"
+                              th:action="@{/petani/chatbot/hapus-semua}" method="post"
+                              th:onsubmit="handleConfirm(event, 'Hapus semua riwayat chat?', 'delete')">
+                            <button type="submit" class="btn-icon delete" title="Hapus riwayat">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- ===== CHAT MESSAGES ===== -->
+                <div class="chat-messages" id="chatMessages">
+
+                    <!-- Empty State -->
+                    <div th:if="${#lists.isEmpty(chatHistory)}" class="chat-empty">
+                        <div class="chat-empty-icon">
+                            <span class="material-symbols-outlined">smart_toy</span>
+                        </div>
+                        <h3>Halo! Saya Asisten Tani AI</h3>
+                        <p>Tanyakan apa saja tentang pertanian — stok, cuaca, hama, atau strategi panen terbaik.</p>
+                    </div>
+
+                    <!-- Chat History -->
+                    <th:block th:each="log : ${chatHistory}">
+                        <!-- User Message -->
+                        <div class="msg-row user">
+                            <div class="msg-avatar user-av">
+                                <span class="material-symbols-outlined" style="font-size:16px;">person</span>
+                            </div>
+                            <div class="chat-msg user">
+                                <span th:text="${log.userPrompt}" style="display:block;margin-bottom:4px;">Pertanyaan dari petani...</span>
+                                <div class="msg-time" th:text="${#temporals.format(log.timestamp, 'HH:mm')}">10:24</div>
+                            </div>
+                        </div>
+                        <!-- AI Response -->
+                        <div class="msg-row bot">
+                            <div class="msg-avatar bot-av">
+                                <span class="material-symbols-outlined" style="font-size:17px;">auto_awesome</span>
+                            </div>
+                            <div class="chat-msg bot">
+                                <div class="bot-label">
+                                    <div class="bot-label-icon">
+                                        <span class="material-symbols-outlined">auto_awesome</span>
+                                    </div>
+                                    <span class="bot-label-text">FoodTrack AI</span>
+                                </div>
+                                <div th:utext="${log.geminiResponse}" style="line-height:1.7;font-size:0.9125rem;">Respons AI...</div>
+                                <div class="msg-time" th:text="${#temporals.format(log.timestamp, 'HH:mm')}">10:24</div>
+                            </div>
+                        </div>
+                    </th:block>
+                </div>
+
+                <!-- ===== SUGGESTION CHIPS (only when empty) ===== -->
+                <div th:if="${#lists.isEmpty(chatHistory)}" class="suggestion-chips">
+                    <button class="chip" onclick="setSuggestion('Berapa dosis pupuk KCL untuk padi?')">
+                        <span class="material-symbols-outlined">science</span>
+                        Dosis pupuk KCL
+                    </button>
+                    <button class="chip" onclick="setSuggestion('Ciri-ciri padi terserang jamur')">
+                        <span class="material-symbols-outlined">pest_control</span>
+                        Padi terserang jamur
+                    </button>
+                    <button class="chip" onclick="setSuggestion('Prediksi cuaca minggu ini')">
+                        <span class="material-symbols-outlined">cloud</span>
+                        Prediksi cuaca
+                    </button>
+                    <button class="chip" onclick="setSuggestion('Cara meningkatkan hasil panen')">
+                        <span class="material-symbols-outlined">trending_up</span>
+                        Tips hasil panen
+                    </button>
+                </div>
+
+                <!-- ===== CHAT INPUT ===== -->
+                <div class="chat-input-wrap">
+                    <form th:action="@{/petani/chatbot/kirim}" method="post" id="chatForm">
+                        <div class="chat-input-bar">
+                            <input type="text" name="prompt" id="promptInput"
+                                   placeholder="Ketik pertanyaan tentang stok, cuaca, atau hama..."
+                                   required autocomplete="off"/>
+                            <button type="submit" class="chat-send-btn" id="sendBtn">
+                                <span class="material-symbols-outlined">send</span>
+                            </button>
+                        </div>
+                    </form>
+                    <p class="chat-footer-note">
+                        FoodTrack AI dapat memberikan informasi yang tidak akurat. Harap verifikasi info penting.
+                    </p>
+                </div>
+
+            </div><!-- end .chat-container -->
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{petani/layout :: confirmModal}"></div>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+    const chatEl = document.getElementById('chatMessages');
+    if (chatEl) chatEl.scrollTop = chatEl.scrollHeight;
+    const input = document.getElementById('promptInput');
+    if (input) input.focus();
+});
+
+function setSuggestion(text) {
+    const input = document.getElementById('promptInput');
+    input.value = text;
+    input.focus();
+}
+
+// Show loading state on send
+document.getElementById('chatForm')?.addEventListener('submit', function() {
+    const btn = document.getElementById('sendBtn');
+    if (btn) {
+        btn.innerHTML = '<span class="material-symbols-outlined" style="animation:spin 0.8s linear infinite">progress_activity</span>';
+        btn.disabled = true;
+    }
+});
+</script>
+
+<style>
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('Stok Pangan')}"></head>
+<body>
+<div class="layout">
+    <nav th:replace="~{admin/layout :: sidebar('stok')}"></nav>
+    <div class="main-content">
+        <header th:replace="~{admin/layout :: topbar('<a href=\'/admin/dashboard\'>Dashboard</a> &rsaquo; <span>Stok Pangan</span>')}"></header>
+        <div class="page-content">
+            <div th:replace="~{admin/layout :: flash}"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+                <h1 class="text-h2">Manajemen Stok Pangan</h1>
+                <a th:href="@{/admin/stok/tambah}" class="btn btn-primary">
+                    <span class="material-symbols-outlined">add</span> Tambah Stok
+                </a>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="form-group">
+                    <label class="text-label">Komoditas</label>
+                    <select class="form-control" id="filterKomoditas">
+                        <option value="">Semua Komoditas</option>
+                        <option th:each="k : ${listKomoditas}" th:value="${k.namaKomoditas}" th:text="${k.namaKomoditas}">Beras</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="text-label">Petani</label>
+                    <select class="form-control" id="filterPetani">
+                        <option value="">Semua Petani</option>
+                        <option th:each="p : ${listPetani}" th:value="${p.nama}" th:text="${p.nama}">Budi</option>
+                    </select>
+                </div>
+                <div class="btn-group" style="display:flex; gap:10px; align-items:flex-end; padding-bottom:2px;">
+                    <button class="btn btn-primary" onclick="filterStok()" title="Filter" style="width:56px; height:48px; padding:0; border-radius:14px; display:flex; align-items:center; justify-content:center; box-shadow: 0 4px 15px rgba(26, 92, 42, 0.15);">
+                        <span class="material-symbols-outlined" style="font-size:24px;">filter_alt</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="resetFilter()" title="Reset" style="width:56px; height:48px; padding:0; border-radius:14px; display:flex; align-items:center; justify-content:center; background:#fff; border:1.5px solid var(--outline-variant); color:var(--on-surface);">
+                        <span class="material-symbols-outlined" style="font-size:24px;">refresh</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="table-container">
+                    <table id="stokTable">
+                        <thead>
+                        <tr>
+                            <th>No</th><th>Komoditas</th><th>Petani</th>
+                            <th>Jumlah Masuk</th><th>Satuan</th><th>Tanggal Panen</th><th>Aksi</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="s, stat : ${listStok}">
+                            <td th:text="${stat.count}">1</td>
+                             <td>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <span class="material-symbols-outlined" style="color:var(--primary); font-size:18px;"
+                                          th:text="${s.komoditas.namaKomoditas.toLowerCase().contains('jagung') ? 'grid_view' : 
+                                                    (s.komoditas.namaKomoditas.toLowerCase().contains('beras') or s.komoditas.namaKomoditas.toLowerCase().contains('padi')) ? 'grain' : 
+                                                    s.komoditas.namaKomoditas.toLowerCase().contains('minyak') ? 'opacity' : 
+                                                    s.komoditas.namaKomoditas.toLowerCase().contains('cabai') ? 'local_fire_department' : 
+                                                    (s.komoditas.namaKomoditas.toLowerCase().contains('kedelai') or s.komoditas.namaKomoditas.toLowerCase().contains('kacang')) ? 'eco' : 
+                                                    s.komoditas.namaKomoditas.toLowerCase().contains('bawang') ? 'nutrition' : 
+                                                    s.komoditas.namaKomoditas.toLowerCase().contains('gula') ? 'bakery_dining' : 
+                                                    'inventory_2'}"></span>
+                                    <strong th:text="${s.komoditas.namaKomoditas}">Beras</strong>
+                                </div>
+                            </td>
+                            <td th:text="${s.petani.nama}">Budi</td>
+                            <td><strong th:text="${s.jumlahMasuk}">500</strong></td>
+                            <td th:text="${s.satuan != null ? s.satuan.namaSatuan : s.komoditas.satuan}">Kg</td>
+                            <td th:text="${#temporals.format(s.tanggalPanen, 'dd MMM yyyy')}">12 Jan 2024</td>
+                            <td>
+                                <div style="display:flex;gap:4px;">
+                                    <a th:href="@{/admin/stok/edit/{id}(id=${s.idStok})}" class="btn-icon edit" title="Edit">
+                                        <span class="material-symbols-outlined">edit</span>
+                                    </a>
+                                    <form th:action="@{/admin/stok/hapus/{id}(id=${s.idStok})}" method="post" style="display:inline;"
+                                          th:onsubmit="handleConfirm(event, 'Yakin ingin menghapus data stok ini?', 'delete')">
+                                        <button type="submit" class="btn-icon delete" title="Hapus">
+                                            <span class="material-symbols-outlined">delete</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(listStok)}">
+                            <td colspan="7" style="text-align:center;color:var(--outline);padding:40px;">Belum ada data stok pangan</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+function filterStok(){
+    const k=document.getElementById('filterKomoditas').value.toLowerCase();
+    const p=document.getElementById('filterPetani').value.toLowerCase();
+    document.querySelectorAll('#stokTable tbody tr').forEach(r=>{
+        const cells=r.querySelectorAll('td');
+        if(cells.length<3)return;
+        const km=cells[1].textContent.toLowerCase(), pt=cells[2].textContent.toLowerCase();
+        r.style.display=(!k||km.includes(k))&&(!p||pt.includes(p))?'':'none';
+    });
+}
+function resetFilter(){
+    document.getElementById('filterKomoditas').value='';
+    document.getElementById('filterPetani').value='';
+    document.querySelectorAll('#stokTable tbody tr').forEach(r=>r.style.display='');
+}
+</script>
+<div th:replace="~{admin/layout :: confirmModal}"></div>
+</body>
+</html>

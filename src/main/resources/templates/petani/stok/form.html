@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{petani/layout :: head('Catat Stok')}"></head>
+<body>
+<div class="layout">
+    <nav th:replace="~{petani/layout :: sidebar('catat')}"></nav>
+    <div class="main-content">
+        <header th:replace="~{petani/layout :: topbar('<a href=\'/petani/dashboard\' style=\'color:var(--primary);text-decoration:none;font-weight:500;\'>Dashboard</a> <span style=\'color:var(--outline);margin:0 4px;\'>&rsaquo;</span> <a href=\'/petani/stok\' style=\'color:var(--primary);text-decoration:none;font-weight:500;\'>Stok Pangan</a> <span style=\'color:var(--outline);margin:0 4px;\'>&rsaquo;</span> <span style=\'font-weight:600;color:var(--on-surface);\'>Form Stok</span>')}"></header>
+
+        <div class="page-content">
+            <div class="page-header" style="margin-bottom: 24px;">
+                <h1 style="font-size: 1.5rem; font-weight: 700;">Catat Stok Panen</h1>
+                <p style="font-size: 0.875rem;">Masukkan rincian hasil panen terbaru Anda untuk diperbarui di sistem inventaris.</p>
+            </div>
+
+            <div class="card" style="padding: 32px; border-radius: 20px;">
+                <form th:action="@{/petani/stok/simpan}" method="post" th:object="${stokPangan}">
+
+                    <!-- Hidden inputs for form submission -->
+                    <input type="hidden" name="komoditas.idKomoditas" id="selectedKomoditasId" value="" />
+                    <input type="hidden" name="satuan.idSatuan" id="selectedSatuanId" value="" />
+
+                    <!-- 1. Pilih Komoditas (Grouped) -->
+                    <div class="form-group">
+                        <label style="font-size:1.125rem;font-weight:600;margin-bottom:16px;display:block;">1. Pilih Komoditas</label>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));gap:16px;margin-top:12px;">
+                            <div th:each="entry : ${groupedKomoditas}" class="komoditas-grouped-card"
+                                 th:data-name="${entry.key}"
+                                 th:onclick="|selectKomoditas(this)|"
+                                 style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 16px;border:2px solid var(--outline-variant);border-radius:20px;cursor:pointer;transition:all 0.3s;text-align:center;background:var(--surface);min-height:120px;">
+                                
+                                <!-- Icon -->
+                                <div style="margin-bottom: 10px; color: var(--primary);">
+                                    <span class="material-symbols-outlined" style="font-size: 32px;"
+                                          th:text="${entry.key.toLowerCase().contains('jagung') ? 'grid_view' : 
+                                                    (entry.key.toLowerCase().contains('beras') or entry.key.toLowerCase().contains('padi')) ? 'grain' : 
+                                                    entry.key.toLowerCase().contains('minyak') ? 'opacity' : 
+                                                    entry.key.toLowerCase().contains('cabai') ? 'local_fire_department' : 
+                                                    (entry.key.toLowerCase().contains('kedelai') or entry.key.toLowerCase().contains('kacang')) ? 'eco' : 
+                                                    entry.key.toLowerCase().contains('bawang') ? 'nutrition' : 
+                                                    entry.key.toLowerCase().contains('gula') ? 'bakery_dining' : 
+                                                    'inventory_2'}"></span>
+                                </div>
+
+                                <!-- Nama Komoditas -->
+                                <span th:text="${entry.key}" style="font-size:1rem;font-weight:700;color:var(--on-surface);margin-bottom:8px;">Jagung</span>
+                                
+                                <!-- Unit Selection -->
+                                <div style="width:100%; margin-top:2px;" onclick="event.stopPropagation();">
+                                    <select class="satuan-select" onchange="onSatuanChange(this)"
+                                            style="width:100%;padding:8px 12px;border:2px solid var(--outline-variant);border-radius:12px;font-size:0.875rem;font-weight:700;color:var(--on-surface);background:var(--surface-container-low);cursor:pointer;text-align:center;appearance:auto;">
+                                        <option value="" disabled selected>Pilih Satuan</option>
+                                        <th:block th:each="k : ${entry.value}">
+                                            <option th:each="s : ${k.satuanList}" 
+                                                    th:value="${k.idKomoditas + ':' + s.idSatuan}"
+                                                    th:data-satuan-name="${s.namaSatuan}"
+                                                    th:text="${s.namaSatuan + (s.isBaseUnit ? ' (Utama)' : ' (1=' + s.konversiNilai + ' ' + (k.satuanList.?[isBaseUnit][0]?.namaSatuan ?: 'Dasar') + ')') }">
+                                                Kg
+                                            </option>
+                                        </th:block>
+                                    </select>
+                                </div>
+                                <input type="hidden" class="komoditas-id-val" value="" />
+                                <input type="hidden" class="satuan-id-val" value="" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2 & 3. Jumlah & Tanggal -->
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:24px;margin-top:32px;">
+                        <div class="form-group">
+                            <label style="font-size:1.125rem;font-weight:600;display:block;margin-bottom:8px;">2. Jumlah Panen</label>
+                            <div style="display:flex; align-items:center; border: 1px solid var(--outline-variant); border-radius: var(--radius-md); overflow:hidden; transition:border-color 0.3s ease;">
+                                <input type="number" th:field="*{jumlahMasuk}" class="form-control" placeholder="0"
+                                       min="0" required style="height:48px; border:none; border-radius:0; flex:1; box-shadow:none;" id="inputJumlah"/>
+                                <div style="padding:0 16px; background:var(--surface-container-high); color:var(--on-surface-variant); font-weight:700; display:flex; align-items:center; height:48px; border-left:1px solid var(--outline-variant);" id="satuanText">
+                                    -
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label style="font-size:1.125rem;font-weight:600;display:block;margin-bottom:8px;">3. Tanggal Panen</label>
+                            <div class="input-icon">
+                                <span class="material-symbols-outlined">calendar_today</span>
+                                <input type="date" th:field="*{tanggalPanen}" class="form-control" required style="height:48px;"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="border-top:1px solid var(--outline-variant);padding-top:24px;margin-top:24px;">
+                        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;" id="submitBtn">
+                            <span class="material-symbols-outlined" style="font-size:20px;">save</span> Simpan Stok Panen
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .komoditas-grouped-card.selected {
+        border-color: var(--primary) !important;
+        background: var(--primary-container) !important;
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(26, 92, 42, 0.12);
+    }
+    .komoditas-grouped-card.selected .material-symbols-outlined {
+        color: var(--primary);
+    }
+    .komoditas-grouped-card:hover:not(.selected) {
+        border-color: var(--outline);
+        background: var(--surface-container-low);
+    }
+    .satuan-select:focus {
+        border-color: var(--primary);
+        outline: none;
+    }
+</style>
+<script>
+    let currentSelectedCard = null;
+
+    function selectKomoditas(card) {
+        // Deselect previous
+        document.querySelectorAll('.komoditas-grouped-card').forEach(c => c.classList.remove('selected'));
+        
+        // Select current
+        card.classList.add('selected');
+        currentSelectedCard = card;
+
+        const selectEl = card.querySelector('.satuan-select');
+
+        if (selectEl) {
+            // Multi unit - check if already selected
+            if (selectEl.value) {
+                const parts = selectEl.value.split(':');
+                document.getElementById('selectedKomoditasId').value = parts[0];
+                document.getElementById('selectedSatuanId').value = parts[1];
+                document.getElementById('satuanText').textContent = selectEl.options[selectEl.selectedIndex].getAttribute('data-satuan-name');
+            } else {
+                // Prompt user to select unit
+                document.getElementById('selectedKomoditasId').value = '';
+                document.getElementById('selectedSatuanId').value = '';
+                document.getElementById('satuanText').textContent = '-';
+                selectEl.focus();
+            }
+        }
+    }
+
+    function onSatuanChange(selectEl) {
+        const card = selectEl.closest('.komoditas-grouped-card');
+        document.querySelectorAll('.komoditas-grouped-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        currentSelectedCard = card;
+
+        if (selectEl.value) {
+            const parts = selectEl.value.split(':');
+            document.getElementById('selectedKomoditasId').value = parts[0];
+            document.getElementById('selectedSatuanId').value = parts[1];
+            document.getElementById('satuanText').textContent = selectEl.options[selectEl.selectedIndex].getAttribute('data-satuan-name');
+        }
+    }
+
+    // Validation before submit
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('submitBtn').closest('form').addEventListener('submit', function(e) {
+            const komoditasId = document.getElementById('selectedKomoditasId').value;
+            if (!komoditasId) {
+                e.preventDefault();
+                alert('Silakan pilih komoditas dan satuan terlebih dahulu.');
+                return false;
+            }
+        });
+    });
+</script>
+</body>
+</html>

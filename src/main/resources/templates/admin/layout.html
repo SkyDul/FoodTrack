@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${title} + ' - Admin FoodTrack'">Admin FoodTrack</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style>
+        .flash-overlay {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10000;
+            width: fit-content; max-width: 90vw; pointer-events: none;
+        }
+        .flash-popup {
+            background: #ffffff;
+            border-radius: 14px; 
+            padding: 12px 24px 12px 14px;
+            box-shadow: 0 12px 36px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.04);
+            display: flex; align-items: center; gap: 16px; position: relative;
+            overflow: hidden; pointer-events: auto;
+            animation: toastIn 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            min-width: 290px;
+        }
+        [data-theme='dark'] .flash-popup {
+            background: #1e251e;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08);
+        }
+        
+        .flash-popup.success { border-left: 5px solid var(--primary); background: #ffffff; }
+        .flash-popup.error { border-left: 5px solid var(--error); background: #ffffff; }
+        
+        [data-theme='dark'] .flash-popup.success { background: linear-gradient(to right, rgba(26, 92, 42, 0.2), #1e251e); }
+        [data-theme='dark'] .flash-popup.error { background: linear-gradient(to right, rgba(186, 26, 26, 0.15), #1e251e); }
+
+        .flash-icon {
+            width: 38px; height: 38px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        .flash-icon span { font-size: 20px; font-weight: 700; }
+
+        .flash-popup.success .flash-icon { background: var(--primary); color: #fff; }
+        .flash-popup.error .flash-icon { background: var(--error); color: #fff; }
+
+        .flash-content { display: flex; flex-direction: column; gap: 1px; }
+        .flash-content h3 { font-size: 0.95rem; font-weight: 850; color: #1a1c1a; margin: 0; display: block; letter-spacing: -0.3px; }
+        .flash-content p { color: #404940; font-size: 0.85rem; margin: 0; font-weight: 600; line-height: 1.4; }
+
+        .flash-progress { position: absolute; bottom: 0; left: 0; height: 3px; width: 100%; background: rgba(0,0,0,0.03); }
+        .flash-progress .bar { height: 100%; width: 100%; animation: shrink 4s linear forwards; }
+        .flash-popup.success .bar { background: var(--primary); }
+        .flash-popup.error .bar { background: var(--error); }
+
+        @keyframes toastIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes shrink { from { width: 100%; } to { width: 0%; } }
+        
+        @media (max-width: 768px) {
+            #menuToggle { display: flex !important; margin-right: 12px; }
+            .topbar { padding: 0 16px; }
+            .page-content { padding: 16px; }
+            .stat-grid { grid-template-columns: 1fr !important; }
+        }
+    </style>
+</head>
+
+<!-- ===== SIDEBAR FRAGMENT ===== -->
+<nav th:fragment="sidebar(active)" class="sidebar">
+    <div class="sidebar-brand" style="padding: 32px 24px;">
+        <div class="logo-wrapper" style="display: flex; align-items: center; justify-content: flex-start; gap: 8px;">
+            <img th:src="@{/img/logo.png}" alt="FoodTrack" style="width:48px; height:48px; object-fit:contain;" />
+            <h2 style="color:#ffffff; font-size: 1.75rem; font-weight: 800; letter-spacing: -0.5px; margin: 0;">FoodTrack</h2>
+        </div>
+    </div>
+
+    <div class="sidebar-nav">
+        <a th:href="@{/admin/dashboard}" th:classappend="${active == 'dashboard'} ? 'active'">
+            <span class="material-symbols-outlined">dashboard</span> Dashboard
+        </a>
+        <a th:href="@{/admin/petani}" th:classappend="${active == 'petani'} ? 'active'">
+            <span class="material-symbols-outlined">group</span> Data Petani
+        </a>
+        <a th:href="@{/admin/komoditas}" th:classappend="${active == 'komoditas'} ? 'active'">
+            <span class="material-symbols-outlined">agriculture</span> Komoditas
+        </a>
+        <a th:href="@{/admin/stok}" th:classappend="${active == 'stok'} ? 'active'">
+            <span class="material-symbols-outlined">inventory_2</span> Stok Pangan
+        </a>
+        <a th:href="@{/admin/distribusi}" th:classappend="${active == 'distribusi'} ? 'active'">
+            <span class="material-symbols-outlined">local_shipping</span> Distribusi
+        </a>
+        <a th:href="@{/admin/laporan}" th:classappend="${active == 'laporan'} ? 'active'">
+            <span class="material-symbols-outlined">analytics</span> Laporan Global
+        </a>
+        <a th:href="@{/admin/chatbot}" th:classappend="${active == 'chatbot'} ? 'active'">
+            <span class="material-symbols-outlined">smart_toy</span> Log Chatbot AI
+        </a>
+    </div>
+
+
+    <div class="sidebar-footer">
+        <form th:action="@{/admin/logout}" method="post">
+            <button type="submit" class="sidebar-logout-btn">
+                <span class="material-symbols-outlined">logout</span>
+                <span>Keluar Aplikasi</span>
+            </button>
+        </form>
+    </div>
+</nav>
+
+<!-- ===== TOPBAR FRAGMENT ===== -->
+<header th:fragment="topbar(breadcrumb)" class="topbar">
+    <div class="topbar-left">
+        <button class="icon-btn" onclick="toggleSidebar()" id="menuToggle">
+            <span class="material-symbols-outlined">menu</span>
+        </button>
+        <div class="breadcrumb" th:utext="${breadcrumb}">Dashboard</div>
+    </div>
+    <div class="topbar-right">
+        <button class="icon-btn" onclick="toggleTheme()" title="Ganti Tema">
+            <span class="material-symbols-outlined" id="themeIcon">dark_mode</span>
+        </button>
+        <div class="dropdown" id="notifContainer">
+            <button class="icon-btn" onclick="toggleDropdown('notifContainer')" title="Notifikasi">
+                <span class="material-symbols-outlined">notifications</span>
+                <span class="notif-badge" th:if="${unreadNotifCount > 0}" th:text="${unreadNotifCount}">3</span>
+            </button>
+            <div class="dropdown-menu">
+            <div class="dropdown-header" style="display:flex; justify-content:space-between; align-items:center;">
+                Notifikasi Terbaru
+                <button onclick="markAllRead()" style="background:none; border:none; color:var(--primary); font-size:0.75rem; font-weight:600; cursor:pointer;">Tandai Terbaca</button>
+            </div>
+                <div th:if="${#lists.isEmpty(globalNotifications)}" class="dropdown-item" style="justify-content:center; padding:32px; color:var(--outline);">
+                    Belum ada notifikasi.
+                </div>
+                <div th:each="n : ${globalNotifications}" class="dropdown-item" 
+                     th:onclick="'markAsRead(' + ${n.id} + ', this)'"
+                     th:style="${n.read} ? 'opacity:0.6; cursor:default;' : 'background:rgba(26, 92, 42, 0.04); cursor:pointer;'">
+                    <div style="width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;"
+                         th:styleappend="${n.read} ? 'background:var(--surface-container-low);' : 'background:rgba(26, 92, 42, 0.1);'">
+                        <span class="material-symbols-outlined" th:text="${n.icon}" 
+                              th:style="'font-size:20px; color:' + (${n.read ? 'var(--outline)' : (n.type == 'error' ? 'var(--error)' : n.type == 'warning' ? 'var(--secondary)' : 'var(--primary)')})">inventory_2</span>
+                    </div>
+                    <div style="flex:1;">
+                        <div th:style="${n.read} ? 'font-weight:500; color:var(--on-surface-variant);' : 'font-weight:700; color:var(--on-surface);'" th:text="${n.message}">Pesan Notifikasi</div>
+                        <div style="font-size:0.75rem; color:var(--outline); margin-top:2px;" th:text="${n.relativeTime}">10 menit yang lalu</div>
+                    </div>
+                    <div th:if="${!n.read}" style="width:8px; height:8px; background:var(--primary); border-radius:50%; margin-left:8px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-dropdown" id="profileContainer">
+            <div class="profile-pill" style="cursor: default;">
+                <div class="pill-avatar">
+                    <span th:text="${currentUserInitial ?: 'A'}">A</span>
+                </div>
+                <div class="pill-info">
+                    <div class="pill-name" th:text="${#authentication.name}">Admin</div>
+                    <div class="pill-role">Administrator</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Overlay & Script -->
+    <div id="sidebarOverlay" onclick="toggleSidebar()" style="position:fixed; inset:0; background:rgba(0,0,0,0.3); z-index:90; display:none;"></div>
+    <script>
+        function toggleTheme() {
+            const root = document.documentElement;
+            const currentTheme = root.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            root.setAttribute('data-theme', newTheme);
+            localStorage.setItem('admin-theme', newTheme);
+            document.getElementById('themeIcon').innerText = newTheme === 'dark' ? 'light_mode' : 'dark_mode';
+        }
+
+        async function markAsRead(id, element) {
+            if (element.style.opacity === '0.6') return; 
+            try {
+                const res = await fetch(`/api/notifications/${id}/mark-read`, { method: 'POST' });
+                if (res.ok) {
+                    const data = await res.json();
+                    updateBadge(data.count);
+                    element.style.opacity = '0.6';
+                    element.style.cursor = 'default';
+                    const icon = element.querySelector('.material-symbols-outlined');
+                    if (icon) icon.style.color = 'var(--outline)';
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        async function markAllRead() {
+            try {
+                const res = await fetch('/api/notifications/mark-all-read', { method: 'POST' });
+                if (res.ok) {
+                    updateBadge(0);
+                    document.querySelectorAll('.dropdown-item').forEach(item => {
+                        item.style.opacity = '0.6';
+                        item.style.cursor = 'default';
+                        const icon = item.querySelector('.material-symbols-outlined');
+                        if (icon) icon.style.color = 'var(--outline)';
+                    });
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        function updateBadge(count) {
+            const badgeContainer = document.querySelector('[onclick*="notifContainer"]');
+            if (!badgeContainer) return;
+            let badge = badgeContainer.querySelector('.notif-badge');
+            if (count > 0) {
+                if (!badge) {
+                    badge = document.createElement('span');
+                    badge.className = 'notif-badge';
+                    badgeContainer.appendChild(badge);
+                }
+                badge.innerText = count;
+            } else if (badge) {
+                badge.remove();
+            }
+        }
+
+        async function pollNotifications() {
+            try {
+                const res = await fetch('/api/notifications/unread-count');
+                const data = await res.json();
+                updateBadge(data.count);
+            } catch (err) { console.error(err); }
+        }
+
+        setInterval(pollNotifications, 30000);
+
+        const savedTheme = localStorage.getItem('admin-theme');
+        if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.addEventListener('DOMContentLoaded', () => {
+                const icon = document.getElementById('themeIcon');
+                if (icon) icon.innerText = savedTheme === 'dark' ? 'light_mode' : 'dark_mode';
+            });
+        }
+
+        function toggleDropdown(id) {
+            const container = document.getElementById(id);
+            container.classList.toggle('active');
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.dropdown')) {
+                document.querySelectorAll('.dropdown.active').forEach(d => d.classList.remove('active'));
+            }
+        });
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (window.innerWidth <= 768) {
+                // Mobile behavior: slide in with simple overlay
+                const isOpen = sidebar.classList.toggle('open');
+                overlay.style.display = isOpen ? 'block' : 'none';
+                document.body.style.overflow = isOpen ? 'hidden' : '';
+            } else {
+                // Desktop behavior: toggle sidebar and content margin
+                const isHidden = sidebar.classList.toggle('desktop-hidden');
+                if (isHidden) {
+                    sidebar.style.transform = 'translateX(-100%)';
+                    mainContent.classList.add('full-width');
+                } else {
+                    sidebar.style.transform = 'translateX(0)';
+                    mainContent.classList.remove('full-width');
+                }
+            }
+        }
+        
+        window.addEventListener('resize', () => {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (window.innerWidth > 768) {
+                if (sidebar) sidebar.style.transform = sidebar.classList.contains('desktop-hidden') ? 'translateX(-100%)' : 'translateX(0)';
+                if (overlay) overlay.style.display = 'none';
+                document.body.style.overflow = '';
+            } else {
+                if (sidebar) {
+                    sidebar.style.transform = sidebar.classList.contains('open') ? 'translateX(0)' : 'translateX(-100%)';
+                }
+            }
+        });
+    </script>
+</header>
+
+<!-- ===== PREMIUM CENTERED POPUP FLASH MESSAGE ===== -->
+<div th:fragment="flash">
+    <!-- Success Messages -->
+    <div th:if="${successMessage != null or param.successMsg != null}" class="flash-overlay" id="flashSuccess" onclick="closeFlash(this)">
+        <div class="flash-popup success">
+            <div class="flash-icon">
+                <span class="material-symbols-outlined">check</span>
+            </div>
+            <div class="flash-content">
+                <h3>Berhasil!</h3>
+                <p th:text="${successMessage ?: param.successMsg}">Status berhasil diperbarui.</p>
+            </div>
+            <div class="flash-progress">
+                <div class="bar"></div>
+            </div>
+        </div>
+    </div>
+    <!-- Error Messages -->
+    <div th:if="${errorMessage != null or param.errorMsg != null}" class="flash-overlay" id="flashError" onclick="closeFlash(this)">
+        <div class="flash-popup error">
+            <div class="flash-icon">
+                <span class="material-symbols-outlined">error</span>
+            </div>
+            <div class="flash-content">
+                <h3>Terjadi Kesalahan</h3>
+                <p th:text="${errorMessage ?: param.errorMsg}">Ada kendala sistem.</p>
+            </div>
+            <div class="flash-progress">
+                <div class="bar"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function closeFlash(el) {
+            el.style.opacity = '0';
+            setTimeout(() => el.remove(), 300);
+        }
+        document.querySelectorAll('.flash-overlay').forEach(flash => {
+            setTimeout(() => closeFlash(flash), 5000);
+        });
+    </script>
+</div>
+
+<!-- ===== CUSTOM CONFIRM MODAL ===== -->
+<div th:fragment="confirmModal">
+<div id="customConfirm" class="confirm-overlay">
+    <div class="confirm-box">
+        <div class="confirm-header">
+            <div class="icon" id="confirmIcon"><span class="material-symbols-outlined">help</span></div>
+            <div class="confirm-title" id="confirmTitle">Konfirmasi</div>
+        </div>
+        <div class="confirm-body" id="confirmMessage">Apakah Anda yakin ingin melanjutkan?</div>
+        <div class="confirm-footer">
+            <button class="btn btn-secondary btn-sm" onclick="closeConfirm(false)">Batal</button>
+            <button class="btn btn-primary btn-sm" id="confirmOkBtn">Ya, Lanjutkan</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let confirmResolve;
+    function showCustomConfirm(message, options = {}) {
+        const overlay = document.getElementById('customConfirm');
+        const msgEl = document.getElementById('confirmMessage');
+        const okBtn = document.getElementById('confirmOkBtn');
+        const titleEl = document.getElementById('confirmTitle');
+        const iconBox = document.getElementById('confirmIcon');
+        
+        const isDelete = options.type === 'delete';
+        
+        msgEl.innerText = message;
+        titleEl.innerText = options.title || (isDelete ? 'Hapus Data' : 'Konfirmasi');
+        okBtn.innerText = options.okText || 'Ya, Lanjutkan';
+        okBtn.style.background = isDelete ? 'var(--error)' : 'var(--primary)';
+        okBtn.style.borderColor = isDelete ? 'var(--error)' : 'var(--primary)';
+        iconBox.style.background = isDelete ? 'var(--error)' : 'var(--primary)';
+        iconBox.style.color = '#ffffff';
+        
+        overlay.classList.add('show');
+        
+        return new Promise((resolve) => {
+            confirmResolve = resolve;
+            okBtn.onclick = () => {
+                overlay.classList.remove('show');
+                resolve(true);
+            };
+        });
+    }
+
+    function closeConfirm(val) {
+        document.getElementById('customConfirm').classList.remove('show');
+        if (confirmResolve) confirmResolve(val);
+    }
+
+    async function handleConfirm(event, message, type = 'confirm') {
+        event.preventDefault();
+        const ok = await showCustomConfirm(message, { type: type });
+        if (ok) {
+            const form = event.target.closest('form');
+            if (form) form.submit();
+            else if (event.target.tagName === 'A') window.location.href = event.target.href;
+        }
+    }
+</script>
+</div>
+
+</html>

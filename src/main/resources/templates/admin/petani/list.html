@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('Data Petani')}"></head>
+<body>
+<div class="layout">
+    <nav th:replace="~{admin/layout :: sidebar('petani')}"></nav>
+    <div class="main-content">
+        <header th:replace="~{admin/layout :: topbar('<a href=\'/admin/dashboard\'>Dashboard</a> &rsaquo; <span>Data Petani</span>')}"></header>
+        <div class="page-content">
+            <div th:replace="~{admin/layout :: flash}"></div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <h1 style="font-size:1.3rem; font-weight:700;">Data Petani</h1>
+                <a th:href="@{/admin/petani/tambah}" class="btn btn-primary">
+                    <span class="material-symbols-outlined">add</span> Tambah Petani
+                </a>
+            </div>
+
+            <!-- Search/Filter Bar -->
+            <div class="filter-bar">
+                <div class="form-group" style="flex:2;">
+                    <div class="input-icon">
+                        <span class="material-symbols-outlined">search</span>
+                        <input type="text" class="form-control" placeholder="Cari nama petani atau kelompok tani..." id="searchInput" onkeyup="filterTable()"/>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="card">
+                <div class="table-container">
+                    <table id="petaniTable">
+                        <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama</th>
+                            <th>Kelompok Tani</th>
+                            <th>Kontak</th>
+                            <th>Username</th>
+                            <th>Aksi</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="petani, stat : ${listPetani}">
+                            <td th:text="${stat.count}">1</td>
+                            <td><strong th:text="${petani.nama}">Budi Santoso</strong></td>
+                            <td th:text="${petani.kelompokTani}">Tani Makmur</td>
+                            <td th:text="${petani.kontak}">081234567890</td>
+                            <td>
+                                <span th:if="${petani.username}" class="badge badge-green" th:text="${petani.username}">budi</span>
+                                <span th:unless="${petani.username}" class="badge badge-gray">Belum diset</span>
+                            </td>
+                            <td>
+                                <div style="display:flex;gap:4px;">
+                                    <a th:href="@{/admin/petani/edit/{id}(id=${petani.idPetani})}" class="btn-icon edit" title="Edit">
+                                        <span class="material-symbols-outlined">edit</span>
+                                    </a>
+                                    <form th:action="@{/admin/petani/hapus/{id}(id=${petani.idPetani})}" method="post" style="display:inline;"
+                                          th:onsubmit="handleConfirm(event, 'Yakin ingin menghapus data petani ini?', 'delete')">
+                                        <button type="submit" class="btn-icon delete" title="Hapus">
+                                            <span class="material-symbols-outlined">delete</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(listPetani)}">
+                            <td colspan="6" style="text-align:center;color:var(--outline);padding:40px;">Belum ada data petani</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+function filterTable(){
+    const q=document.getElementById('searchInput').value.toLowerCase();
+    document.querySelectorAll('#petaniTable tbody tr').forEach(r=>{
+        r.style.display=r.textContent.toLowerCase().includes(q)?'':'none';
+    });
+}
+</script>
+<div th:replace="~{admin/layout :: confirmModal}"></div>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{petani/layout :: head('Stok Pangan')}"></head>
+<body>
+<div class="layout">
+    <nav th:replace="~{petani/layout :: sidebar('stok')}"></nav>
+    <div class="main-content">
+        <header th:replace="~{petani/layout :: topbar('<a href=\'/petani/dashboard\' style=\'color:var(--primary);text-decoration:none;font-weight:500;\'>Dashboard</a> <span style=\'color:var(--outline);margin:0 4px;\'>&rsaquo;</span> <span style=\'font-weight:600;color:var(--on-surface);\'>Stok Pangan</span>')}"></header>
+        <div class="page-content">
+            <div th:replace="~{petani/layout :: flash}"></div>
+
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
+                <div>
+                    <h1 style="font-size:1.15rem;font-weight:700;">Stok Pangan Saya</h1>
+                    <p style="font-size:0.875rem; color:var(--on-surface-variant);">Kelola dan pantau ketersediaan hasil panen Anda di gudang.</p>
+                </div>
+                <a th:href="@{/petani/stok/tambah}" class="btn btn-primary">
+                    <span class="material-symbols-outlined">add</span> Catat Stok Baru
+                </a>
+            </div>
+
+            <style>
+                .filter-tab {
+                    border: 1px solid var(--outline-variant);
+                    background: var(--surface);
+                    color: var(--on-surface-variant);
+                    border-radius: 99px;
+                    padding: 8px 24px;
+                    font-size: 0.875rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                }
+                .filter-tab:hover {
+                    border-color: var(--primary);
+                    color: var(--primary);
+                    background: var(--surface-container-low);
+                }
+                .filter-tab.active-tab {
+                    background: var(--primary);
+                    border-color: var(--primary);
+                    color: #ffffff;
+                    font-weight: 600;
+                    box-shadow: 0 4px 12px rgba(9, 100, 48, 0.15);
+                }
+            </style>
+
+            <!-- Filter Tabs -->
+            <div style="display:flex;gap:10px;margin-bottom:32px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none;">
+                <button class="filter-tab active-tab" onclick="filterByKomoditas(this, '')" style="display:flex; align-items:center; gap:8px;">
+                    <span class="material-symbols-outlined" style="font-size:18px;">grid_view</span> Semua
+                </button>
+                <div th:each="k : ${listKomoditas}" style="display:contents;">
+                    <button class="filter-tab" 
+                            th:data-komoditas="${k.namaKomoditas}"
+                            onclick="filterByKomoditas(this, this.getAttribute('data-komoditas'))"
+                            style="display:flex; align-items:center; gap:8px;">
+                        <span class="material-symbols-outlined" style="font-size:18px;"
+                              th:text="${k.namaKomoditas.toLowerCase().contains('jagung') ? 'grid_view' : 
+                                        (k.namaKomoditas.toLowerCase().contains('beras') or k.namaKomoditas.toLowerCase().contains('padi')) ? 'grain' : 
+                                        k.namaKomoditas.toLowerCase().contains('minyak') ? 'opacity' : 
+                                        k.namaKomoditas.toLowerCase().contains('cabai') ? 'local_fire_department' : 
+                                        (k.namaKomoditas.toLowerCase().contains('kedelai') or k.namaKomoditas.toLowerCase().contains('kacang')) ? 'eco' : 
+                                        k.namaKomoditas.toLowerCase().contains('bawang') ? 'nutrition' : 
+                                        k.namaKomoditas.toLowerCase().contains('gula') ? 'bakery_dining' : 
+                                        'inventory_2'}"></span>
+                        <span th:text="${k.namaKomoditas}">Beras</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stok Cards Grid -->
+            <div class="stok-cards" id="stokGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:24px;">
+                <div th:each="stok : ${listStok}" class="stok-card" th:data-komoditas="${stok.komoditas.namaKomoditas}"
+                     style="background:#fff; border-radius:16px; padding:24px; box-shadow:0 4px 12px rgba(0,0,0,0.05); border: 1px solid var(--outline-variant); transition: transform 0.2s; cursor:pointer; display: flex; flex-direction: column;"
+                     onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+                    
+                    <div class="stok-header" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--surface-container-low); display: flex; align-items: center; justify-content: center; color: var(--primary); border: 1px solid var(--outline-variant);">
+                                <span class="material-symbols-outlined" style="font-size:20px;"
+                                      th:text="${stok.komoditas.namaKomoditas.toLowerCase().contains('jagung') ? 'grid_view' : 
+                                                (stok.komoditas.namaKomoditas.toLowerCase().contains('beras') or stok.komoditas.namaKomoditas.toLowerCase().contains('padi')) ? 'grain' : 
+                                                stok.komoditas.namaKomoditas.toLowerCase().contains('minyak') ? 'opacity' : 
+                                                stok.komoditas.namaKomoditas.toLowerCase().contains('cabai') ? 'local_fire_department' : 
+                                                (stok.komoditas.namaKomoditas.toLowerCase().contains('kedelai') or stok.komoditas.namaKomoditas.toLowerCase().contains('kacang')) ? 'eco' : 
+                                                stok.komoditas.namaKomoditas.toLowerCase().contains('bawang') ? 'nutrition' : 
+                                                stok.komoditas.namaKomoditas.toLowerCase().contains('gula') ? 'bakery_dining' : 
+                                                'inventory_2'}"></span>
+                            </div>
+                            <span class="badge badge-green" th:text="${stok.komoditas.namaKomoditas.toUpperCase()}">BERAS</span>
+                        </div>
+                        <span style="display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--outline);font-weight:500; background:var(--surface-container-low); padding:4px 10px; border-radius:20px;">
+                            <span class="material-symbols-outlined" style="font-size:14px;">calendar_today</span>
+                            <span th:text="${#temporals.format(stok.tanggalPanen, 'dd MMM yyyy')}">12 Jan 2024</span>
+                        </span>
+                    </div>
+
+                    <div class="stok-body" style="margin-bottom:16px;">
+                        <div style="font-size:0.75rem; color:var(--on-surface-variant); margin-bottom:2px; font-weight:500;">Total Stok Tersedia</div>
+                        <div style="display:flex; align-items:baseline; gap:6px;">
+                            <span th:text="${stok.jumlahMasuk}" style="font-size:1.75rem; font-weight:800; color:var(--on-surface); letter-spacing:-0.5px;">500</span>
+                            <span th:text="${stok.satuan != null ? stok.satuan.namaSatuan : stok.komoditas.satuan}" style="font-size:1rem; font-weight:600; color:var(--on-surface-variant);">Kg</span>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; align-items:center; justify-content:space-between; padding-top:16px; border-top:1px solid var(--outline-variant);">
+                        <a th:href="@{/petani/stok/{id}(id=${stok.idStok})}" class="btn btn-secondary btn-sm" style="font-size:0.75rem; border-radius:8px;">
+                            Detail Stok
+                        </a>
+                        <span style="font-size:0.75rem; color:var(--outline); display:flex; align-items:center; gap:4px;">
+                            <span class="material-symbols-outlined" style="font-size:14px;">history</span>
+                            Terakhir diupdate
+                        </span>
+                    </div>
+                </div>
+
+                <div th:if="${#lists.isEmpty(listStok)}" style="grid-column:1/-1;text-align:center;padding:48px;color:var(--outline);">
+                    <span class="material-symbols-outlined" style="font-size:48px;margin-bottom:12px;">inventory_2</span>
+                    <p>Belum ada data stok. Mulai catat stok panen Anda!</p>
+                    <a th:href="@{/petani/stok/tambah}" class="btn btn-primary" style="margin-top:16px;">
+                        <span class="material-symbols-outlined">add</span> Catat Stok Baru
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+function filterByKomoditas(btn, komoditas){
+    document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active-tab'));
+    btn.classList.add('active-tab');
+    document.querySelectorAll('.stok-card').forEach(c => {
+        c.style.display = !komoditas || c.dataset.komoditas === komoditas ? '' : 'none';
+    });
+}
+</script>
+</body>
+</html>

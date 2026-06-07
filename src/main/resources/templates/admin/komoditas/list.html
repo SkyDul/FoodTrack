@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('Komoditas')}"></head>
+<body>
+<div class="layout">
+    <nav th:replace="~{admin/layout :: sidebar('komoditas')}"></nav>
+    <div class="main-content">
+        <header th:replace="~{admin/layout :: topbar('<a href=\'/admin/dashboard\'>Dashboard</a> &rsaquo; <span>Komoditas</span>')}"></header>
+        <div class="page-content">
+            <div th:replace="~{admin/layout :: flash}"></div>
+            
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <h1 style="font-size:1.3rem; font-weight:700;">Data Komoditas</h1>
+                <a th:href="@{/admin/komoditas/tambah}" class="btn btn-primary">
+                    <span class="material-symbols-outlined">add</span> Tambah Komoditas
+                </a>
+            </div>
+
+            <!-- Search/Filter Bar -->
+            <div class="filter-bar" style="margin-bottom: 32px;">
+                <div class="form-group" style="flex:2;">
+                    <div class="input-icon">
+                        <span class="material-symbols-outlined">search</span>
+                        <input type="text" class="form-control" placeholder="Cari nama komoditas..." id="searchInput" onkeyup="filterKomoditas()"/>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grouped Commodities Cards -->
+            <div id="komoditasGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:20px;">
+                <div th:each="entry : ${groupedKomoditas}" class="komoditas-card-wrapper" th:data-name="${entry.key.toLowerCase()}">
+                    <div class="card komoditas-group-card" style="padding:0; border:1px solid var(--outline-variant); border-radius:20px; overflow:hidden; transition: all 0.3s ease; background: var(--surface); height: 100%; display: flex; flex-direction: column;">
+                        
+                        <!-- Header -->
+                        <div style="padding:20px; background: linear-gradient(to bottom, rgba(26,92,42,0.03), transparent); border-bottom:1px solid var(--outline-variant); display:flex; justify-content:space-between; align-items:center;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div style="width:36px; height:36px; background:rgba(26,92,42,0.08); color:var(--primary); border-radius:10px; display:flex; align-items:center; justify-content:center; border: 1px solid rgba(26,92,42,0.1);">
+                                    <!-- Icon Material Symbols yang Mendekati Bentuk Komoditas -->
+                                    <span class="material-symbols-outlined" style="font-size: 20px;"
+                                          th:text="${entry.key.toLowerCase().contains('jagung') ? 'grid_view' : 
+                                                    (entry.key.toLowerCase().contains('beras') or entry.key.toLowerCase().contains('padi')) ? 'grain' : 
+                                                    entry.key.toLowerCase().contains('minyak') ? 'opacity' : 
+                                                    entry.key.toLowerCase().contains('cabai') ? 'local_fire_department' : 
+                                                    (entry.key.toLowerCase().contains('kedelai') or entry.key.toLowerCase().contains('kacang')) ? 'eco' : 
+                                                    entry.key.toLowerCase().contains('bawang') ? 'nutrition' : 
+                                                    entry.key.toLowerCase().contains('tomat') ? 'lens' : 
+                                                    entry.key.toLowerCase().contains('telur') ? 'egg' : 
+                                                    entry.key.toLowerCase().contains('gula') ? 'bakery_dining' : 
+                                                    'inventory_2'}">
+                                        inventory_2
+                                    </span>
+                                </div>
+                                <h3 th:text="${entry.key}" style="font-size:1.1rem; font-weight:800; color:var(--on-surface); margin:0;">Jagung</h3>
+                            </div>
+                        </div>
+
+                        <!-- Summary Row (Units Only - Clean for Seniors) -->
+                        <div style="padding:16px; flex: 1; display: flex; align-items: center; justify-content: center; min-height: 80px;">
+                            <div style="padding:14px 20px; border-radius:16px; background:#fcfcfc; border:1px solid #f0f0f0; display:flex; align-items:center; gap:12px; width: 100%;">
+                                <div style="width:10px; height:10px; border-radius:50%; background:var(--primary); flex-shrink: 0;"></div>
+                                <span style="font-weight:800; color:var(--on-surface); font-size: 1.15rem; letter-spacing: -0.5px;" 
+                                      th:text="${#strings.arrayJoin(entry.value[0].satuanList.![namaSatuan], ', ')}">Kg, Ton</span>
+                            </div>
+                            
+                            <!-- Hidden Data for Modal (Full Details) -->
+                            <div class="hidden-unit-data" style="display:none;">
+                                <div th:each="s : ${entry.value[0].satuanList}" class="modal-unit-item" 
+                                     style="padding:20px 24px; border-radius:20px; background:#fcfcfc; border:1.5px solid #f0f0f0; display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                                    <div style="display:flex; align-items:center; gap:12px;">
+                                        <span style="font-weight:800; color:#1a1a1a; font-size: 1.1rem;" th:text="${s.namaSatuan}">Kg</span>
+                                        <span th:if="${s.isBaseUnit}" class="badge" style="font-size:0.65rem; padding: 3px 8px; background:#e8f5e9; color:#1a5c2a; border:none; font-weight:900; border-radius:8px; text-transform:uppercase; letter-spacing:0.5px;">DASAR</span>
+                                    </div>
+                                    <div style="font-size:1.3rem; font-weight:900; color:#1a5c2a;" 
+                                         th:text="${'Rp ' + #numbers.formatDecimal(s.harga ?: 0, 0, 'POINT', 0, 'COMMA')}">Rp 2.000</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer Actions (Lihat, Edit, Hapus) -->
+                        <div style="padding: 16px; display: flex; gap: 8px; border-top: 1px solid #f0f0f0; background: #fafafa; position: relative;">
+                            <!-- LIHAT (Data-driven Modal Trigger) -->
+                            <button type="button" 
+                                    th:data-name="${entry.key}"
+                                    onclick="showUnitModal(this)"
+                                    class="btn" style="flex: 2; height: 44px; font-size:0.85rem; font-weight:800; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; background: #1a5c2a; color: #fff; border: none; transition: all 0.2s; box-shadow: 0 4px 10px rgba(26,92,42,0.15);">
+                                <span class="material-symbols-outlined" style="font-size:18px;">visibility</span> Lihat
+                            </button>
+                            
+                            <!-- EDIT (Square Button) -->
+                            <a th:href="@{/admin/komoditas/edit/{id}(id=${entry.value[0].idKomoditas})}" class="btn" style="width: 44px; height: 44px; border-radius:12px; display:flex; align-items:center; justify-content:center; border: 1.5px solid #e0e0e0; color: #666; background: #fff; transition: all 0.2s;" onmouseover="this.style.background='#f5f5f5'; this.style.borderColor='#ccc'" onmouseout="this.style.background='#fff'; this.style.borderColor='#e0e0e0'">
+                                <span class="material-symbols-outlined" style="font-size:20px;">edit</span>
+                            </a>
+                            
+                            <!-- HAPUS (Square Button) -->
+                            <form th:action="@{/admin/komoditas/hapus/{id}(id=${entry.value[0].idKomoditas})}" method="post" style="margin:0;">
+                                <button type="button" onclick="handleConfirm(event, 'Yakin ingin menghapus komoditas ini? Semua data satuan, harga, dan riwayat stok terkait juga akan terhapus.', 'delete')" class="btn" style="width: 44px; height: 44px; border-radius:12px; display:flex; align-items:center; justify-content:center; border: 1.5px solid #fee2e2; color: #ef4444; background: #fff; transition: all 0.2s;" onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='#fff'">
+                                    <span class="material-symbols-outlined" style="font-size:20px;">delete</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Single Modal (Outside Loop) -->
+            <div id="unitDetailModal" class="unit-popup-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+                <div style="background:#fff; width:95%; max-width:420px; border-radius:28px; box-shadow:0 25px 60px rgba(0,0,0,0.25); border:1px solid #eee; padding:28px; animation: modalZoom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                        <div style="display:flex; align-items:center; gap:14px;">
+                            <div style="width:44px; height:44px; background:rgba(26,92,42,0.08); color:#1a5c2a; border-radius:12px; display:flex; align-items:center; justify-content:center; border: 1.5px solid rgba(26,92,42,0.1);">
+                                <span class="material-symbols-outlined" style="font-size:24px;">inventory_2</span>
+                            </div>
+                            <h3 id="modalCommName" style="margin:0; font-size:1.25rem; font-weight:800; color:#1a1a1a;">Nama Komoditas</h3>
+                        </div>
+                        <button type="button" onclick="closeUnitModal()" style="background:none; border:none; cursor:pointer; color:#bbb; transition:0.2s;" onmouseover="this.style.color='#333'" onmouseout="this.style.color='#bbb'">
+                            <span class="material-symbols-outlined" style="font-size:24px;">close</span>
+                        </button>
+                    </div>
+                    
+                    <div style="padding: 1px 0; border-top: 1px solid #f0f0f0; margin: 0 -28px 24px;"></div>
+
+                    <!-- List Container -->
+                    <div id="modalUnitList"></div>
+                    
+                    <!-- Footer -->
+                    <button type="button" onclick="closeUnitModal()" class="btn" style="width:100%; height:54px; border-radius:18px; font-weight:800; background:#f5f5f5; border:none; color:#444; font-size:1rem; transition:0.2s;" onmouseover="this.style.background='#eee'" onmouseout="this.style.background='#f5f5f5'">Tutup</button>
+                </div>
+            </div>
+
+            <!-- Empty State (No Data in DB) -->
+            <div th:if="${groupedKomoditas == null or groupedKomoditas.empty}" style="text-align:center; padding:100px 40px; background: #fff; border-radius: 24px; border: 1.5px dashed #e0e0e0; margin-top: 20px;">
+                <div style="width: 80px; height: 80px; background: #f8f9fa; color: #ced4da; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
+                    <span class="material-symbols-outlined" style="font-size: 40px;">inventory_2</span>
+                </div>
+                <h3 style="font-weight: 800; color: #1a1a1a; margin-bottom: 8px;">Belum Ada Data Komoditas</h3>
+                <p style="color: #666; max-width: 400px; margin: 0 auto 32px; font-size: 0.9rem;">Daftarkan jenis barang (seperti Beras, Jagung, atau Mede) terlebih dahulu agar bisa mengelola stok pangan.</p>
+                <a th:href="@{/admin/komoditas/tambah}" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 12px; font-weight: 700; text-decoration: none;">
+                    <span class="material-symbols-outlined">add</span> Tambah Komoditas Pertama
+                </a>
+            </div>
+
+            <!-- No Results for Search -->
+            <div id="noResults" style="display:none; text-align:center; color:#999; padding:80px; background:#fcfcfc; border-radius:24px; border:1.5px dashed #eee;">
+                <span class="material-symbols-outlined" style="font-size:48px; margin-bottom:16px; opacity:0.3;">search_off</span>
+                <h3 style="font-weight:800; color:#1a1a1a;">Komoditas tidak ditemukan</h3>
+                <p>Coba gunakan kata kunci pencarian yang lain.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes modalZoom { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    .komoditas-group-card:hover {
+        border-color: var(--primary) !important;
+        box-shadow: 0 12px 24px rgba(0,0,0,0.04);
+    }
+</style>
+
+<script>
+    function filterKomoditas() {
+        const input = document.getElementById('searchInput');
+        const filter = input.value.toLowerCase();
+        const cards = document.getElementsByClassName('komoditas-card-wrapper');
+        let hasResults = false;
+
+        for (let i = 0; i < cards.length; i++) {
+            const name = cards[i].getAttribute('data-name');
+            if (name.includes(filter)) {
+                cards[i].style.display = "";
+                hasResults = true;
+            } else {
+                cards[i].style.display = "none";
+            }
+        }
+
+        document.getElementById('noResults').style.display = hasResults ? 'none' : 'block';
+    }
+
+    function showUnitModal(btn) {
+        const name = btn.getAttribute('data-name');
+        const card = btn.closest('.komoditas-group-card');
+        const hiddenData = card.querySelector('.hidden-unit-data').innerHTML;
+
+        document.getElementById('modalCommName').innerText = name;
+        document.getElementById('modalUnitList').innerHTML = hiddenData;
+        document.getElementById('unitDetailModal').style.display = 'flex';
+    }
+
+    function closeUnitModal() {
+        document.getElementById('unitDetailModal').style.display = 'none';
+    }
+
+    window.addEventListener('click', (e) => {
+        if (e.target.id === 'unitDetailModal') {
+            closeUnitModal();
+        }
+    });
+</script>
+
+<div th:replace="~{admin/layout :: confirmModal}"></div>
+</body>
+</html>

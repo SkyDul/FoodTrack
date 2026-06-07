@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="FoodTrack - Sistem logistik pertanian digital yang menghubungkan petani, gudang, dan pasar."/>
+    <title>FoodTrack — Smart Food Security System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<!-- Navbar -->
+<nav class="landing-nav">
+    <div class="nav-brand">
+        <img th:src="@{/img/logo.png}" alt="FoodTrack" style="width:48px; height:48px; object-fit:contain;" />
+        <span style="color:#fff; font-weight:800; font-size:1.5rem; letter-spacing:-0.5px;">FoodTrack</span>
+    </div>
+    <div class="nav-links">
+        <a href="#hero" class="active">Beranda</a>
+        <a href="#fitur">Fitur</a>
+        <a href="#cara-kerja">Cara Kerja</a>
+    </div>
+    <div class="nav-actions">
+        <a th:href="@{/admin/login}" class="btn btn-login-admin">Login Admin</a>
+        <a th:href="@{/login-petani}" class="btn btn-portal-petani">Portal Petani</a>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section id="hero" class="hero-wrapper" style="background:var(--surface-container-low); border-bottom: 1px solid var(--outline-variant);">
+    <div class="hero">
+        <div class="hero-text">
+            <h1>Kelola Stok Pangan Lebih Cerdas <span class="highlight">Bersama AI</span></h1>
+            <p>Sistem logistik pertanian digital yang menghubungkan petani, gudang, dan pasar. Optimalkan distribusi, pantau ketersediaan, dan cegah kelangkaan dengan presisi engine modern kami.</p>
+            <div class="hero-actions">
+                <a th:href="@{/login-petani}" class="btn btn-primary" style="padding:16px 32px; border-radius:12px;">
+                    Masuk Portal Petani <span class="material-symbols-outlined" style="font-size:20px;">arrow_forward</span>
+                </a>
+                <a th:href="@{/admin/login}" class="btn btn-secondary" style="padding:16px 32px; border-radius:12px;">Login Admin</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&q=80"
+                 alt="Petani menggunakan tablet di sawah"
+            style="border-radius:24px; box-shadow: 0 32px 64px -16px rgba(26, 92, 42, 0.2);"/>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Bar -->
+<section class="stats-bar">
+    <div class="stat-item">
+        <h3 th:text="${totalPetani != null ? totalPetani : '0'}">1.200+</h3>
+        <p>Petani Aktif</p>
+    </div>
+    <div class="stat-item">
+        <h3 th:text="${totalStok != null ? totalStok : '0'} + ' Kg'">8.500+</h3>
+        <p>Stok Dikelola</p>
+    </div>
+    <div class="stat-item">
+        <h3 th:text="${totalKomoditas != null ? totalKomoditas : '0'}">45+</h3>
+        <p>Jenis Komoditas</p>
+    </div>
+    <div class="stat-item">
+        <h3 th:text="${distribusiSelesai != null ? distribusiSelesai : '0'}">99.9%</h3>
+        <p>Distribusi Selesai</p>
+    </div>
+</section>
+
+<!-- Fitur Section -->
+<section id="fitur" class="landing-section">
+    <div style="text-align:center;margin-bottom:64px;">
+        <h2 class="text-h2" style="font-size: 2.5rem; letter-spacing: -0.02em;">Fitur Unggulan</h2>
+        <p style="color:var(--on-surface-variant);max-width:600px;margin:16px auto 0; font-size: 1.125rem;">Solusi lengkap untuk pengelolaan pangan dari hulu ke hilir</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:32px;">
+        <!-- Fitur 1 -->
+        <div class="card" style="text-align:center;padding:48px 32px;background:var(--primary);color:#fff;border:none;border-radius:24px;">
+            <div style="width:72px;height:72px;border-radius:20px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;backdrop-filter:blur(4px);">
+                <span class="material-symbols-outlined" style="font-size:32px;color:#fff;">inventory_2</span>
+            </div>
+            <h3 style="font-size:1.5rem;font-weight:700;margin-bottom:12px;">Kelola Stok</h3>
+            <p style="color:rgba(255,255,255,0.9);font-size:1rem;line-height:1.6;">Catat dan pantau stok pangan secara real-time dengan akurasi tinggi.</p>
+        </div>
+        <!-- Fitur 2 -->
+        <div class="card" style="text-align:center;padding:48px 32px;background:var(--primary);color:#fff;border:none;border-radius:24px;">
+            <div style="width:72px;height:72px;border-radius:20px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;backdrop-filter:blur(4px);">
+                <span class="material-symbols-outlined" style="font-size:32px;color:#fff;">local_shipping</span>
+            </div>
+            <h3 style="font-size:1.5rem;font-weight:700;margin-bottom:12px;">Distribusi</h3>
+            <p style="color:rgba(255,255,255,0.9);font-size:1rem;line-height:1.6;">Lacak pengiriman dari gudang ke tujuan dengan status real-time.</p>
+        </div>
+        <!-- Fitur 3 -->
+        <div class="card" style="text-align:center;padding:48px 32px;background:var(--primary);color:#fff;border:none;border-radius:24px;">
+            <div style="width:72px;height:72px;border-radius:20px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;backdrop-filter:blur(4px);">
+                <span class="material-symbols-outlined" style="font-size:32px;color:#fff;">smart_toy</span>
+            </div>
+            <h3 style="font-size:1.5rem;font-weight:700;margin-bottom:12px;">Chatbot AI</h3>
+            <p style="color:rgba(255,255,255,0.9);font-size:1rem;line-height:1.6;">Tanya asisten AI untuk rekomendasi pertanian berbasis data.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Cara Kerja -->
+<section id="cara-kerja" style="background:var(--surface-container-low); border-top: 1px solid var(--outline-variant); border-bottom: 1px solid var(--outline-variant);">
+    <div class="landing-section" style="text-align:center;">
+        <h2 class="text-h2" style="margin-bottom:64px; font-size: 2.5rem; letter-spacing: -0.02em;">Cara Kerja</h2>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:60px;">
+            <div class="step-card">
+                <div class="step-icon">1</div>
+                <h3 style="font-size:1.125rem;font-weight:600;margin-bottom:8px;">Daftar &amp; Login</h3>
+                <p style="color:var(--on-surface-variant);font-size:0.9375rem;">Admin mendaftarkan petani, lalu petani login ke portal mereka.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-icon">2</div>
+                <h3 style="font-size:1.125rem;font-weight:600;margin-bottom:8px;">Catat Stok Panen</h3>
+                <p style="color:var(--on-surface-variant);font-size:0.9375rem;">Petani mencatat hasil panen dan stok langsung dari portal.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-icon">3</div>
+                <h3 style="font-size:1.125rem;font-weight:600;margin-bottom:8px;">Distribusi &amp; Monitor</h3>
+                <p style="color:var(--on-surface-variant);font-size:0.9375rem;">Admin mengelola distribusi dan memantau semua data secara terpusat.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="landing-footer">
+    <div class="footer-brand">
+        <img th:src="@{/img/logo.png}" alt="FoodTrack" style="width:24px; height:24px; object-fit:contain;" />
+        <span style="color:#fff;">FoodTrack</span>
+    </div>
+    <p style="font-size:0.8125rem;color:rgba(255,255,255,0.7);">© 2026 FOODTRACK. KELOMPOK 2.</p>
+    <div class="footer-links">
+        <a href="#hero">Beranda</a>
+        <a href="#fitur">Fitur</a>
+        <a href="#cara-kerja">Cara Kerja</a>
+    </div>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.landing-nav .nav-links a');
+
+        function updateActiveLink() {
+            let current = '';
+            const scrollY = window.scrollY;
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                
+                if (scrollY >= (sectionTop - 150)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (current && link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', updateActiveLink);
+        updateActiveLink(); // Trigger on initial load
+    });
+</script>
+</body>
+</html>

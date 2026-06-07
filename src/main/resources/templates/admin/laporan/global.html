@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('Laporan Global')}"></head>
+<body>
+<!-- Structure for Print (Formal Document) -->
+<div class="print-only">
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 20px; text-align: center;">
+        <img th:src="@{/img/logo.png}" alt="FoodTrack Logo" style="width: 70px; height: 70px; object-fit: contain; margin-bottom: 5px;" />
+        <div>
+            <h2 style="font-size: 16pt; margin: 0; font-weight: bold; color: #096430;">LAPORAN RINGKASAN EKSEKUTIF KETERSEDIAAN PANGAN</h2>
+            <h3 style="font-size: 12pt; margin: 4px 0 0 0; font-weight: bold; color: #333;">SISTEM INFORMASI MANAJEMEN FOODTRACK</h3>
+            <p style="font-size: 10pt; margin: 4px 0 0 0; color: #666; font-style: italic;">Data ketersediaan dan arus distribusi pangan nasional secara real-time.</p>
+        </div>
+    </div>
+    
+    <div class="print-section">
+        <h4 style="margin-bottom: 15px; text-align: left; border-bottom: 1px solid #000; padding-bottom: 8px; width: fit-content; text-transform: uppercase;">RINGKASAN STATISTIK UTAMA</h4>
+        <p style="font-size: 10pt; margin-bottom: 15px; text-align: left;">Laporan ini menyajikan ringkasan data ketersediaan pangan dan arus distribusi operasional per tanggal <span th:text="${#temporals.format(#temporals.createNow(), 'd MMMM yyyy', new java.util.Locale('id'))}">2 Mei 2026</span>.</p>
+        
+        <table class="formal-table" style="width: 50% !important; margin-left: 0;">
+            <thead>
+                <tr>
+                    <th style="width: 70%;">Kategori</th>
+                    <th style="width: 30%; text-align: center;">Jumlah / Nilai</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Total Mitra Petani</td>
+                    <td style="text-align: center; font-weight: bold;" th:text="${totalPetani ?: 0}">3</td>
+                </tr>
+                <tr>
+                    <td>Total Varietas Komoditas</td>
+                    <td style="text-align: center; font-weight: bold;" th:text="${totalKomoditas ?: 0}">3</td>
+                </tr>
+                <tr>
+                    <td>Total Batch Stok</td>
+                    <td style="text-align: center; font-weight: bold;" th:text="${totalStok ?: 0}">1</td>
+                </tr>
+                <tr>
+                    <td>Total Jalur Distribusi</td>
+                    <td style="text-align: center; font-weight: bold;" th:text="${totalDistribusi ?: 0}">1</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="print-section">
+        <h4 style="margin-bottom: 15px; text-align: left; border-bottom: 1px solid #000; padding-bottom: 8px; width: fit-content; text-transform: uppercase;">DATA STOK PANGAN NASIONAL</h4>
+        <p style="font-size: 10pt; margin-bottom: 15px; text-align: left;">Rincian ketersediaan stok pangan yang terdaftar dalam sistem manajemen database:</p>
+        
+        <table class="formal-table" style="margin-left: 0;">
+            <thead>
+                <tr>
+                    <th>Komoditas</th>
+                    <th>Nama Petani</th>
+                    <th>Jumlah Stok</th>
+                    <th>Tanggal Panen</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="s : ${listStok}">
+                    <td th:text="${s.komoditas != null ? s.komoditas.namaKomoditas : '-'}">Jagung</td>
+                    <td th:text="${s.petani != null ? s.petani.nama : '-'}">Lify N.A</td>
+                    <td th:text="${s.jumlahMasuk + ' ' + (s.komoditas != null ? s.komoditas.satuan : '')}">21 Kg</td>
+                    <td th:text="${s.tanggalPanen != null ? #temporals.format(s.tanggalPanen, 'dd/MM/yyyy') : '-'}">15/05/2026</td>
+                </tr>
+            </tbody>
+        </table>
+        <p style="font-size: 8pt; font-style: italic; margin-top: 10px;">*Catatan: Data menunjukkan estimasi panen mendatang atau jadwal pembaruan stok berkala.</p>
+    </div>
+
+    <div class="print-section">
+        <h4 style="margin-bottom: 15px; text-align: left; border-bottom: 1px solid #000; padding-bottom: 8px; width: fit-content; text-transform: uppercase;">ALUR DISTRIBUSI KOMODITAS</h4>
+        <p style="font-size: 10pt; margin-bottom: 15px; text-align: left;">Status logistik pergerakan komoditas dari titik sumber ke titik tujuan:</p>
+        
+        <table class="formal-table" style="margin-left: 0;">
+            <thead>
+                <tr>
+                    <th>Produk</th>
+                    <th>Petani</th>
+                    <th>Titik Tujuan</th>
+                    <th>Status</th>
+                    <th>Tanggal Kirim</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="d : ${listDistribusi}">
+                    <td th:text="${d.stokPangan != null && d.stokPangan.komoditas != null ? d.stokPangan.komoditas.namaKomoditas : '-'}">Jagung</td>
+                    <td th:text="${d.stokPangan != null && d.stokPangan.petani != null ? d.stokPangan.petani.nama : '-'}">Lify N.A</td>
+                    <td th:text="${d.tujuan}">Kecamatan Ujung Berung</td>
+                    <td style="text-align: center; font-weight: bold;" th:text="${d.statusPengiriman}">Selesai</td>
+                    <td th:text="${d.tanggalKirim != null ? #temporals.format(d.tanggalKirim, 'dd/MM/yyyy') : '-'}">02/05/2026</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="print-section" style="page-break-inside: avoid; text-align: left;">
+        <h4 style="margin-bottom: 15px; text-align: left; border-bottom: 1px solid #000; padding-bottom: 8px; width: fit-content; text-transform: uppercase;">PENGESAHAN DAN VALIDASI</h4>
+        <p style="font-size: 10pt; margin-bottom: 20px; text-align: left;">Dokumen ini dihasilkan secara otomatis oleh sistem pusat FoodTrack sebagai instrumen monitoring dan pengambilan keputusan terkait ketahanan pangan.</p>
+        
+        <div style="font-size: 9pt; color: #333; margin-bottom: 30px;">
+            <strong>Informasi Administrasi:</strong><br/>
+            Waktu Cetak: <span id="printDateTime"></span> WIB<br/>
+            ID Laporan: <span th:text="'FT-EXSUM-' + ${#temporals.format(#temporals.createNow(), 'yyyyMMdd')}">FT-EXSUM-20260502</span>
+        </div>
+
+        <div style="float: right; text-align: right; width: 300px;">
+            <p>Bandung, <span th:text="${#temporals.format(#temporals.createNow(), 'dd MMMM yyyy', new java.util.Locale('id'))}">02 Mei 2026</span></p>
+            <p style="margin-top: 60px;">( ___________________________ )</p>
+            <p style="font-weight: bold;">Petugas Administrasi FoodTrack</p>
+        </div>
+        <div style="clear: both;"></div>
+    </div>
+</div>
+
+<div class="layout">
+    <nav th:replace="~{admin/layout :: sidebar('laporan')}"></nav>
+    <div class="main-content">
+        <header th:replace="~{admin/layout :: topbar('<a href=\'/admin/dashboard\' style=\'color:var(--primary);text-decoration:none;font-weight:500;\'>Dashboard</a> <span style=\'color:var(--outline);margin:0 4px;\'>&rsaquo;</span> <span style=\'font-weight:600;color:var(--on-surface);\'>Laporan Global</span>')}"></header>
+        <div class="page-content">
+            
+            <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; border-bottom: 1px solid var(--outline-variant); padding-bottom: 24px;">
+                <div>
+                    <h1 style="font-size: 2rem; font-weight: 900; color: var(--on-surface); margin-bottom: 8px; letter-spacing: -0.5px;">Laporan Ringkasan Eksekutif</h1>
+                    <p style="color: var(--outline); font-size: 1rem;">Laporan komprehensif ketersediaan dan distribusi pangan nasional.</p>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button onclick="exportToExcel()" class="btn" style="background: #1d6f42; color: #fff; display: flex; align-items: center; gap: 10px; padding: 12px 24px; border-radius: 14px; font-weight: 700; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(29, 111, 66, 0.2);">
+                        <span class="material-symbols-outlined" style="font-size: 20px;">description</span> Ekspor Excel
+                    </button>
+                    <button onclick="window.print()" class="btn btn-primary" style="display: flex; align-items: center; gap: 10px; padding: 12px 24px; border-radius: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(26, 92, 42, 0.2);">
+                        <span class="material-symbols-outlined" style="font-size: 20px;">print</span> Cetak Laporan
+                    </button>
+                </div>
+            </div>
+
+            <!-- Summary Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-bottom: 40px;">
+                <div class="card" style="padding: 24px; border-radius: 20px;">
+                    <div style="color: var(--outline); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">Mitra Petani</div>
+                    <div style="font-size: 1.75rem; font-weight: 800; color: var(--primary);" th:text="${totalPetani ?: 0}">0</div>
+                </div>
+                <div class="card" style="padding: 24px; border-radius: 20px;">
+                    <div style="color: var(--outline); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">Varietas Komoditas</div>
+                    <div style="font-size: 1.75rem; font-weight: 800; color: #f59e0b;" th:text="${totalKomoditas ?: 0}">0</div>
+                </div>
+                <div class="card" style="padding: 24px; border-radius: 20px;">
+                    <div style="color: var(--outline); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">Batch Stok</div>
+                    <div style="font-size: 1.75rem; font-weight: 800; color: #ef4444;" th:text="${totalStok ?: 0}">0</div>
+                </div>
+                <div class="card" style="padding: 24px; border-radius: 20px;">
+                    <div style="color: var(--outline); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">Total Distribusi</div>
+                    <div style="font-size: 1.75rem; font-weight: 800; color: #3b82f6;" th:text="${totalDistribusi ?: 0}">0</div>
+                </div>
+            </div>
+
+            <!-- Table Sections -->
+            <div style="display: flex; flex-direction: column; gap: 32px;">
+                <!-- Stock -->
+                <div id="stokTableSection" class="card" style="border-radius: 24px; padding: 24px;">
+                    <h3 style="margin-bottom: 24px; font-weight: 800; display: flex; align-items: center; gap: 10px;">
+                        <span class="material-symbols-outlined" style="color:var(--primary)">inventory</span> Data Stok Pangan
+                    </h3>
+                    <div class="table-container">
+                        <table>
+                            <thead style="background: #096430; color: #fff;">
+                                <tr>
+                                    <th style="padding: 16px; border-radius: 12px 0 0 0; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px;">Komoditas</th>
+                                    <th style="padding: 16px; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px;">Petani</th>
+                                    <th style="padding: 16px; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px;">Jumlah</th>
+                                    <th style="padding: 16px; border-radius: 0 12px 0 0; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px;">Tgl Panen</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="s : ${listStok}" style="border-bottom: 1px solid var(--outline-variant); transition: all 0.2s;" onmouseover="this.style.background='rgba(9, 100, 48, 0.02)'" onmouseout="this.style.background='transparent'">
+                                    <td style="padding: 16px;"><strong th:text="${s.komoditas != null ? s.komoditas.namaKomoditas : 'N/A'}">Beras</strong></td>
+                                    <td style="padding: 16px;" th:text="${s.petani != null ? s.petani.nama : 'N/A'}">Petani</td>
+                                    <td style="padding: 16px;" th:text="${s.jumlahMasuk + ' ' + (s.komoditas != null ? s.komoditas.satuan : '')}">100</td>
+                                    <td style="padding: 16px;" th:text="${s.tanggalPanen != null ? #temporals.format(s.tanggalPanen, 'dd MMM yyyy') : '-'}">Date</td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(listStok)}">
+                                    <td colspan="4" style="text-align:center; padding: 20px; color: var(--outline);">Belum ada data stok</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Distribution -->
+                <div id="distTableSection" class="card" style="border-radius: 24px; padding: 24px;">
+                    <h3 style="margin-bottom: 24px; font-weight: 800; display: flex; align-items: center; gap: 10px;">
+                        <span class="material-symbols-outlined" style="color:#3b82f6">local_shipping</span> Alur Distribusi
+                    </h3>
+                    <div class="table-container">
+                        <table>
+                            <thead style="background: #096430; color: #fff;">
+                                <tr>
+                                    <th style="padding: 16px; border-radius: 12px 0 0 0; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px;">Produk</th>
+                                    <th style="padding: 16px; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px;">Petani</th>
+                                    <th style="padding: 16px; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px;">Tujuan</th>
+                                    <th style="padding: 16px; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px;">Status</th>
+                                    <th style="padding: 16px; border-radius: 0 12px 0 0; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px;">Tgl Kirim</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="d : ${listDistribusi}" style="border-bottom: 1px solid var(--outline-variant); transition: all 0.2s;" onmouseover="this.style.background='rgba(9, 100, 48, 0.02)'" onmouseout="this.style.background='transparent'">
+                                    <td style="padding: 16px;"><strong th:text="${d.stokPangan != null && d.stokPangan.komoditas != null ? d.stokPangan.komoditas.namaKomoditas : 'N/A'}">Jagung</strong></td>
+                                    <td style="padding: 16px;" th:text="${d.stokPangan != null && d.stokPangan.petani != null ? d.stokPangan.petani.nama : 'N/A'}">Petani</td>
+                                    <td style="padding: 16px;" th:text="${d.tujuan}">Destinasi</td>
+                                    <td style="padding: 16px;">
+                                        <span class="badge" th:classappend="${d.statusPengiriman == 'Selesai' ? 'badge-green' : 'badge-yellow'}" 
+                                              style="padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;"
+                                              th:text="${d.statusPengiriman}">Status</span>
+                                    </td>
+                                    <td style="padding: 16px;" th:text="${d.tanggalKirim != null ? #temporals.format(d.tanggalKirim, 'dd MMM yyyy') : '-'}">Date</td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(listDistribusi)}">
+                                    <td colspan="4" style="text-align:center; padding: 20px; color: #666;">Belum ada data distribusi</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<style>
+@media screen {
+    .print-only { display: none; }
+}
+
+@media print {
+    @page {
+        size: A4;
+        margin: 2.5cm 2cm;
+    }
+
+    /* Reset & Clean */
+    body { background: #fff !important; color: #000 !important; font-family: 'Times New Roman', Times, serif !important; }
+    .layout, .confirm-modal, .material-symbols-outlined, .badge {
+        display: none !important;
+    }
+    
+    .print-only {
+        display: block !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+
+    /* Professional Kop Laporan */
+    .print-header {
+        display: none !important; /* Replaced by new structure */
+    }
+
+    .report-title {
+        display: none !important; /* Replaced by new structure */
+    }
+
+    /* Formal Summary Table */
+    .summary-table {
+        display: none !important; /* Replaced by new structure */
+    }
+    .summary-table td {
+        border: 1px solid #000 !important;
+        padding: 10px !important;
+        width: 25%;
+        text-align: center;
+    }
+    .summary-label { font-size: 9pt; text-transform: uppercase; font-weight: bold; display: block; margin-bottom: 5px; }
+    .summary-value { font-size: 14pt; font-weight: bold; }
+
+    /* Hide Web Grid Elements */
+    [style*="display: grid; grid-template-columns: repeat(auto-fit"], .card {
+        display: none !important;
+    }
+
+    /* Professional Data Tables */
+    .print-section {
+        display: block !important;
+        margin-bottom: 40px;
+        page-break-inside: avoid;
+    }
+    .print-section h4 {
+        font-size: 12pt;
+        margin-bottom: 15px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .formal-table {
+        display: table !important;
+        width: 100% !important;
+        border-collapse: collapse !important;
+        border: 1.5px solid #000 !important;
+    }
+    .formal-table th {
+        background: #f2f2f2 !important;
+        border: 1px solid #000 !important;
+        padding: 8px !important;
+        font-size: 10pt;
+        text-align: left;
+        font-weight: bold;
+    }
+    .formal-table td {
+        border: 1px solid #000 !important;
+        padding: 8px !important;
+        font-size: 10pt;
+        vertical-align: top;
+    }
+
+    /* Custom Print Badge */
+    .print-status {
+        display: none !important;
+    }
+
+    /* Print Footer */
+    .print-footer {
+        display: block !important;
+        margin-top: 60px;
+        font-size: 9pt;
+        text-align: right;
+    }
+}
+</style>
+
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+<script>
+    const now = new Date();
+    const optionsDate = { year: 'numeric', month: 'long', day: 'numeric' };
+    const optionsTime = { hour: '2-digit', minute: '2-digit' };
+    document.getElementById('printDateTime').textContent = now.toLocaleDateString('id-ID', optionsDate) + ' | ' + now.toLocaleTimeString('id-ID', optionsTime);
+
+    function exportToExcel() {
+        const wb = XLSX.utils.book_new();
+        
+        // 1. Sheet Ringkasan
+        const ringkasanData = [
+            ["LAPORAN RINGKASAN EKSEKUTIF KETERSEDIAAN PANGAN"],
+            ["Sistem Informasi Pangan - FoodTrack"],
+            [""],
+            ["Waktu Ekspor", now.toLocaleDateString('id-ID', optionsDate) + ' ' + now.toLocaleTimeString('id-ID', optionsTime)],
+            ["ID Laporan", 'FT-EXSUM-' + now.toISOString().slice(0,10).replace(/-/g, "")],
+            [""],
+            ["KATEGORI", "JUMLAH"],
+            ["Total Mitra Petani", [[${totalPetani ?: 0}]]],
+            ["Total Varietas Komoditas", [[${totalKomoditas ?: 0}]]],
+            ["Total Batch Stok", [[${totalStok ?: 0}]]],
+            ["Total Jalur Distribusi", [[${totalDistribusi ?: 0}]]]
+        ];
+        const wsRingkasan = XLSX.utils.aoa_to_sheet(ringkasanData);
+        XLSX.utils.book_append_sheet(wb, wsRingkasan, "Ringkasan Statistik");
+
+        // 2. Sheet Data Stok
+        const stokTable = document.querySelector("#stokTableSection table");
+        const wsStok = XLSX.utils.table_to_sheet(stokTable);
+        XLSX.utils.book_append_sheet(wb, wsStok, "Data Stok Pangan");
+
+        // 3. Sheet Alur Distribusi
+        const distTable = document.querySelector("#distTableSection table");
+        const wsDist = XLSX.utils.table_to_sheet(distTable);
+        XLSX.utils.book_append_sheet(wb, wsDist, "Alur Distribusi");
+
+        // Generate and Download
+        const fileName = 'FoodTrack_Laporan_Eksekutif_' + now.toISOString().slice(0,10) + '.xlsx';
+        XLSX.writeFile(wb, fileName);
+    }
+</script>
+<div th:replace="~{admin/layout :: confirmModal}"></div>
+</body>
+</html>

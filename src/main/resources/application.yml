@@ -1,0 +1,45 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: foodtrack
+
+  session:
+    # Menonaktifkan Spring Session untuk mencegah konflik dengan fitur Remember Me (cookie)
+    store-type: none 
+
+  datasource:
+    # URL database, username dan password
+    url: jdbc:mysql://localhost:3306/foodtrack_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=Asia/Jakarta&allowPublicKeyRetrieval=true
+    username: root
+    password:  
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+
+  thymeleaf:
+    cache: false
+    mode: HTML
+    encoding: UTF-8
+
+logging:
+  level:
+    com.foodtrack: DEBUG
+    org.springframework.security: WARN
+
+gemini:
+  api:
+    key: ""
+
+mistral:
+  api:
+    key: ""

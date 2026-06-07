@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('Form Stok')}"></head>
+<body>
+<div class="layout">
+    <nav th:replace="~{admin/layout :: sidebar('stok')}"></nav>
+    <div class="main-content">
+        <header th:replace="~{admin/layout :: topbar('<a href=\'/admin/dashboard\' style=\'color:var(--primary);text-decoration:none;font-weight:500;\'>Dashboard</a> <span style=\'color:var(--outline);margin:0 4px;\'>&rsaquo;</span> <a href=\'/admin/stok\' style=\'color:var(--primary);text-decoration:none;font-weight:500;\'>Stok Pangan</a> <span style=\'color:var(--outline);margin:0 4px;\'>&rsaquo;</span> <span style=\'font-weight:600;color:var(--on-surface);\'>Catat Stok</span>')}"></header>
+        
+        <div class="page-content" style="max-width: 1200px; margin: 0 auto; padding: 40px;">
+            <div th:replace="~{admin/layout :: flash}"></div>
+            
+            <div class="page-header" style="margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 style="font-size: 2.25rem; font-weight: 850; color: var(--primary); margin: 0; letter-spacing: -1.5px;">Pencatatan Stok Masuk</h1>
+                    <p style="color: var(--outline); font-weight: 500; margin-top: 6px; font-size: 1.05rem;">Input data hasil panen atau kiriman stok dari mitra petani ke gudang.</p>
+                </div>
+                <div style="width: 64px; height: 64px; background: linear-gradient(135deg, var(--primary), #2d7a3d); border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 10px 25px rgba(26,92,42,0.2);">
+                    <span class="material-symbols-outlined" style="font-size: 34px;">inventory_2</span>
+                </div>
+            </div>
+
+            <form th:action="@{/admin/stok/simpan}" method="post" th:object="${stokPangan}" id="stokForm">
+                <input type="hidden" th:field="*{idStok}"/>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1.6fr; gap: 32px; align-items: start;">
+                    
+                    <!-- LEFT COLUMN: STEP 1 (Farmer Selection) -->
+                    <div class="card" style="padding: 32px; border: 1.5px solid var(--outline-variant); border-radius: 32px; background: #fff; position: relative; overflow: hidden; box-shadow: 0 4px 30px rgba(0,0,0,0.03);">
+                        <div style="position: absolute; right: -25px; top: -25px; font-size: 120px; font-weight: 950; color: rgba(26,92,42,0.035); pointer-events: none; user-select: none;">01</div>
+                        
+                        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 32px;">
+                            <div style="width: 48px; height: 48px; background: rgba(26,92,42,0.08); color: var(--primary); border-radius: 16px; display: flex; align-items: center; justify-content: center; border: 1.5px solid rgba(26,92,42,0.1);">
+                                <span class="material-symbols-outlined" style="font-size: 24px;">person_search</span>
+                            </div>
+                            <h3 style="font-size: 1.35rem; font-weight: 850; color: var(--on-surface); margin: 0;">Mitra Petani</h3>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-weight: 800; font-size: 0.9rem; color: #444; margin-bottom: 14px; display: block;">Cari Nama Petani <span style="color:var(--error)">*</span></label>
+                            <select id="petani" th:field="*{petani.idPetani}" class="form-control" style="height: 64px; border-radius: 18px; font-weight: 700; font-size: 1rem; border: 2px solid #eee; background: #fafafa; transition: 0.3s;" required onchange="onFarmerSelected()">
+                                <option value="">-- Pilih Petani --</option>
+                                <option th:each="p : ${listPetani}" th:value="${p.idPetani}" th:text="${p.nama + ' (' + p.kelompokTani + ')'}">Budi</option>
+                            </select>
+                            
+                            <div id="farmerInfo" style="margin-top: 32px; padding: 24px; background: #fcfcfc; border-radius: 20px; border: 1.5px dashed #eee; text-align: center;">
+                                <div style="width: 48px; height: 48px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                                    <span class="material-symbols-outlined" style="color: #bbb;">contact_page</span>
+                                </div>
+                                <p style="margin: 0; font-size: 0.85rem; color: #888; font-weight: 500; line-height: 1.6;">Pilih petani terlebih dahulu untuk membuka form detail komoditas.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN: STEP 2 (Details) -->
+                    <div id="step2" class="card" style="padding: 32px; border: 1.5px solid var(--outline-variant); border-radius: 32px; background: #fff; position: relative; overflow: hidden; opacity: 0.4; pointer-events: none; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 10px 40px rgba(0,0,0,0.04);">
+                        <div style="position: absolute; right: -25px; top: -25px; font-size: 120px; font-weight: 950; color: rgba(251,191,36,0.035); pointer-events: none; user-select: none;">02</div>
+                        
+                        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 32px;">
+                            <div style="width: 48px; height: 48px; background: rgba(251,191,36,0.08); color: #fbbf24; border-radius: 16px; display: flex; align-items: center; justify-content: center; border: 1.5px solid rgba(251,191,36,0.1);">
+                                <span class="material-symbols-outlined" style="font-size: 24px;">inventory</span>
+                            </div>
+                            <h3 style="font-size: 1.35rem; font-weight: 850; color: var(--on-surface); margin: 0;">Rincian Barang & Stok</h3>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 28px;">
+                            <div class="form-group">
+                                <label style="font-weight: 800; font-size: 0.9rem; color: #444; margin-bottom: 14px; display: block;">Jenis Komoditas <span style="color:var(--error)">*</span></label>
+                                <select id="komoditas" th:field="*{komoditas.idKomoditas}" class="form-control" style="height: 64px; border-radius: 18px; font-weight: 700; border: 2px solid #eee;" required onchange="onCommoditySelected()">
+                                    <option value="">-- Pilih Barang --</option>
+                                    <th:block th:each="k : ${listKomoditas}">
+                                        <option th:value="${k.idKomoditas}" 
+                                                th:text="${k.namaKomoditas}" 
+                                                th:data-units="${#strings.listJoin(k.satuanList.![idSatuan + ':' + namaSatuan + ':' + isBaseUnit], '|')}"
+                                                th:selected="${stokPangan.komoditas != null and stokPangan.komoditas.idKomoditas == k.idKomoditas}">Beras</option>
+                                    </th:block>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="font-weight: 800; font-size: 0.9rem; color: #444; margin-bottom: 14px; display: block;">Satuan <span style="color:var(--error)">*</span></label>
+                                <select id="unitDropdown" name="satuan.idSatuan" class="form-control" style="height: 64px; border-radius: 18px; font-weight: 800; color: var(--primary); background: var(--primary-container); border: 2px solid var(--primary); transition: 0.3s;" required>
+                                    <option value="">-- Satuan --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 28px; margin-top: 28px;">
+                            <div class="form-group">
+                                <label style="font-weight: 800; font-size: 0.9rem; color: #444; margin-bottom: 14px; display: block;">Jumlah Stok Masuk <span style="color:var(--error)">*</span></label>
+                                <div style="position: relative;">
+                                    <input type="number" id="jumlahMasuk" th:field="*{jumlahMasuk}" class="form-control" placeholder="0" min="1" required 
+                                           style="height: 64px; border-radius: 18px; font-weight: 900; font-size: 1.75rem; padding-left: 24px; border: 2px solid #eee; background: #fff; color: var(--primary);"/>
+                                    <div id="unitIndicator" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-weight: 900; color: #fff; font-size: 0.85rem; background: var(--primary); padding: 6px 14px; border-radius: 10px; box-shadow: 0 4px 10px rgba(26,92,42,0.2);">UNIT</div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label style="font-weight: 800; font-size: 0.9rem; color: #444; margin-bottom: 14px; display: block;">Tanggal Panen <span style="color:var(--error)">*</span></label>
+                                <input type="date" id="tanggalPanen" th:field="*{tanggalPanen}" class="form-control" required 
+                                       style="height: 64px; border-radius: 18px; font-weight: 700; border: 2px solid #eee; padding: 0 20px; background: #fff;"/>
+                            </div>
+                        </div>
+
+                        <!-- ACTION BUTTONS -->
+                        <div style="display: flex; justify-content: flex-end; gap: 16px; margin-top: 48px;">
+                            <a th:href="@{/admin/stok}" class="btn" style="border-radius: 18px; padding: 0 36px; height: 60px; font-weight: 800; display: flex; align-items: center; border: 2px solid #eee; color: #666; background: #fff; transition: 0.2s;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='#fff'">Batal</a>
+                            <button type="submit" id="saveBtn" class="btn btn-primary" style="border-radius: 18px; padding: 0 48px; height: 60px; font-weight: 800; display: flex; align-items: center; gap: 12px; box-shadow: 0 15px 30px rgba(26,92,42,0.25); background: linear-gradient(135deg, var(--primary), #2d7a3d); border: none; color: #fff;">
+                                <span class="material-symbols-outlined" style="font-size: 24px;">save_as</span>
+                                Simpan Data Stok
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    function onFarmerSelected() {
+        const farmerSelect = document.getElementById('petani');
+        const farmerId = farmerSelect.value;
+        const step2 = document.getElementById('step2');
+        const farmerInfo = document.getElementById('farmerInfo');
+        
+        if (farmerId) {
+            step2.style.opacity = '1';
+            step2.style.pointerEvents = 'auto';
+            farmerSelect.style.borderColor = 'var(--primary)';
+            farmerSelect.style.background = 'rgba(26,92,42,0.02)';
+            
+            const name = farmerSelect.options[farmerSelect.selectedIndex].text;
+            farmerInfo.innerHTML = `
+                <div style="color: var(--primary); font-weight: 800; font-size: 0.95rem; margin-bottom: 4px;">Terpilih:</div>
+                <div style="font-weight: 900; color: #1a1a1a; font-size: 1.1rem;">${name}</div>
+            `;
+            farmerInfo.style.borderColor = 'var(--primary)';
+            farmerInfo.style.background = 'rgba(26,92,42,0.04)';
+        } else {
+            step2.style.opacity = '0.4';
+            step2.style.pointerEvents = 'none';
+            farmerSelect.style.borderColor = '#eee';
+            farmerSelect.style.background = '#fafafa';
+            farmerInfo.innerHTML = `
+                <div style="width: 48px; height: 48px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                    <span class="material-symbols-outlined" style="color: #bbb;">contact_page</span>
+                </div>
+                <p style="margin: 0; font-size: 0.85rem; color: #888; font-weight: 500; line-height: 1.6;">Pilih petani terlebih dahulu untuk membuka form detail komoditas.</p>
+            `;
+            farmerInfo.style.borderColor = '#eee';
+            farmerInfo.style.background = '#fcfcfc';
+        }
+    }
+
+    function onCommoditySelected() {
+        const komoditasSelect = document.getElementById('komoditas');
+        const unitDropdown = document.getElementById('unitDropdown');
+        const unitIndicator = document.getElementById('unitIndicator');
+        const selectedOption = komoditasSelect.options[komoditasSelect.selectedIndex];
+        
+        unitDropdown.innerHTML = '<option value="">-- Satuan --</option>';
+        unitIndicator.textContent = 'UNIT';
+        
+        if (selectedOption.value) {
+            const data = selectedOption.getAttribute('data-units');
+            if (data) {
+                const pairs = data.split('|');
+                pairs.forEach(p => {
+                    const parts = p.split(':');
+                    if (parts.length >= 2) {
+                        const id = parts[0];
+                        const name = parts[1];
+                        const isBase = parts[2] === 'true';
+                        
+                        const opt = document.createElement('option');
+                        opt.value = id;
+                        opt.textContent = name + (isBase ? ' (Dasar)' : '');
+                        unitDropdown.appendChild(opt);
+                        
+                        if (isBase) {
+                            unitDropdown.value = id;
+                            unitIndicator.textContent = name;
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        onFarmerSelected();
+        if (document.getElementById('komoditas').value) {
+            onCommoditySelected();
+        }
+    });
+</script>
+
+<style>
+    .form-control:focus {
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 4px rgba(26, 92, 42, 0.1) !important;
+    }
+</style>
+
+</body>
+</html>

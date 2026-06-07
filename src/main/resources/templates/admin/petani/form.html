@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('Form Petani')}"></head>
+<body>
+<div class="layout">
+    <nav th:replace="~{admin/layout :: sidebar('petani')}"></nav>
+    <div class="main-content">
+        <th:block th:if="${petani.idPetani == null}">
+            <header th:replace="~{admin/layout :: topbar('<a href=\'/admin/dashboard\'>Dashboard</a> &rsaquo; <a href=\'/admin/petani\'>Data Petani</a> &rsaquo; <span>Tambah</span>')}"></header>
+        </th:block>
+        <th:block th:if="${petani.idPetani != null}">
+            <header th:replace="~{admin/layout :: topbar('<a href=\'/admin/dashboard\'>Dashboard</a> &rsaquo; <a href=\'/admin/petani\'>Data Petani</a> &rsaquo; <span>Edit</span>')}"></header>
+        </th:block>
+        <div class="page-content">
+            <div class="page-header" style="margin-bottom: 20px;">
+                <h1 th:text="${petani.idPetani != null} ? 'Edit Data Petani' : 'Tambah Data Petani'">Tambah Data Petani</h1>
+                <p>Masukkan informasi detail petani baru ke dalam sistem untuk pelacakan stok dan hasil panen.</p>
+            </div>
+
+            <div class="card" style="border: 1px solid var(--outline-variant); border-radius: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.02); overflow: hidden; background: #fff; padding: 0 !important;">
+                <form th:action="@{/admin/petani/simpan}" method="post" th:object="${petani}" style="margin: 0; padding: 0;">
+                    <input type="hidden" th:field="*{idPetani}"/>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; min-height: 500px;">
+                        <!-- Kolom Kiri: Informasi Personal -->
+                        <div style="padding: 40px; border-right: 1px solid var(--outline-variant);">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 32px;">
+                                <div style="width: 32px; height: 32px; background: var(--primary); color: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">1</div>
+                                <h3 style="font-size: 1.125rem; font-weight: 800; margin: 0;">Sumber & Identitas</h3>
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; gap: 24px;">
+                                <div class="form-group">
+                                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.875rem; color: var(--on-surface); margin-bottom: 10px;">
+                                        <span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">person</span> Pilih Nama Petani <span style="color: var(--error);">*</span>
+                                    </label>
+                                    <input type="text" th:field="*{nama}" class="form-control" placeholder="Contoh: Ahmad Subarjo" required
+                                           style="height: 52px; border-radius: 12px; border: 1.5px solid var(--outline-variant); padding: 0 16px;"/>
+                                </div>
+
+                                <div class="form-group">
+                                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.875rem; color: var(--on-surface); margin-bottom: 10px;">
+                                        <span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">groups</span> Kelompok Tani
+                                    </label>
+                                    <input type="text" th:field="*{kelompokTani}" class="form-control" placeholder="Nama kelompok (opsional)"
+                                           style="height: 52px; border-radius: 12px; border: 1.5px solid var(--outline-variant); padding: 0 16px;"/>
+                                </div>
+
+                                <div class="form-group">
+                                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.875rem; color: var(--on-surface); margin-bottom: 10px;">
+                                        <span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">call</span> No. WhatsApp / HP <span style="color: var(--error);">*</span>
+                                    </label>
+                                    <input type="text" th:field="*{kontak}" class="form-control" placeholder="0812..." required
+                                           style="height: 52px; border-radius: 12px; border: 1.5px solid var(--outline-variant); padding: 0 16px;"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kolom Kanan: Detail Akun -->
+                        <div style="padding: 40px; background: rgba(0,0,0,0.01);">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 32px;">
+                                <div style="width: 32px; height: 32px; background: #ffb300; color: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">2</div>
+                                <h3 style="font-size: 1.125rem; font-weight: 800; margin: 0;">Detail Keamanan</h3>
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; gap: 24px;">
+                                <div class="form-group">
+                                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.875rem; color: var(--on-surface); margin-bottom: 10px;">
+                                        <span class="material-symbols-outlined" style="font-size: 18px; color: #ffb300;">alternate_email</span> Username Akses
+                                    </label>
+                                    <input type="text" th:field="*{username}" class="form-control" placeholder="username_petani"
+                                           style="height: 52px; border-radius: 12px; border: 1.5px solid var(--outline-variant); padding: 0 16px;"/>
+                                </div>
+
+                                <div class="form-group">
+                                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.875rem; color: var(--on-surface); margin-bottom: 10px;">
+                                        <span class="material-symbols-outlined" style="font-size: 18px; color: #ffb300;">lock</span> Kata Sandi Baru
+                                    </label>
+                                    <input type="password" name="passwordRaw" class="form-control" 
+                                           th:placeholder="${petani.idPetani != null} ? 'Kosongkan jika tetap' : 'Password'"
+                                           style="height: 52px; border-radius: 12px; border: 1.5px solid var(--outline-variant); padding: 0 16px;"/>
+                                </div>
+
+                                <div style="margin-top: auto; padding-top: 32px; border-top: 1px solid var(--outline-variant); display: flex; gap: 12px; justify-content: flex-end; align-items: center;">
+                                    <a th:href="@{/admin/petani}" class="btn" style="padding: 12px 24px; border-radius: 12px; font-weight: 700; color: var(--on-surface-variant);">Batal</a>
+                                    <button type="submit" class="btn btn-primary" style="padding: 12px 32px; border-radius: 12px; font-weight: 700; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 16px rgba(26, 92, 42, 0.2);">
+                                        <span class="material-symbols-outlined" style="font-size: 20px;">task_alt</span>
+                                        <span th:text="${petani.idPetani != null} ? 'Simpan Perubahan' : 'Daftarkan Petani'">Daftarkan Petani</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
