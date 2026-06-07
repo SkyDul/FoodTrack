@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: ${PORT:8081}
 
 spring:
   application:
@@ -9,11 +9,11 @@ spring:
     store-type: none   # Disable Spring Session — prevents conflict with Remember Me cookies
 
   datasource:
-    url: jdbc:mysql://localhost:3306/sipangan_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=Asia/Jakarta&allowPublicKeyRetrieval=true
-    username: root
-    password:
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQLHOST:localhost}:${MYSQLPORT:3306}/${MYSQLDATABASE:sipangan_db}?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=Asia/Jakarta&allowPublicKeyRetrieval=true
+    username: ${MYSQLUSER:root}
+    password: ${MYSQLPASSWORD:}
 
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
@@ -35,4 +35,9 @@ logging:
 
 gemini:
   api:
-    key: "<ISI DENGAN API GEMINI>"
+    key: "gemini"
+
+mistral:
+  api:
+    key: "mistral"
+
